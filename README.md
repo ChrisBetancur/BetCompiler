@@ -1,2 +1,2 @@
 # BetCompiler
-Compiler for my own langauge
+Compiler for my own language
