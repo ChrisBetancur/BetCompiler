@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
 #include "ast_node.h"
 #include "token.h"
 #include "lexer.h"
@@ -15,20 +20,36 @@ typedef struct PARSER_STRUCT {
 
 Parser* init_parser(Lexer* lexer, int num_tokens);
 
-void parser_eat(Parser* parser);
+void parser_eat(Parser* parser, int type);
 
-bool isPrimType(char* name);
+bool is_prim_type(char* name);
 
-bool isKeywordType(char* name);
+bool is_keyword_type(char* name);
 
-ASTNode* parse_var(parser* parser);
+bool is_unique_symbol_name(char* name);
 
-ASTNode* parse_compound(Parser* parser);
+bool is_multdiv_op(char* name);
+
+bool is_addsub_op(char* name);
+
+ASTNode* parse_factor(Parser* parser);
+
+ASTNode* parse_term(Parser* parser);
+
+ASTNode* parse_expr(Parser* parser);
 
 ASTNode* parse_id(Parser* parser);
 
 ASTNode* parser_parse(Parser* parser);
 
 void parser_parse_tokens(Parser* parser);
+
+int parser_count_nodes(ASTNode* node, int count);
+
+void bfs_ast(ASTNode* root);
+
+void traverse_ast(ASTNode* node, List* flag, int depth, bool is_last);
+
+void print_ast(Parser* parser);
 
 #endif

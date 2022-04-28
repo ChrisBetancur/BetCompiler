@@ -5,6 +5,7 @@
 #include "include/lexer.h"
 #include "include/io.h"
 #include "include/token.h"
+#include "include/parser.h"
 
 void bet_compile(char* src) {
     char* src_file = read_file(src);
@@ -12,8 +13,8 @@ void bet_compile(char* src) {
 
     int num_tokens = 0;
     Token** tokens = malloc(sizeof(struct TOKEN_STRUCT));
-
-    while (lexer->index < lexer->src_size) {
+    
+    /*while (lexer->index < lexer->src_size) {
         Token* token = lexer_next_token(lexer);
 
         //printf("%s\n", token_to_string(token));
@@ -25,9 +26,13 @@ void bet_compile(char* src) {
 
         num_tokens++;
         tokens = realloc(tokens, (num_tokens + 1) * sizeof(struct TOKEN_STRUCT));
-    }
+    }*/
 
-    for (int i = 0; i < num_tokens; i++) {
-        printf("%s\n", token_to_string(tokens[i]));
-    }
+    Parser* parser = init_parser(lexer, num_tokens);
+    parser_parse_tokens(parser);
+    
+    print_ast(parser);
+    /*for (int i = 0; i < num_tokens; i++) {
+        //printf("%s\n", token_to_string(tokens[i]));
+    }*/
 }

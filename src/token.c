@@ -13,7 +13,7 @@ Token* init_token(char* value, int type) {
     return token;
 }
 
-static char* token_type_to_string(int type) {
+char* token_type_to_string(int type) {
     switch (type) {
         case TOKEN_ID:
             return "ID";
@@ -26,6 +26,12 @@ static char* token_type_to_string(int type) {
             break;
         case TOKEN_SUB:
             return "SUB";
+            break;
+        case TOKEN_MULT:
+            return "MULTIPLICATION";
+            break;
+        case TOKEN_DIV:
+            return "DIVISION";
             break;
         case TOKEN_LPARAN:
             return "LEFT PARAN";
@@ -55,6 +61,11 @@ static char* token_type_to_string(int type) {
         case TOKEN_INT:
             return "INTEGER";
             break;
+
+        case TOKEN_EOL:
+            return "INTEGER";
+            break;
+ 
         default:
             return "ERROR: TOKEN TYPE NOT STRINGABLE";
             break;

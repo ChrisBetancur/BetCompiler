@@ -6,9 +6,9 @@
 
 typedef struct LIST_STRUCT {
     void** arr;
-    size_t type_size;
-    int arr_size;
-    int arr_count;
+    size_t data_size;
+    size_t arr_size;
+    int num_items;
 } List;
 
 List* init_list(size_t type_size);

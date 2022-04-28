@@ -8,6 +8,8 @@ typedef struct TOKEN_STRUCT {
         TOKEN_ID,
         TOKEN_EQUAL,
         TOKEN_ADD,
+        TOKEN_MULT,
+        TOKEN_DIV,
         TOKEN_SUB,
         TOKEN_LPARAN,
         TOKEN_RPARAN,
@@ -18,10 +20,14 @@ typedef struct TOKEN_STRUCT {
         TOKEN_LESS,
         TOKEN_GREATER,
         TOKEN_INT,
+        TOKEN_EOL,
+        TOKEN_EOF
     } type;
 } Token;
 
 Token* init_token(char* value, int type);
+
+char* token_type_to_string(int type);
 
 char* token_to_string(Token* token);
 

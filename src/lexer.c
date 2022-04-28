@@ -86,6 +86,12 @@ Token* lexer_next_token(Lexer* lexer) {
             case '-':
                 return lexer_advance_once(lexer, TOKEN_SUB);
                 break;
+            case '*':
+                return lexer_advance_once(lexer, TOKEN_MULT);
+                break;
+            case '/':
+                return lexer_advance_once(lexer, TOKEN_DIV);
+                break;
             case '(':
                 return lexer_advance_once(lexer, TOKEN_LPARAN);
                 break;
@@ -98,9 +104,6 @@ Token* lexer_next_token(Lexer* lexer) {
             case '}':
                 return lexer_advance_once(lexer, TOKEN_RBRACE);
                 break;
-            case ';':
-                return lexer_advance_once(lexer, TOKEN_SEMI);
-                break;
             case ',':
                 return lexer_advance_once(lexer, TOKEN_COMMA);
                 break;
@@ -110,10 +113,12 @@ Token* lexer_next_token(Lexer* lexer) {
             case '>':
                 return lexer_advance_once(lexer, TOKEN_GREATER);
                 break;
-
+            case ';':
+                return lexer_advance_once(lexer, TOKEN_EOL);
+                break;
         }
     }
-    return NULL;
+    return init_token(NULL, TOKEN_EOF);
 }
 
 

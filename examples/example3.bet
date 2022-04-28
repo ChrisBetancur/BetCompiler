@@ -1,4 +1,4 @@
-int b = 10;
+int b = 1099;
 
 int print_var(int a) {
     print(a);

@@ -8,17 +8,27 @@ typedef struct AST_NODE_STRUCT {
     List* children;
     
     enum {
-        AST_FUNC_DEF,
-        AST_TYPE,
+        AST_GLOBAL,
+        AST_FUNC,
+        AST_DEF_TYPE,
+        AST_CALL,
         AST_COMPOUND,
-        AST_STATEMENT,
-        AST_VAR_DECLARATION,
-        AST_EXPRESSION,
-        AST_ASSIGNMENT,
+        AST_BINARY_OP,
+        AST_OPERATOR,
+        AST_RETURN_ST,
+        AST_VAR,
+        AST_TERM,
+        AST_EXPR,
+        AST_NULL,
+        AST_INT,
         AST_LITERAL
     } type;
 }ASTNode;
 
 ASTNode* init_ASTNode(int type, char* name);
+
+char* astnode_type_to_string(int type);
+
+char* astnode_to_string(ASTNode* node);
 
 #endif
