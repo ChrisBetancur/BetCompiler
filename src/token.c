@@ -19,51 +19,52 @@ char* token_type_to_string(int type) {
             return "ID";
             break;
         case TOKEN_EQUAL:
-            return "EQUAL";
+            return "=";
             break;
         case TOKEN_ADD:
-            return "ADD";
+            return "+";
             break;
         case TOKEN_SUB:
-            return "SUB";
+            return "-";
             break;
         case TOKEN_MULT:
-            return "MULTIPLICATION";
+            return "*";
             break;
         case TOKEN_DIV:
-            return "DIVISION";
+            return "/";
             break;
         case TOKEN_LPARAN:
-            return "LEFT PARAN";
+            return "(";
             break;
         case TOKEN_RPARAN:
-            return "RIGHT PARAN";
+            return ")";
             break;
         case TOKEN_LBRACE:
-            return "LEFT BRACE";
+            return "{";
             break;
         case TOKEN_RBRACE:
-            return "RIGHT BRACE";
-            break;
-        case TOKEN_SEMI:
-            return "SEMI COLON";
+            return "}";
             break;
         case TOKEN_COMMA:
-            return "COMMA";
+            return ",";
             break;
         case TOKEN_LESS:
-            return "LESS THAN";
+            return "<";
             break;
  
         case TOKEN_GREATER:
-            return "GREATER THAN";
+            return ">";
             break;
         case TOKEN_INT:
-            return "INTEGER";
+            return "INT";
             break;
 
         case TOKEN_EOL:
-            return "INTEGER";
+            return "';' EOL";
+            break;
+ 
+        case TOKEN_EOF:
+            return "EOF";
             break;
  
         default:

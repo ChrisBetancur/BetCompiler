@@ -22,10 +22,16 @@ int main(int argc, char* argv[]) {
     
     stack_print(stack);
     */
-    /*List* list = init_list(sizeof(struct val));
-    
+    //List* list = init_list(sizeof(int));
+    /* 
+    for (int i = 0; i < 10; i++) {
+        printf("Hey there\n");
+        list_append(list, i, sizeof(int));
+    }
+    print_list(list);
+    */
     //list_append(list, init_ASTNode(AST_INT, "bro"), sizeof(struct AST_NODE_STRUCT));
-   
+    /* 
     Value* value = malloc(sizeof(struct val));
     value->t = 1;
     
@@ -53,7 +59,7 @@ int main(int argc, char* argv[]) {
         ((Value*)list->arr[i])->t = i;
     }
 
-    print(list);*/
+    print(list);
     //printf("%d\n", ((Value*)list->arr[7])->t);
-
+    */
 }

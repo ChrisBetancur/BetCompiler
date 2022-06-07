@@ -22,8 +22,8 @@ char* astnode_type_to_string(int type) {
         case AST_FUNC:
             return "FUNCTION";
             break;
-        case AST_DEF_TYPE:
-            return "DEFINITION TYPE";
+        case AST_DEC_TYPE:
+            return "DECLARATION TYPE";
             break;
         case AST_CALL:
             return "SYMBOL CALLED";
@@ -36,6 +36,9 @@ char* astnode_type_to_string(int type) {
             break;
         case AST_OPERATOR:
             return "OPERATOR";
+            break;
+        case AST_RETURN_TYPE:
+            return "RETURN TYPE";
             break;
         case AST_RETURN_ST:
             return "RETURN STATEMENT";
@@ -57,6 +60,12 @@ char* astnode_type_to_string(int type) {
             break;
         case AST_LITERAL:
             return "LITERAL";
+            break;
+         case AST_PARAMS:
+            return "PARAMS";
+            break;
+         case AST_BLOCK:
+            return "BLOCK";
             break;
  
         default:

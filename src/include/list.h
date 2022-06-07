@@ -7,8 +7,8 @@
 typedef struct LIST_STRUCT {
     void** arr;
     size_t data_size;
-    size_t arr_size;
-    int num_items;
+    //size_t arr_size;
+    size_t num_items;
 } List;
 
 List* init_list(size_t type_size);

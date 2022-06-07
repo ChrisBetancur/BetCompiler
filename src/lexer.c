@@ -118,7 +118,7 @@ Token* lexer_next_token(Lexer* lexer) {
                 break;
         }
     }
-    return init_token(NULL, TOKEN_EOF);
+    return init_token("EOF", TOKEN_EOF);
 }
 
 
