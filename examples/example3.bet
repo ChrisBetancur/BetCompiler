@@ -1,0 +1,11 @@
+int b = 1099;
+
+int print_var(int a) {
+    print(a);
+}
+
+int main() {
+    int test = 9;
+
+    print_var(test);
+}

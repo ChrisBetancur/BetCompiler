@@ -1,0 +1,2 @@
+int main(int a, int b, int c);
+void func(int a, int b);
