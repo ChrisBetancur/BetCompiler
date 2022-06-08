@@ -10,7 +10,7 @@ Compiler for my own language. Combination of lanuages like python, C,
 
 ### Current Issues
 
-#### 1. Error: List Append
+#### 1. Error: List Append (SOLVED)
 - Issue in list.c, supposed to be 1 instead of 2 but both causes seg faults if there is certain amount of lines in bet code
 
 ```c
@@ -20,7 +20,6 @@ if (!list_struct->arr) {
 ```
 
 ### Next Steps
-- Fix Error 1
 - Finish AST for functions
 
 
