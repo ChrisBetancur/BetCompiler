@@ -1,6 +1,5 @@
 #include "include/parser.h"
 #include "include/token.h"
-#include "include/stack.h"
 #include "include/ast_node.h"
 
 Parser* init_parser(Lexer* lexer) {

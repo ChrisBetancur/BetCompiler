@@ -5,7 +5,6 @@
 #include "include/token.h"
 #include "include/ast_node.h"
 
-#include "include/stack.h"
 #include "include/list.h"
 
 int main(int argc, char* argv[]) {
