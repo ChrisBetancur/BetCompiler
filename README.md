@@ -1,5 +1,5 @@
 # BetCompiler
-Compiler for my own language. Combination of lanuages like python, C,
+Compiler for my own language. Combination of my favorite features of python, C and Java
 
 ### Todo
 - [x] Lexer
