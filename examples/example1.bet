@@ -1,5 +1,11 @@
-int main(int a, int b, int c);
-void func(int a, int b);
-void funcA(int a, int b);
-void funcB(int a, int b);
-void funcC(int a, int b);
+int a();
+
+int a() {
+    int i = 0;
+}
+
+int main(int a, int b, int c) {
+    int i = 0;
+    int a = 3 + 8 - (8 * 7) / 1;
+
+}

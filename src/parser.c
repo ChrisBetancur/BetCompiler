@@ -18,7 +18,7 @@ void parser_eat(Parser* parser, int type) {
         printf("Exited with code 1\n");
         exit(1);
     }
-    printf("%s\n", token_to_string(parser->curr_token));
+    //printf("%s\n", token_to_string(parser->curr_token));
     parser->curr_token = lexer_next_token(parser->lexer);
 }
 
@@ -143,14 +143,7 @@ ASTNode* parse_expr(Parser* parser) {
     
     return symbol;
 }
-/*
-ASTNode* parse_assignment(Parser* parser, int def_type) {
-    ASTNode* prev_val = init_ASTNode(def_type, parser->curr_token->value);
 
-    while (strcmp(parser->curr_token->value, ";") != 0) {
-        
-    }
-}*/
 
 ASTNode* parse_var(Parser* parser, Token* symbol_name_token, ASTNode* def_type) {
     ASTNode* symbol = init_ASTNode(AST_VAR, symbol_name_token->value);
@@ -173,9 +166,33 @@ ASTNode* parse_var(Parser* parser, Token* symbol_name_token, ASTNode* def_type) 
 }
 
 
+ASTNode* parse_block(Parser* parser) {
+    ASTNode* block = init_ASTNode(AST_BLOCK, NULL);
+    parser_eat(parser, TOKEN_LBRACE);
+
+    bool block_done = false;
+    while (block_done != true) {
+        ASTNode* child = parser_parse(parser);
+        list_append(block->children, child, sizeof(struct AST_NODE_STRUCT));
+        if (parser->curr_token->type == TOKEN_RBRACE) {
+            parser_eat(parser, TOKEN_RBRACE);
+            block_done = true;
+        }
+    }
+
+    return block;
+}
+
+
 ASTNode* parse_func_params(Parser* parser) {
     ASTNode* params = init_ASTNode(AST_PARAMS, NULL);
     parser_eat(parser, TOKEN_LPARAN);
+    
+    if (parser->curr_token->type == TOKEN_RPARAN) {
+        parser_eat(parser, TOKEN_RPARAN);
+        return params;
+    }
+
     bool param_done = false;
     while (param_done != true) {
         ASTNode* dec_type = init_ASTNode(AST_DEC_TYPE, parser->curr_token->value);
@@ -196,16 +213,26 @@ ASTNode* parse_func_params(Parser* parser) {
 }
 
 
-ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* dec_type) {
+ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* ret_type) {
     ASTNode* symbol = init_ASTNode(AST_FUNC, symbol_name_token->value);
     //printf("HEYYYYYYYYYYY %s\n", parser->curr_token->value);
-    list_append(symbol->children, dec_type, sizeof(struct AST_NODE_STRUCT));
-    list_append(symbol->children, parse_func_params(parser), sizeof(struct AST_NODE_STRUCT));
+    if (ret_type != NULL)
+        list_append(symbol->children, ret_type, sizeof(struct AST_NODE_STRUCT));
+    
+    ASTNode* params = parse_func_params(parser);
+
+    if (params->children->num_items == 0)
+        list_append(symbol->children, NULL, sizeof(struct AST_NODE_STRUCT));
+    else
+        list_append(symbol->children, params, sizeof(struct AST_NODE_STRUCT));
 
     if (parser->curr_token->type != TOKEN_LBRACE) {
         parser_eat(parser, TOKEN_EOL);
         parser->curr_line++; //After reading EOL then new line
     }
+    else
+        list_append(symbol->children, parse_block(parser), sizeof(struct AST_NODE_STRUCT));
+
     //printf("%s\n", astnode_to_string(((ASTNode*)symbol->children->arr[1])->children->arr[1]));
     return symbol;
 }
@@ -216,6 +243,7 @@ bool is_symbol_declared_global(Parser* parser, char* symbol_name) {
         if (strcmp(((ASTNode*)parser->root->children->arr[i])->name, symbol_name) == 0)
             return true;
     }
+
     return false;
 }
 
@@ -242,8 +270,14 @@ ASTNode* parse_id(Parser* parser) {
         if (strcmp(parser->curr_token->value, "(") != 0) {
             return parse_var(parser, symbol_name, def_type);
         }
-        def_type = init_ASTNode(AST_RETURN_TYPE, def_type->name);
-        return parse_func(parser, symbol_name, def_type); //FIND WAY TO CHECK IF IT IS GLOBAL DEF
+
+        if (is_symbol_declared_global(parser, symbol_name->value)) {
+            printf("Hey\n");
+            return parse_func(parser, symbol_name, NULL);
+        }
+
+        ASTNode* ret_type = init_ASTNode(AST_RETURN_TYPE, def_type->name);
+        return parse_func(parser, symbol_name, ret_type); //FIND WAY TO CHECK IF IT IS GLOBAL DEF
     }
 
     return NULL;
@@ -263,7 +297,7 @@ ASTNode* parser_parse(Parser* parser) {
 void parser_parse_tokens(Parser* parser) {
     parser->root = init_ASTNode(AST_GLOBAL, NULL); //FILE NAME
 
-    printf("\n\n\n\t-----TOKENS-----\n\n");
+    //printf("\n\n\n\t-----TOKENS-----\n\n");
     
     while (parser->curr_token->type != TOKEN_EOF) {
         ASTNode* child = parser_parse(parser);

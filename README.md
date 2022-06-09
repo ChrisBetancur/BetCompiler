@@ -23,6 +23,7 @@ if (!list_struct->arr) {
 
 ### Next Steps
 - Finish AST for functions
+    - Add the return statement feature
 
 
 ### How to compile code

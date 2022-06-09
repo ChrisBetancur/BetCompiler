@@ -41,6 +41,10 @@ ASTNode* parse_expr(Parser* parser);
 
 ASTNode* parse_var(Parser* parser, Token* symbol_name_token, ASTNode* def_type);
 
+ASTNode* parse_block(Parser* parser);
+
+ASTNode* parse_func_params(Parser* parser);
+
 ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* def_type);
 
 bool is_symbol_declared_global(Parser* parser, char* symbol_name);
