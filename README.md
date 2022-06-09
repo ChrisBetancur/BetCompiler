@@ -18,6 +18,8 @@ if (!list_struct->arr) {
         list_struct->arr = calloc(2, list_struct->data_size);
     }
 ```
+-  Solution
+    - Created new list append where I copied the list to a new array and free the old one
 
 ### Next Steps
 - Finish AST for functions
