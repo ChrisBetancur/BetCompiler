@@ -13,6 +13,8 @@
 
 typedef struct PARSER_STRUCT {
     ASTNode* root;
+    ASTNode* curr_func;
+
     Lexer* lexer;
     unsigned int num_tokens;
     Token* curr_token;
@@ -43,11 +45,19 @@ ASTNode* parse_var(Parser* parser, Token* symbol_name_token, ASTNode* def_type);
 
 ASTNode* parse_block(Parser* parser);
 
+ASTNode* parse_return_st(Parser* parser);
+
+ASTNode* parse_keyword(Parser* parser);
+
 ASTNode* parse_func_params(Parser* parser);
 
 ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* def_type);
 
 bool is_symbol_declared_global(Parser* parser, char* symbol_name);
+
+bool is_symbol_in_scope(ASTNode* curr_symbol, Token* curr_token);
+
+bool is_symbol_declared(Parser* parser, Token* curr_token);
 
 ASTNode* parse_id(Parser* parser);
 

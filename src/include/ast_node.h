@@ -16,7 +16,7 @@ typedef struct AST_NODE_STRUCT {
         AST_BINARY_OP,
         AST_OPERATOR,
         AST_RETURN_TYPE,
-        AST_RETURN_ST,
+        AST_RETURN,
         AST_VAR,
         AST_TERM,
         AST_EXPR,

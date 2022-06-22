@@ -58,12 +58,3 @@ void list_append(List* list_struct, void* data, size_t data_size)
 }
 */
 
-void print_list(List* list) {
-    for (int i = 0; i < list->num_items; i++) {
-        printf("%d\n", list->arr[i]);
-    }
-}
-
-
-
-

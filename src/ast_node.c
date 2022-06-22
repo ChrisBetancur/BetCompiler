@@ -40,8 +40,8 @@ char* astnode_type_to_string(int type) {
         case AST_RETURN_TYPE:
             return "RETURN TYPE";
             break;
-        case AST_RETURN_ST:
-            return "RETURN STATEMENT";
+        case AST_RETURN:
+            return "RETURN";
             break;
         case AST_VAR:
             return "VARIABLE";
