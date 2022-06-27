@@ -1,3 +1,6 @@
+int main(int a, int b, in c);
+
 int main(int a, int b, int c) {
-    return a;
+    int g = 0 + 2 + 6 + 1  + 7;
+    return g;
 }

@@ -49,15 +49,17 @@ ASTNode* parse_return_st(Parser* parser);
 
 ASTNode* parse_keyword(Parser* parser);
 
+ASTNode* get_return_val(ASTNode* curr_symbol);
+
 ASTNode* parse_func_params(Parser* parser);
 
 ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* def_type);
 
 bool is_symbol_declared_global(Parser* parser, char* symbol_name);
 
-bool is_symbol_in_scope(ASTNode* curr_symbol, Token* curr_token);
+bool is_symbol_in_scope(ASTNode* curr_symbol, ASTNode* symbol);
 
-bool is_symbol_declared(Parser* parser, Token* curr_token);
+bool is_symbol_declared(Parser* parser, ASTNode* symbol);
 
 ASTNode* parse_id(Parser* parser);
 
@@ -69,7 +71,7 @@ int parser_count_nodes(ASTNode* node, int count);
 
 void bfs_ast(ASTNode* root);
 
-void traverse_ast(ASTNode* node, List* flag, int depth, bool is_last);
+void traverse_print_ast(ASTNode* node, List* flag, int depth, bool is_last);
 
 void print_ast(Parser* parser);
 

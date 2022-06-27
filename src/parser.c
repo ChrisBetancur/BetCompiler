@@ -1,4 +1,5 @@
 #include "include/parser.h"
+#include <ctype.h>
 #include "include/token.h"
 #include "include/ast_node.h"
 
@@ -33,10 +34,16 @@ bool is_prim_type(char* name) {
     if (strcmp(name, "void") == 0)
         return true;
 
+
     return false;
 }
 
-bool is_keyword_type(char* name) {
+
+bool is_keyword_type(char* name) { // 
+    if (is_prim_type(name))
+        return true;
+
+
     if (strcmp(name, "return") == 0)
         return true;
 
@@ -47,9 +54,7 @@ bool is_keyword_type(char* name) {
 }
 
 bool is_unique_symbol_name(char* name) { //future must implement to check if the symbol has already been defined in the scope
-    if (is_prim_type(name))
-        return false;
-    else if (is_keyword_type(name))
+    if (is_keyword_type(name))
         return false;
     else
         return true;
@@ -127,8 +132,6 @@ ASTNode* parse_expr(Parser* parser) {
         ASTNode* prev_symbol = symbol;
         symbol = init_ASTNode(AST_BINARY_OP, NULL);
         char* op = parser->curr_token->value;
-        /*if (symbol == NULL) 
-            symbol = init_ASTNode(AST_BINARY_OP, NULL);*/
 
         if (parser->curr_token->type == TOKEN_ADD) {
             parser_eat(parser, TOKEN_ADD);
@@ -164,6 +167,17 @@ ASTNode* parse_var(Parser* parser, Token* symbol_name_token, ASTNode* def_type) 
     }
     parser_eat(parser, TOKEN_EOL);
     parser->curr_line++; //After reading EOL then new line
+    
+    /*bool dec = is_symbol_declared(parser, symbol);
+    printf("%d\n", dec);
+    if (!is_symbol_declared(parser, symbol) && def_type != NULL) {
+        printf("bet: Cannot find symbol '%s' at line %d\n", symbol->name, parser->curr_line);
+        printf("Exited with code 1\n");
+        exit(1);
+    }*/
+
+
+
     return symbol;
 }
 
@@ -175,9 +189,9 @@ ASTNode* parse_block(Parser* parser) {
     bool block_done = false;
     while (block_done != true) {
         ASTNode* child = NULL;
+        child = parse_id(parser);
 
-        child = parser_parse(parser);
-
+        //printf("Child %s", astnode_to_string(child));
         list_append(block->children, child, sizeof(struct AST_NODE_STRUCT));
     
         if (parser->curr_token->type == TOKEN_RBRACE) {
@@ -186,6 +200,7 @@ ASTNode* parse_block(Parser* parser) {
             block_done = true;
         } 
     }
+
     return block;
 }
 
@@ -194,11 +209,18 @@ ASTNode* parse_return_st(Parser* parser) {
 
     switch(parser->curr_token->type) {
         case TOKEN_INT:
-
             list_append(return_symbol->children, parse_expr(parser), sizeof(struct AST_NODE_STRUCT));
             parser_eat(parser, TOKEN_EOL);
             return return_symbol;
             break;
+
+        case TOKEN_ID:
+            list_append(return_symbol->children, parse_id(parser), sizeof(struct AST_NODE_STRUCT));
+            //printf("%s\n", token_to_string(parser->curr_token));
+            //parser_eat(parser, TOKEN_EOL);
+            return return_symbol;
+            break;
+
         default:
             return NULL;
             break;
@@ -207,6 +229,14 @@ ASTNode* parse_return_st(Parser* parser) {
 }
 
 ASTNode* parse_keyword(Parser* parser) {
+    
+    if (strcmp(parser->curr_token->value, "int") == 0) {
+        ASTNode* def_type = init_ASTNode(AST_DEC_TYPE, parser->curr_token->value); 
+        parser_eat(parser, TOKEN_ID);
+        //printf("%s\n", token_to_string(parser->curr_token));
+        //printf("%s\n", astnode_to_string(def_type));
+        return def_type;
+    }
     if (strcmp(parser->curr_token->value, "return") == 0) {
         parser_eat(parser, TOKEN_ID);
         //if (parser->curr_symbol->children->arr[0])
@@ -222,6 +252,21 @@ ASTNode* parse_keyword(Parser* parser) {
     return NULL;
 }
 
+/*
+ASTNode* get_return_val(ASTNode* curr_symbol) { 
+    if (curr_symbol->type == AST_RETURN) {
+        return curr_symbol;
+    }
+
+    for (int i = 0; i < curr_symbol->children->num_items; i++) {
+        ASTNode* child = get_return_val(curr_symbol->children->arr[i]);
+
+        if (child != NULL)
+            return child;
+    }
+
+    return NULL;
+}*/
 
 
 ASTNode* parse_func_params(Parser* parser) {
@@ -272,19 +317,35 @@ ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* ret_type)
         parser->curr_line++; //After reading EOL then new line
     }
     else {
-        parser->curr_func = symbol;
         list_append(symbol->children, parse_block(parser), sizeof(struct AST_NODE_STRUCT));
+
     }
 
-        /*if (is_keyword_type(parser->curr_token->value)) {
-            child = parse_keyword(parser);     
-        }*/
+            /*
+     * GET RETURN VAR AND CHECK IF THE VAR IS REFERENCED IN THE FUNC SYMBOL OR REFERENCED GLOBALLY
+     * 
+     * */
+    /*
+    parser->curr_func = symbol;
 
-    //printf("%s\n", astnode_to_string(((ASTNode*)symbol->children->arr[1])->children->arr[1]));
+
+    ASTNode* return_val = get_return_val(symbol);
+
+    if (is_symbol_declared(parser, return_val->children->arr[0])) {
+        ((ASTNode*)return_val->children->arr[0])->children->arr[0] = NULL;
+    }
+    else {
+        printf("bet: Cannot find symbol '%s' at line %d\n", ((ASTNode*)return_val->children->arr[0])->name, parser->curr_line);
+        printf("Exited with code 1\n");
+        exit(1);
+    }
+
+    parser->curr_func = NULL;*/
+
     return symbol;
 }
 
-
+/*
 bool is_symbol_declared_global(Parser* parser, char* symbol_name) {
     for (int i = 0; i < parser->root->children->num_items; i++) {
         if (strcmp(((ASTNode*)parser->root->children->arr[i])->name, symbol_name) == 0)
@@ -295,21 +356,22 @@ bool is_symbol_declared_global(Parser* parser, char* symbol_name) {
 }
 
 
-bool is_symbol_in_scope(ASTNode* curr_symbol, Token* curr_token) {
+bool is_symbol_in_scope(ASTNode* curr_symbol, ASTNode* symbol) {
     if (curr_symbol->type == AST_RETURN) {
         return false;
     }
    
     if (curr_symbol->name != NULL) {
-        if (strcmp(curr_symbol->name, curr_token->value) == 0) {
+        
+        if (strcmp(curr_symbol->name, symbol->name) == 0) {
             return true;
         }
     }
 
-    printf("%s---%s\n", curr_symbol->name, curr_token->value);
+    //printf("%s---%s\n", curr_symbol->name, curr_token->value);
     for (int i = 0; i < curr_symbol->children->num_items; i++) {
-        printf("%s\n", astnode_to_string(curr_symbol->children->arr[i]));
-        return is_symbol_in_scope(curr_symbol->children->arr[i], curr_token);
+        //printf("%s\n", astnode_to_string(curr_symbol->children->arr[i]));
+        return is_symbol_in_scope(curr_symbol->children->arr[i], symbol);
     }
     return false;
 }
@@ -317,60 +379,77 @@ bool is_symbol_in_scope(ASTNode* curr_symbol, Token* curr_token) {
 //bool is_correct_type (Parser* parser, )
 
 
-bool is_symbol_declared(Parser* parser, Token* curr_token) {
-    if (parser->curr_func == NULL)
-        return false;
-
-    //printf("%s\n", astnode_to_string(((ASTNode*)parser->root->children[0])));
-    if (is_symbol_in_scope(parser->curr_func, curr_token)) {
-        //printf("%s\n", token_to_string(parser->curr_token));
+bool is_symbol_declared(Parser* parser, ASTNode* symbol) {
+    if (is_symbol_declared_global(parser, symbol->name))
         return true;
+
+
+    if (parser->curr_func != NULL) {
+
+        for (int i = 0; i <  ((ASTNode*)parser->curr_func->children->arr[1])->children->num_items; i++) {
+            ASTNode* child = ((ASTNode*)parser->curr_func->children->arr[1])->children->arr[i];
+            printf("Child %s\n", astnode_to_string(child)); 
+            if (child->name != NULL) {
+                if (strcmp(child->name, symbol->name) == 0) {
+                    return true;
+                }
+            }
+
+        }
+
+        for (int i = 0; i < ((ASTNode*)parser->curr_func->children->arr[2])->children->num_items; i++) {
+            ASTNode* child = ((ASTNode*)parser->curr_func->children->arr[2])->children->arr[i];
+            printf("Child2 %s\n", astnode_to_string(child)); 
+            if (child->name != NULL) {
+                if (strcmp(child->name, symbol->name) == 0) {
+                    return true;
+                }
+            }
+        }
+
     }
 
-    /*for (int i = 0; i < parser->curr_symbol->children->num_items; i++) {
-        if ()
-    }*/
+    
+
     return false;
-}
+}*/
 
 
 
 ASTNode* parse_id(Parser* parser) {
     if (is_keyword_type(parser->curr_token->value)) {
-        return parse_keyword(parser);   
+        ASTNode* keyword = parse_keyword(parser);   
+
+        if (keyword->type == AST_DEC_TYPE) {
+            ASTNode* def_type = keyword;
+            if (is_unique_symbol_name(parser->curr_token->value)) {
+                Token* symbol_name = parser->curr_token;
+                parser_eat(parser, TOKEN_ID);
+                if (strcmp(parser->curr_token->value, "(") != 0) {
+                    return parse_var(parser, symbol_name, def_type);
+                }
+
+                /*if (is_symbol_declared_global(parser, symbol_name->value)) {
+                    return parse_func(parser, symbol_name, NULL);
+                }*/
+
+                ASTNode* ret_type = init_ASTNode(AST_RETURN_TYPE, def_type->name);
+                ASTNode* func = parse_func(parser, symbol_name, ret_type); //FIND WAY TO CHECK IF IT IS GLOBAL DEF
+                //printf("%s\n", astnode_to_string(func));
+                return func;
+            }     
+        }
+        return keyword;
     }
 
-   if (!is_prim_type(parser->curr_token->value)) { // TO CHECK IF VAR IS PREV DECLARED, MIGHT HAVE ISSUES WHEN IMPLEMENT FUNCTIONS
-        if (is_symbol_declared_global(parser, parser->curr_token->value)) {
-            Token* symbol_name = parser->curr_token;
-            parser_eat(parser, TOKEN_ID);
-            return parse_var(parser, symbol_name, NULL);
-        }
-        else {
-            printf("Cannot find symbol: %s\n", parser->curr_token->value);
-            printf("Exited with code 1\n");
-            exit(1);
-        }
-    }
-    ASTNode* def_type = init_ASTNode(AST_DEC_TYPE, parser->curr_token->value);
-    parser_eat(parser, TOKEN_ID);
-
-    if (is_unique_symbol_name(parser->curr_token->value)) {
+    if (!is_prim_type(parser->curr_token->value)) { // TO CHECK IF VAR IS PREV DECLARED, MIGHT HAVE ISSUES WHEN IMPLEMENT FUNCTIONS
         Token* symbol_name = parser->curr_token;
         parser_eat(parser, TOKEN_ID);
-            
-        if (strcmp(parser->curr_token->value, "(") != 0) {
-            return parse_var(parser, symbol_name, def_type);
-        }
+        
+        return parse_var(parser, symbol_name, NULL);
+       
 
-        if (is_symbol_declared_global(parser, symbol_name->value)) {
-            return parse_func(parser, symbol_name, NULL);
-        }
-
-        ASTNode* ret_type = init_ASTNode(AST_RETURN_TYPE, def_type->name);
-        return parse_func(parser, symbol_name, ret_type); //FIND WAY TO CHECK IF IT IS GLOBAL DEF
     }
-
     return NULL;
 }
 
@@ -408,7 +487,7 @@ int count_nodes(ASTNode* curr) {
 }
 
 
-void traverse_ast(ASTNode* node, List* flag, int depth, bool is_last) {
+void traverse_print_ast(ASTNode* node, List* flag, int depth, bool is_last) {
     if (node == NULL)
         return;
 
@@ -433,7 +512,7 @@ void traverse_ast(ASTNode* node, List* flag, int depth, bool is_last) {
     }
     
     for (int i = 0; i < node->children->num_items; i++) {
-        traverse_ast(node->children->arr[i], flag, depth + 1, (i == (node->children->num_items - 1)));
+        traverse_print_ast(node->children->arr[i], flag, depth + 1, (i == (node->children->num_items - 1)));
     }
     flag->arr[depth] = (void*)true;
 }
@@ -448,6 +527,6 @@ void print_ast(Parser* parser) {
     }
     //printf("%s\n", astnode_to_string(((ASTNode*)((ASTNode*)((ASTNode*)((ASTNode*)((ASTNode*)((ASTNode*)parser->root->children->arr[0])->children->arr[1])->children->arr[0])->children->arr[2])->children->arr[2])->children->arr[0])->children->arr[0]));
     printf("\n\n\n\t-----AST-----\n\n");
-    traverse_ast(parser->root, flag, 0, false);
+    traverse_print_ast(parser->root, flag, 0, false);
 }
 

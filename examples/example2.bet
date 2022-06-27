@@ -1,7 +1,2 @@
-int func() {
-    return 1;
-}
-
-int main() {
-    print(func());
-}
+int i;
+b = 0;

@@ -6,7 +6,8 @@ Compiler for my own language. Combination of my favorite features of python, C a
 
 - [ ] AST
   - [x] Expressions
-  - [ ] Functions
+  - [x] Functions
+  - [ ] Symbol declaration 
 
 ### Current Issues
 
@@ -22,8 +23,8 @@ if (!list_struct->arr) {
     - Created new list append where I copied the list to a new array and free the old one
 
 ### Next Steps
-- Finish AST for functions
-    - Add the return statement feature
+- Clean up AST
+    - check if var or function is defined properly
 
 
 ### How to compile code
