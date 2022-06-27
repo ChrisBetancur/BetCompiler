@@ -29,6 +29,6 @@ if (!list_struct->arr) {
 
 ### How to compile code
 
-1. Open terminal
+1. Open terminal and go to where Bet is stored
 2. make
 3. ./a.out <bet file name>
