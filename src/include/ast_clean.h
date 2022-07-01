@@ -18,8 +18,8 @@ bool is_symbol_declared(Parser* parser, ASTNode* symbol);
 
 ASTNode* get_return_val(ASTNode* curr_symbol);
 
-void clean_vars(Parser* parser, ASTNode* curr_symbol);
+void clean_var(Parser* parser, ASTNode* curr_symbol);
 
-void clean(Parser* parser);
+void clean(Parser* parser, ASTNode* curr_symbol);
 
 #endif

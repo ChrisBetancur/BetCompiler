@@ -4,6 +4,17 @@
 
 #include "include/token.h"
 
+/*
+ * Function: init_token
+ *
+ * Creates token to store value in code to make it readable
+ *
+ * value: the string value from code to be stored in token
+ * type: type of value that is stored in token
+ *
+ * returns: token ref
+ */
+
 Token* init_token(char* value, int type) {
     Token* token = calloc(1, sizeof(struct TOKEN_STRUCT));
     
@@ -12,6 +23,16 @@ Token* init_token(char* value, int type) {
 
     return token;
 }
+
+/*
+ * Function: token_type_to_string
+ *
+ * Translates token type to string
+ *
+ * type: the type of token to translate
+ *
+ * returns: token type in string format
+ */
 
 char* token_type_to_string(int type) {
     switch (type) {
@@ -73,6 +94,16 @@ char* token_type_to_string(int type) {
     }
 
 }
+
+/*
+ * Function: token_to_string
+ *
+ * Translates token to readable string
+ *
+ * token: token used to translate
+ *
+ * returns: token in string format
+ */
 
 char* token_to_string(Token* token) {
     const char* type_str = token_type_to_string(token->type);

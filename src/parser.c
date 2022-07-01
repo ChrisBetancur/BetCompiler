@@ -16,11 +16,10 @@ Parser* init_parser(Lexer* lexer) {
 
 void parser_eat(Parser* parser, int type) {
     if (parser->curr_token->type != type) {
-        printf("Parser: '%s' unexpected token; Expected: '%s' token at line %d\n", parser->curr_token->value, token_type_to_string(type), parser->curr_line);
+        printf("Parser: '%s' unexpected token; Expected: '%s'::%d\n", parser->curr_token->value, token_type_to_string(type), parser->curr_line);
         printf("Exited with code 1\n");
         exit(1);
     }
-    //printf("%s\n", token_to_string(parser->curr_token));
     parser->curr_token = lexer_next_token(parser->lexer);
 }
 
@@ -53,7 +52,7 @@ bool is_keyword_type(char* name) { //
     return false;
 }
 
-bool is_unique_symbol_name(char* name) { //future must implement to check if the symbol has already been defined in the scope
+bool is_unique_symbol_name(char* name) {
     if (is_keyword_type(name))
         return false;
     else
@@ -84,17 +83,16 @@ bool is_addsub_op(char* name) {
 ASTNode* parse_factor(Parser* parser) {
     ASTNode* symbol;
     if (parser->curr_token->type == TOKEN_INT) {
-        symbol = init_ASTNode(AST_INT, parser->curr_token->value);
+        symbol = init_ASTNode(parser->curr_token->value, AST_INT);
         parser_eat(parser, TOKEN_INT);
         return symbol;
     }
     
     else if (parser->curr_token->type == TOKEN_LPARAN) {
-        symbol = init_ASTNode(AST_TERM, NULL);
+        symbol = init_ASTNode(NULL, AST_TERM);
         parser_eat(parser, TOKEN_LPARAN);
         list_append(symbol->children, parse_expr(parser), sizeof(struct AST_NODE_STRUCT));
         parser_eat(parser, TOKEN_RPARAN);
-        //printf("Term ---> %s\n", astnode_to_string(((ASTNode*)symbol->children->arr[0])->children->arr[2]));
         return symbol;
     }
     return NULL;
@@ -104,7 +102,8 @@ ASTNode* parse_term(Parser* parser) {
     ASTNode* symbol = parse_factor(parser);
     while (is_multdiv_op(parser->curr_token->value)) {
         ASTNode* prev_symbol = symbol;
-        symbol = init_ASTNode(AST_BINARY_OP, NULL);
+      
+        symbol = init_ASTNode(NULL, AST_BINARY_OP);
         char* op = parser->curr_token->value;
         if (parser->curr_token->type == TOKEN_MULT) {
             parser_eat(parser, TOKEN_MULT);
@@ -113,24 +112,20 @@ ASTNode* parse_term(Parser* parser) {
         else if (parser->curr_token->type == TOKEN_DIV) {
             parser_eat(parser, TOKEN_DIV);
         }
-        list_append(symbol->children, init_ASTNode(AST_OPERATOR, op), sizeof(struct AST_NODE_STRUCT));
+        list_append(symbol->children, init_ASTNode(op, AST_OPERATOR), sizeof(struct AST_NODE_STRUCT));
         list_append(symbol->children, prev_symbol, sizeof(struct AST_NODE_STRUCT));
         ASTNode* right = parse_factor(parser);
         list_append(symbol->children, right, sizeof(struct AST_NODE_STRUCT));
     }
-    //printf("%s\n", astnode_to_string(symbol));
     return symbol;
 }
 
 ASTNode* parse_expr(Parser* parser) { 
-    //ASTNode* symbol = NULL;
-
     ASTNode* symbol = parse_term(parser);
    
-    //printf("Hello %s\n", astnode_to_string(symbol));
     while (is_addsub_op(parser->curr_token->value)) {
         ASTNode* prev_symbol = symbol;
-        symbol = init_ASTNode(AST_BINARY_OP, NULL);
+        symbol = init_ASTNode(NULL, AST_BINARY_OP);
         char* op = parser->curr_token->value;
 
         if (parser->curr_token->type == TOKEN_ADD) {
@@ -140,7 +135,7 @@ ASTNode* parse_expr(Parser* parser) {
         else if (parser->curr_token->type == TOKEN_SUB) {
             parser_eat(parser, TOKEN_SUB);
         }
-        list_append(symbol->children, init_ASTNode(AST_OPERATOR, op), sizeof(struct AST_NODE_STRUCT));
+        list_append(symbol->children, init_ASTNode(op, AST_OPERATOR), sizeof(struct AST_NODE_STRUCT));
         list_append(symbol->children, prev_symbol, sizeof(struct AST_NODE_STRUCT));
         ASTNode* right_term = parse_term(parser);
         list_append(symbol->children, right_term, sizeof(struct AST_NODE_STRUCT));
@@ -151,39 +146,28 @@ ASTNode* parse_expr(Parser* parser) {
 
 
 ASTNode* parse_var(Parser* parser, Token* symbol_name_token, ASTNode* def_type) {
-    ASTNode* symbol = init_ASTNode(AST_VAR, symbol_name_token->value);
+    ASTNode* symbol = init_ASTNode(symbol_name_token->value, AST_VAR);
 
     if (def_type != NULL)
         list_append(symbol->children, def_type, sizeof(struct AST_NODE_STRUCT));
 
     if (strcmp(parser->curr_token->value, ";") == 0) {
-        list_append(symbol->children, init_ASTNode(AST_NULL, NULL), sizeof(struct AST_NODE_STRUCT));
+        list_append(symbol->children, init_ASTNode(NULL, AST_NULL), sizeof(struct AST_NODE_STRUCT));
     }
     else {
         parser_eat(parser, TOKEN_EQUAL);
-        ASTNode* expr = init_ASTNode(AST_EXPR, NULL);
+        ASTNode* expr = init_ASTNode(NULL, AST_EXPR);
         list_append(symbol->children, expr, sizeof(struct AST_NODE_STRUCT));
         list_append(expr->children, parse_expr(parser), sizeof(struct AST_NODE_STRUCT));
     }
     parser_eat(parser, TOKEN_EOL);
-    parser->curr_line++; //After reading EOL then new line
-    
-    /*bool dec = is_symbol_declared(parser, symbol);
-    printf("%d\n", dec);
-    if (!is_symbol_declared(parser, symbol) && def_type != NULL) {
-        printf("bet: Cannot find symbol '%s' at line %d\n", symbol->name, parser->curr_line);
-        printf("Exited with code 1\n");
-        exit(1);
-    }*/
-
-
-
+    parser->curr_line++;
     return symbol;
 }
 
 
 ASTNode* parse_block(Parser* parser) {
-    ASTNode* block = init_ASTNode(AST_BLOCK, NULL);
+    ASTNode* block = init_ASTNode(NULL, AST_BLOCK);
     parser_eat(parser, TOKEN_LBRACE);
 
     bool block_done = false;
@@ -191,7 +175,6 @@ ASTNode* parse_block(Parser* parser) {
         ASTNode* child = NULL;
         child = parse_id(parser);
 
-        //printf("Child %s", astnode_to_string(child));
         list_append(block->children, child, sizeof(struct AST_NODE_STRUCT));
     
         if (parser->curr_token->type == TOKEN_RBRACE) {
@@ -205,7 +188,7 @@ ASTNode* parse_block(Parser* parser) {
 }
 
 ASTNode* parse_return_st(Parser* parser) {
-    ASTNode* return_symbol = init_ASTNode(AST_RETURN, NULL);
+    ASTNode* return_symbol = init_ASTNode(NULL, AST_RETURN);
 
     switch(parser->curr_token->type) {
         case TOKEN_INT:
@@ -216,8 +199,6 @@ ASTNode* parse_return_st(Parser* parser) {
 
         case TOKEN_ID:
             list_append(return_symbol->children, parse_id(parser), sizeof(struct AST_NODE_STRUCT));
-            //printf("%s\n", token_to_string(parser->curr_token));
-            //parser_eat(parser, TOKEN_EOL);
             return return_symbol;
             break;
 
@@ -231,15 +212,12 @@ ASTNode* parse_return_st(Parser* parser) {
 ASTNode* parse_keyword(Parser* parser) {
     
     if (strcmp(parser->curr_token->value, "int") == 0) {
-        ASTNode* def_type = init_ASTNode(AST_DEC_TYPE, parser->curr_token->value); 
+        ASTNode* def_type = init_ASTNode(parser->curr_token->value, AST_DEC_TYPE); 
         parser_eat(parser, TOKEN_ID);
-        //printf("%s\n", token_to_string(parser->curr_token));
-        //printf("%s\n", astnode_to_string(def_type));
         return def_type;
     }
     if (strcmp(parser->curr_token->value, "return") == 0) {
         parser_eat(parser, TOKEN_ID);
-        //if (parser->curr_symbol->children->arr[0])
         if (!is_prim_type(parser->curr_token->value)) {
             return parse_return_st(parser);
         }
@@ -252,25 +230,9 @@ ASTNode* parse_keyword(Parser* parser) {
     return NULL;
 }
 
-/*
-ASTNode* get_return_val(ASTNode* curr_symbol) { 
-    if (curr_symbol->type == AST_RETURN) {
-        return curr_symbol;
-    }
-
-    for (int i = 0; i < curr_symbol->children->num_items; i++) {
-        ASTNode* child = get_return_val(curr_symbol->children->arr[i]);
-
-        if (child != NULL)
-            return child;
-    }
-
-    return NULL;
-}*/
-
 
 ASTNode* parse_func_params(Parser* parser) {
-    ASTNode* params = init_ASTNode(AST_PARAMS, NULL);
+    ASTNode* params = init_ASTNode(NULL, AST_PARAMS);
     parser_eat(parser, TOKEN_LPARAN);
     
     if (parser->curr_token->type == TOKEN_RPARAN) {
@@ -280,9 +242,9 @@ ASTNode* parse_func_params(Parser* parser) {
 
     bool param_done = false;
     while (param_done != true) {
-        ASTNode* dec_type = init_ASTNode(AST_DEC_TYPE, parser->curr_token->value);
+        ASTNode* dec_type = init_ASTNode(parser->curr_token->value, AST_DEC_TYPE);
         parser_eat(parser, TOKEN_ID);
-        ASTNode* param_var = init_ASTNode(AST_VAR, parser->curr_token->value);
+        ASTNode* param_var = init_ASTNode(parser->curr_token->value, AST_VAR);
         list_append(param_var->children, dec_type, sizeof(struct AST_NODE_STRUCT));
         parser_eat(parser, TOKEN_ID); 
         if (parser->curr_token->type == TOKEN_RPARAN)
@@ -299,17 +261,14 @@ ASTNode* parse_func_params(Parser* parser) {
 
 
 ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* ret_type) {
-    ASTNode* symbol = init_ASTNode(AST_FUNC, symbol_name_token->value);
-    //printf("HEYYYYYYYYYYY %s\n", parser->curr_token->value);
+    ASTNode* symbol = init_ASTNode(symbol_name_token->value, AST_FUNC);
     if (ret_type != NULL)
         list_append(symbol->children, ret_type, sizeof(struct AST_NODE_STRUCT));
     
     ASTNode* params = parse_func_params(parser);
 
     
-    if (params->children->num_items == 0)
-        list_append(symbol->children, NULL, sizeof(struct AST_NODE_STRUCT));
-    else
+    if (params->children->num_items != 0)
         list_append(symbol->children, params, sizeof(struct AST_NODE_STRUCT));
 
     if (parser->curr_token->type != TOKEN_LBRACE) {
@@ -321,99 +280,8 @@ ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* ret_type)
 
     }
 
-            /*
-     * GET RETURN VAR AND CHECK IF THE VAR IS REFERENCED IN THE FUNC SYMBOL OR REFERENCED GLOBALLY
-     * 
-     * */
-    /*
-    parser->curr_func = symbol;
-
-
-    ASTNode* return_val = get_return_val(symbol);
-
-    if (is_symbol_declared(parser, return_val->children->arr[0])) {
-        ((ASTNode*)return_val->children->arr[0])->children->arr[0] = NULL;
-    }
-    else {
-        printf("bet: Cannot find symbol '%s' at line %d\n", ((ASTNode*)return_val->children->arr[0])->name, parser->curr_line);
-        printf("Exited with code 1\n");
-        exit(1);
-    }
-
-    parser->curr_func = NULL;*/
-
     return symbol;
 }
-
-/*
-bool is_symbol_declared_global(Parser* parser, char* symbol_name) {
-    for (int i = 0; i < parser->root->children->num_items; i++) {
-        if (strcmp(((ASTNode*)parser->root->children->arr[i])->name, symbol_name) == 0)
-            return true;
-    }
-
-    return false;
-}
-
-
-bool is_symbol_in_scope(ASTNode* curr_symbol, ASTNode* symbol) {
-    if (curr_symbol->type == AST_RETURN) {
-        return false;
-    }
-   
-    if (curr_symbol->name != NULL) {
-        
-        if (strcmp(curr_symbol->name, symbol->name) == 0) {
-            return true;
-        }
-    }
-
-    //printf("%s---%s\n", curr_symbol->name, curr_token->value);
-    for (int i = 0; i < curr_symbol->children->num_items; i++) {
-        //printf("%s\n", astnode_to_string(curr_symbol->children->arr[i]));
-        return is_symbol_in_scope(curr_symbol->children->arr[i], symbol);
-    }
-    return false;
-}
-
-//bool is_correct_type (Parser* parser, )
-
-
-bool is_symbol_declared(Parser* parser, ASTNode* symbol) {
-    if (is_symbol_declared_global(parser, symbol->name))
-        return true;
-
-
-    if (parser->curr_func != NULL) {
-
-        for (int i = 0; i <  ((ASTNode*)parser->curr_func->children->arr[1])->children->num_items; i++) {
-            ASTNode* child = ((ASTNode*)parser->curr_func->children->arr[1])->children->arr[i];
-            printf("Child %s\n", astnode_to_string(child)); 
-            if (child->name != NULL) {
-                if (strcmp(child->name, symbol->name) == 0) {
-                    return true;
-                }
-            }
-
-        }
-
-        for (int i = 0; i < ((ASTNode*)parser->curr_func->children->arr[2])->children->num_items; i++) {
-            ASTNode* child = ((ASTNode*)parser->curr_func->children->arr[2])->children->arr[i];
-            printf("Child2 %s\n", astnode_to_string(child)); 
-            if (child->name != NULL) {
-                if (strcmp(child->name, symbol->name) == 0) {
-                    return true;
-                }
-            }
-        }
-
-    }
-
-    
-
-    return false;
-}*/
-
 
 
 ASTNode* parse_id(Parser* parser) {
@@ -429,20 +297,15 @@ ASTNode* parse_id(Parser* parser) {
                     return parse_var(parser, symbol_name, def_type);
                 }
 
-                /*if (is_symbol_declared_global(parser, symbol_name->value)) {
-                    return parse_func(parser, symbol_name, NULL);
-                }*/
-
-                ASTNode* ret_type = init_ASTNode(AST_RETURN_TYPE, def_type->name);
-                ASTNode* func = parse_func(parser, symbol_name, ret_type); //FIND WAY TO CHECK IF IT IS GLOBAL DEF
-                //printf("%s\n", astnode_to_string(func));
+                ASTNode* ret_type = init_ASTNode(def_type->name, AST_RETURN_TYPE);
+                ASTNode* func = parse_func(parser, symbol_name, ret_type);
                 return func;
             }     
         }
         return keyword;
     }
 
-    if (!is_prim_type(parser->curr_token->value)) { // TO CHECK IF VAR IS PREV DECLARED, MIGHT HAVE ISSUES WHEN IMPLEMENT FUNCTIONS
+    if (!is_prim_type(parser->curr_token->value)) {
         Token* symbol_name = parser->curr_token;
         parser_eat(parser, TOKEN_ID);
         
@@ -465,7 +328,7 @@ ASTNode* parser_parse(Parser* parser) {
 }
 
 void parser_parse_tokens(Parser* parser) {
-    parser->root = init_ASTNode(AST_GLOBAL, NULL); //FILE NAME
+    parser->root = init_ASTNode(NULL, AST_GLOBAL);
 
     //printf("\n\n\n\t-----TOKENS-----\n\n");
     
@@ -525,7 +388,6 @@ void print_ast(Parser* parser) {
     for (int i = 0; i < count; i++) {
         list_append(flag, (void*)true, sizeof(bool));
     }
-    //printf("%s\n", astnode_to_string(((ASTNode*)((ASTNode*)((ASTNode*)((ASTNode*)((ASTNode*)((ASTNode*)parser->root->children->arr[0])->children->arr[1])->children->arr[0])->children->arr[2])->children->arr[2])->children->arr[0])->children->arr[0]));
     printf("\n\n\n\t-----AST-----\n\n");
     traverse_print_ast(parser->root, flag, 0, false);
 }

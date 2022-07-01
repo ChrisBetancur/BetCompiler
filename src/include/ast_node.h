@@ -28,7 +28,7 @@ typedef struct AST_NODE_STRUCT {
     } type;
 }ASTNode;
 
-ASTNode* init_ASTNode(int type, char* name);
+ASTNode* init_ASTNode(char* name, int type);
 
 char* astnode_type_to_string(int type);
 

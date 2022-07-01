@@ -4,7 +4,18 @@
 
 #include "include/ast_node.h"
 
-ASTNode* init_ASTNode(int type, char* name) {
+/*
+ * Function: init_ASTNode
+ *
+ * Creates ast node to store value and type of node
+ *
+ * name: name of node
+ * type: type of node
+ *
+ * returns: ast node ref
+ */
+
+ASTNode* init_ASTNode(char* name, int type) {
     ASTNode* node = malloc(sizeof(struct AST_NODE_STRUCT));
 
     node->name = name;
@@ -13,6 +24,16 @@ ASTNode* init_ASTNode(int type, char* name) {
 
     return node;
 }
+
+/*
+ * Function: astnode_type_to_string
+ *
+ * Translates ast node type to string
+ *
+ * type: type of node
+ *
+ * returns: astnode type in string format
+ */
 
 char* astnode_type_to_string(int type) {
     switch (type) {
