@@ -96,6 +96,16 @@ char* astnode_type_to_string(int type) {
 
 }
 
+/*
+ * Function: astnode_to_string
+ *
+ * Translates node to string, creates template for string
+ *
+ * node: node used to translate
+ *
+ * returns: node as a string
+ */
+
 char* astnode_to_string(ASTNode* node) {
     const char* type_str = astnode_type_to_string(node->type);
     char* node_str;

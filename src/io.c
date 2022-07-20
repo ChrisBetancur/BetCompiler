@@ -3,7 +3,15 @@
 #include <string.h>
 #include <string.h>
 
-// read 
+/*
+ * Function: read_file
+ *
+ * reads file from file path and puts it in string
+ *
+ * file_path: file path of file
+ *
+ * returns: buffer containing the file contents
+ */
 char* read_file(char* file_path) {
     FILE* file;
     char* line_buf = NULL;
@@ -33,8 +41,6 @@ char* read_file(char* file_path) {
     line_buf = NULL;
 
     fclose(file);
-
-    //printf("\n---Buffer---\n%s\n", buffer);
 
     return buffer;
 }

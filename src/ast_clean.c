@@ -13,26 +13,23 @@ bool is_symbol_declared_global(Parser* parser, char* symbol_name) {
 
 
 bool is_symbol_in_scope(ASTNode* curr_symbol, ASTNode* symbol) {
-    
+    printf("%s\n", astnode_to_string(curr_symbol));
     if (curr_symbol->type == AST_RETURN) {
         return false;
     }
 
-    if (curr_symbol->name != NULL) {
+    if (curr_symbol->type == symbol->type) {
         if (strcmp(curr_symbol->name, symbol->name) == 0) {
-            
-            if (((ASTNode*)curr_symbol->children->arr[0])->type == AST_DEC_TYPE || ((ASTNode*)curr_symbol->children->arr[0])->type == AST_RETURN_TYPE) { //CHECK IF ASSIGNMENT IS CORRECT TYPE
-                return true;
-            }
-            return false;
+            return true;
         }
     }
 
-    printf("Curr symbol %s\n", astnode_to_string(symbol));
-    for (int i = 0; i < curr_symbol->children->num_items; i++) {
-        printf("%s\n", astnode_to_string(curr_symbol->children->arr[i]));
-        return is_symbol_in_scope(curr_symbol->children->arr[i], symbol);
+    if (curr_symbol->children->num_items > 0) {
+        for (int i = 0; i < curr_symbol->children->num_items; i++) {
+            return is_symbol_in_scope(curr_symbol->children->arr[i], symbol);
+        }
     }
+
     return false;
 }
 
@@ -62,6 +59,7 @@ ASTNode* get_return_val(ASTNode* curr_symbol) {
 
 void clean_symbol(Parser* parser, ASTNode* curr_symbol) {
     if (curr_symbol->type == AST_VAR) {
+        printf("ehll\n");
         if (((ASTNode*)curr_symbol->children->arr[0])->type == AST_DEC_TYPE) {
             return;
         }
