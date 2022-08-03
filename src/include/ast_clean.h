@@ -12,14 +12,18 @@
 
 bool is_symbol_declared_global(Parser* parser, char* symbol_name);
 
+bool verify_symbol_dec(ASTNode* symbol);
+
 bool is_symbol_in_scope(ASTNode* curr_symbol, ASTNode* symbol);
 
-bool is_symbol_declared(Parser* parser, ASTNode* symbol);
+bool is_symbol_declared(Parser* parser, ASTNode* symbol, ASTNode* symbol_scope);
 
 ASTNode* get_return_val(ASTNode* curr_symbol);
 
-void clean_var(Parser* parser, ASTNode* curr_symbol);
+bool validate_func(ASTNode* curr_func, ASTNode* ret_val);
 
-void clean(Parser* parser, ASTNode* curr_symbol);
+void clean_symbol(Parser* parser, ASTNode* curr_symbol, ASTNode* symbol_scope);
+
+void clean(Parser* parser, ASTNode* curr_symbol, ASTNode* symbol_scope);
 
 #endif
