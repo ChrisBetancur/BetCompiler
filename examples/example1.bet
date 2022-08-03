@@ -5,7 +5,7 @@ int test() {
 }
 
 int bro(int a, int b) {
-    sa = 99;
+    ay = 99;
     return 0;
 }
 
