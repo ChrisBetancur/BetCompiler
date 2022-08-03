@@ -4,10 +4,12 @@ Compiler for my own language. Combination of my favorite features of python, C a
 ### Todo
 - [x] Lexer
 
-- [ ] AST
+- [x] AST
   - [x] Expressions
   - [x] Functions
-  - [ ] Symbol declaration 
+  - [x] Symbol declaration 
+
+- [] Translating to x86 Assembly
 
 ### Current Issues
 
@@ -23,8 +25,7 @@ if (!list_struct->arr) {
     - Created new list append where I copied the list to a new array and free the old one
 
 ### Next Steps
-- Clean up AST
-    - check if var or function is defined properly
+- Translate AST to assembly to compile code
 
 
 ### How to compile code

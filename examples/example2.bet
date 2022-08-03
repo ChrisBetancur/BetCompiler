@@ -1,1 +1,4 @@
-b = 0;
+
+int main(int b) {
+    return 0;
+}

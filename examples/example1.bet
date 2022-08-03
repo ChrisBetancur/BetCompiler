@@ -1,4 +1,12 @@
-int main() {
-    int g = 0;
-    return g;
+int ay = 9 * 77 + (12 + 2) / 2;
+int test() {
+    int ay = 0;
+    return 0;
 }
+
+int bro(int a, int b) {
+    sa = 99;
+    return 0;
+}
+
+
