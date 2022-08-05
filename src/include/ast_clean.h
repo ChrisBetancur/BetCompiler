@@ -18,11 +18,13 @@ bool is_symbol_in_scope(ASTNode* curr_symbol, ASTNode* symbol);
 
 bool is_symbol_declared(Parser* parser, ASTNode* symbol, ASTNode* symbol_scope);
 
+ASTNode* get_symbol_in_scope(ASTNode* curr_symbol, ASTNode* symbol);
+
 ASTNode* get_return_val(ASTNode* curr_symbol);
 
 bool validate_func(ASTNode* curr_func, ASTNode* ret_val);
 
-void clean_symbol(Parser* parser, ASTNode* curr_symbol, ASTNode* symbol_scope);
+void clean_symbol(Parser* parser, ASTNode* curr_symbol, ASTNode* symbol_scope, int symbol_line);
 
 void clean(Parser* parser, ASTNode* curr_symbol, ASTNode* symbol_scope);
 

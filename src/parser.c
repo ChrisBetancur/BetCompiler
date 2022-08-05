@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include "include/token.h"
 #include "include/ast_node.h"
+#include "include/ast_clean.h"
 
 Parser* init_parser(Lexer* lexer) {
     Parser* parser = malloc(sizeof(struct PARSER_STRUCT));
@@ -10,17 +11,18 @@ Parser* init_parser(Lexer* lexer) {
     parser->curr_func = NULL;
     parser->lexer = lexer;
     parser->curr_token = lexer_next_token(parser->lexer);
-    parser->curr_line = 1;
     return parser;
 }
 
 void parser_eat(Parser* parser, int type) {
+
     if (parser->curr_token->type != type) {
-        printf("Parser: '%s' unexpected token; Expected: '%s'::%d\n", parser->curr_token->value, token_type_to_string(type), parser->curr_line);
+        printf("Parser: '%s' unexpected token; Expected: '%s'::%d\n", parser->curr_token->value, token_type_to_string(type), parser->curr_token->line_num);
         printf("Exited with code 1\n");
         exit(1);
     }
     parser->curr_token = lexer_next_token(parser->lexer);
+
 }
 
 bool is_prim_type(char* name) {
@@ -37,9 +39,16 @@ bool is_prim_type(char* name) {
     return false;
 }
 
+bool is_dec_type(char* name) {
+    if (strcmp(name, "string") == 0)
+        return true;
+
+    return is_prim_type(name);
+}
+
 
 bool is_keyword_type(char* name) { // 
-    if (is_prim_type(name))
+    if (is_dec_type(name))
         return true;
     
     if (strcmp(name, "return") == 0)
@@ -75,6 +84,12 @@ bool is_addsub_op(char* name) {
     return false;
 }
 
+ASTNode* parse_literal(Parser* parser) {
+    ASTNode* symbol = init_ASTNode(parser->curr_token->value, AST_LITERAL);
+    parser_eat(parser, TOKEN_STRING);
+    return symbol;
+}
+
 
 ASTNode* parse_factor(Parser* parser) {
     ASTNode* symbol;
@@ -91,6 +106,8 @@ ASTNode* parse_factor(Parser* parser) {
         parser_eat(parser, TOKEN_RPARAN);
         return symbol;
     }
+
+    parser_eat(parser, TOKEN_INT);
     return NULL;
 }
 
@@ -118,7 +135,6 @@ ASTNode* parse_term(Parser* parser) {
 
 ASTNode* parse_expr(Parser* parser) { 
     ASTNode* symbol = parse_term(parser);
-   
     while (is_addsub_op(parser->curr_token->value)) {
         ASTNode* prev_symbol = symbol;
         symbol = init_ASTNode(NULL, AST_BINARY_OP);
@@ -131,10 +147,22 @@ ASTNode* parse_expr(Parser* parser) {
         list_append(symbol->children, right_term, sizeof(struct AST_NODE_STRUCT));
     }
     
-    //print_ast_at_node(symbol);
+    print_ast_at_node(symbol);
     return symbol;
 }
 
+
+void parse_int_var(Parser* parser, ASTNode* symbol) {
+    ASTNode* expr = init_ASTNode(NULL, AST_EXPR);
+    list_append(symbol->children, expr, sizeof(struct AST_NODE_STRUCT));
+    list_append(expr->children, parse_expr(parser), sizeof(struct AST_NODE_STRUCT));
+    printf("Hello\n");
+    print_ast_at_node(expr);
+}
+
+void parse_string_var(Parser* parser, ASTNode* symbol) {
+    list_append(symbol->children, parse_literal(parser), sizeof(struct AST_NODE_STRUCT));
+}
 
 ASTNode* parse_var(Parser* parser, Token* symbol_name_token, ASTNode* def_type) {
     ASTNode* symbol = init_ASTNode(symbol_name_token->value, AST_VAR);
@@ -142,17 +170,31 @@ ASTNode* parse_var(Parser* parser, Token* symbol_name_token, ASTNode* def_type) 
     if (def_type != NULL)
         list_append(symbol->children, def_type, sizeof(struct AST_NODE_STRUCT));
 
+
+   
     if (strcmp(parser->curr_token->value, ";") == 0) {
         list_append(symbol->children, init_ASTNode(NULL, AST_NULL), sizeof(struct AST_NODE_STRUCT));
     }
     else {
+        
         parser_eat(parser, TOKEN_EQUAL);
-        ASTNode* expr = init_ASTNode(NULL, AST_EXPR);
-        list_append(symbol->children, expr, sizeof(struct AST_NODE_STRUCT));
-        list_append(expr->children, parse_expr(parser), sizeof(struct AST_NODE_STRUCT));
+        if (def_type == NULL) {
+            clean_symbol(parser, symbol, parser->root, parser->curr_token->line_num);
+            ASTNode* symbol_def = get_symbol_in_scope(parser->root, symbol);
+            def_type = symbol_def->children->arr[0];
+        }
+        
+           
+        if (strcmp(def_type->name, "int") == 0) {
+            parse_int_var(parser, symbol);
+        }
+
+        else if (strcmp(def_type->name, "string") == 0) {
+            parse_string_var(parser, symbol);
+        }
     }
+
     parser_eat(parser, TOKEN_EOL);
-    parser->curr_line++;
 
 
     return symbol;
@@ -211,17 +253,19 @@ ASTNode* parse_return_st(Parser* parser) {
 
 ASTNode* parse_keyword(Parser* parser) {
    
-    if (strcmp(parser->curr_token->value, "int") == 0) {
+    if (is_dec_type(parser->curr_token->value)) {
         ASTNode* def_type = init_ASTNode(parser->curr_token->value, AST_DEC_TYPE); 
         parser_eat(parser, TOKEN_ID);
         return def_type;
     }
 
+
+    /*
     if (strcmp(parser->curr_token->value, "void") == 0) {
         ASTNode* def_type = init_ASTNode(parser->curr_token->value, AST_DEC_TYPE); 
         parser_eat(parser, TOKEN_ID);
         return def_type;
-    }
+    }*/
 
 
 
@@ -280,7 +324,6 @@ ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* ret_type)
 
     if (parser->curr_token->type != TOKEN_LBRACE) {
         parser_eat(parser, TOKEN_EOL);
-        parser->curr_line++; //After reading EOL then new line
     }
     else {
         list_append(symbol->children, parse_block(parser), sizeof(struct AST_NODE_STRUCT));
@@ -288,6 +331,22 @@ ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* ret_type)
     }
 
     return symbol;
+}
+
+ASTNode* parse_func_call_params(Parser* parser) { //NOT DONE
+    ASTNode* params = init_ASTNode(NULL, AST_PARAMS);
+    parser_eat(parser, TOKEN_LPARAN);
+
+    if (parser->curr_token->type == TOKEN_RPARAN) {
+        parser_eat(parser, TOKEN_RPARAN);
+        parser_eat(parser, TOKEN_EOL);
+        return NULL;
+    }
+
+    bool param_done = false;
+
+    while (param_done != true) {
+    }
 }
 
 ASTNode* parse_func_call(Parser* parser, Token* symbol_name_token) {
@@ -300,7 +359,6 @@ ASTNode* parse_func_call(Parser* parser, Token* symbol_name_token) {
         list_append(symbol->children, params, sizeof(struct AST_NODE_STRUCT));
 
     parser_eat(parser, TOKEN_EOL);
-    parser->curr_line++;
  
     return symbol;
 }

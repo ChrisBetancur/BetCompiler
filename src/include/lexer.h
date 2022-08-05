@@ -7,6 +7,7 @@ typedef struct LEXER_STRUCT {
     char* src;
     int src_size;
     char curr;
+    unsigned int curr_line;
     int index;
 } Lexer;
 
@@ -17,6 +18,8 @@ char lexer_peek(Lexer* lexer);
 void lexer_advance(Lexer* lexer);
 
 void lexer_skip_whitespace(Lexer* lexer);
+
+Token* lexer_advance_string(Lexer* lexer);
 
 Token* lexer_advance_num(Lexer* lexer);
 

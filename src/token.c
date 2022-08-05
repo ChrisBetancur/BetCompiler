@@ -15,11 +15,12 @@
  * returns: token ref
  */
 
-Token* init_token(char* value, int type) {
+Token* init_token(char* value, int type, int line_num) {
     Token* token = calloc(1, sizeof(struct TOKEN_STRUCT));
     
     token->value = value;
     token->type = type;
+    token->line_num = line_num;
 
     return token;
 }
@@ -76,6 +77,11 @@ char* token_type_to_string(int type) {
         case TOKEN_GREATER:
             return ">";
             break;
+        
+        case TOKEN_STRING:
+            return "STRING";
+            break;
+
         case TOKEN_INT:
             return "INT";
             break;

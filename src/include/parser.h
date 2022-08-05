@@ -18,7 +18,6 @@ typedef struct PARSER_STRUCT {
     Lexer* lexer;
     unsigned int num_tokens;
     Token* curr_token;
-    int curr_line;
 } Parser;
 
 Parser* init_parser(Lexer* lexer);
@@ -27,6 +26,8 @@ void parser_eat(Parser* parser, int type);
 
 bool is_prim_type(char* name);
 
+bool is_dec_type(char* name);
+
 bool is_keyword_type(char* name);
 
 bool is_unique_symbol_name(char* name);
@@ -34,6 +35,8 @@ bool is_unique_symbol_name(char* name);
 bool is_multdiv_op(char* name);
 
 bool is_addsub_op(char* name);
+
+ASTNode* parse_literal(Parser* parser);
 
 ASTNode* parse_factor(Parser* parser);
 
@@ -54,6 +57,8 @@ ASTNode* get_return_val(ASTNode* curr_symbol);
 ASTNode* parse_func_params(Parser* parser);
 
 ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* def_type);
+
+ASTNode* parse_func_call_params(Parser* parser);
 
 ASTNode* parse_func_call(Parser* parser, Token* symbol_name_token);
 

@@ -12,6 +12,7 @@ Lexer* init_lexer(char* src) {
     lexer->src_size = (int)strlen(src);
     lexer->curr = src[0];
     lexer->index = 0;
+    lexer->curr_line = 1;
 
     return lexer;
 }
@@ -27,8 +28,24 @@ void lexer_advance(Lexer* lexer) {
 
 void lexer_skip_whitespace(Lexer* lexer) {
     while (lexer->curr == ' ' || lexer->curr == '\t' || lexer->curr == '\n' || lexer->curr == '\0') {
+        if (lexer->curr == '\n')
+            lexer->curr_line++;
         lexer_advance(lexer);
     }
+}
+
+Token* lexer_advance_string(Lexer* lexer) {
+    char* value_buffer = calloc(1, sizeof(char));
+
+    lexer_advance(lexer);
+    while (lexer->curr != '\"') {
+        value_buffer = realloc(value_buffer, (strlen(value_buffer) + 2) * sizeof(char));
+        strcat(value_buffer, (char[]){lexer->curr, 0});
+        lexer_advance(lexer);
+    }
+    lexer_advance(lexer);
+
+    return init_token(value_buffer, TOKEN_STRING, lexer->curr_line);
 }
 
 Token* lexer_advance_num(Lexer* lexer) {
@@ -39,18 +56,21 @@ Token* lexer_advance_num(Lexer* lexer) {
         strcat(value_buffer, (char[]){lexer->curr, 0}); // RESEARCH
         lexer_advance(lexer);
     }
-    return init_token(value_buffer, TOKEN_INT);
+    return init_token(value_buffer, TOKEN_INT, lexer->curr_line);
 }
 
 Token* lexer_advance_once(Lexer* lexer, int type) {
-    
+
+    if (type == TOKEN_EOL) {
+        lexer->curr_line++;
+    }
+
     char* token_buffer = calloc(2, sizeof(char));
     token_buffer[0] = lexer->curr;
     token_buffer[1] = '\0';
-
     lexer_advance(lexer);
 
-    return init_token(token_buffer, type);
+    return init_token(token_buffer, type, lexer->curr_line);
 }
 
 Token* lexer_advance_id(Lexer* lexer) {
@@ -62,7 +82,7 @@ Token* lexer_advance_id(Lexer* lexer) {
         lexer_advance(lexer);
     }
     //printf("%s\n", value_buffer);
-    return init_token(value_buffer, TOKEN_ID);
+    return init_token(value_buffer, TOKEN_ID, lexer->curr_line);
 }
 
 Token* lexer_next_token(Lexer* lexer) {
@@ -113,12 +133,16 @@ Token* lexer_next_token(Lexer* lexer) {
             case '>':
                 return lexer_advance_once(lexer, TOKEN_GREATER);
                 break;
+            case '\"':
+                return lexer_advance_string(lexer);
+                break;
+
             case ';':
                 return lexer_advance_once(lexer, TOKEN_EOL);
                 break;
         }
     }
-    return init_token("EOF", TOKEN_EOF);
+    return init_token("EOF", TOKEN_EOF, lexer->curr_line);
 }
 
 

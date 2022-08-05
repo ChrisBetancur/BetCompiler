@@ -3,6 +3,7 @@
 
 typedef struct TOKEN_STRUCT {
     char* value;
+    unsigned int line_num;
 
     enum {
         TOKEN_ID,
@@ -19,13 +20,14 @@ typedef struct TOKEN_STRUCT {
         TOKEN_COMMA,
         TOKEN_LESS,
         TOKEN_GREATER,
+        TOKEN_STRING,
         TOKEN_INT,
         TOKEN_EOL,
         TOKEN_EOF
     } type;
 } Token;
 
-Token* init_token(char* value, int type);
+Token* init_token(char* value, int type, int line_num);
 
 char* token_type_to_string(int type);
 

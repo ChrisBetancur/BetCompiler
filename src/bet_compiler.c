@@ -24,7 +24,7 @@ void bet_compile(char* src) {
     parser_parse_tokens(parser);
 
 
-    clean(parser, parser->root, parser->root);
+    //clean(parser, parser->root, parser->root);
 
     print_ast(parser);
 }
