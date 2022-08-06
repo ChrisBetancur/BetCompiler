@@ -23,8 +23,5 @@ void bet_compile(char* src) {
     Parser* parser = init_parser(lexer);
     parser_parse_tokens(parser);
 
-
-    //clean(parser, parser->root, parser->root);
-
     print_ast(parser);
 }

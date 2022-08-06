@@ -5,11 +5,9 @@ bool is_symbol_declared_global(Parser* parser, char* symbol_name) {
     if (parser->root->children->num_items < 1)
         return false;
     for (int i = 0; i < parser->root->children->num_items - 1; i++) {
-        printf("%s\n", astnode_to_string(parser->root->children->arr[i]));
         if (strcmp(((ASTNode*)parser->root->children->arr[i])->name, symbol_name) == 0) {
             return true;
         }
-        printf("Bye\n");
     }
 
     return false;
@@ -34,9 +32,7 @@ bool is_symbol_in_scope(ASTNode* curr_symbol, ASTNode* symbol) {
         return false;
     }
 
-    if (curr_symbol->type == symbol->type || curr_symbol->type == AST_FUNC && (symbol->type == AST_CALL)) {
-        printf("%d\n", curr_symbol->children->num_items);
-        //printf("%s\n", astnode_to_string(curr_symbol->children->arr[1]));
+    if (curr_symbol->type == symbol->type || (curr_symbol->type == AST_FUNC && symbol->type == AST_CALL)) {
         if (!verify_symbol_dec(curr_symbol)) {
             return false;
         }
@@ -142,36 +138,16 @@ void clean_symbol(Parser* parser, ASTNode* curr_symbol, ASTNode* symbol_scope, i
     printf("\n\n\n");
 }
 
-
-/* void clean(Parser* parser, ASTNode* curr_symbol, ASTNode* symbol_scope) {
+void clean_func(Parser* parser, ASTNode* curr_symbol, ASTNode* symbol_scope, int symbol_line) {
     if (curr_symbol->type == AST_FUNC) {
         symbol_scope = curr_symbol;
         ASTNode* return_val = get_return_val(curr_symbol);
         if (!validate_func(curr_symbol, return_val)) {
-            printf("Parser: '%s' symbol has incorrect return value; Expected '%s'\n",
-                    curr_symbol->name, ((ASTNode*)curr_symbol->children->arr[0])->name);
+            printf("Parser: '%s' symbol has incorrect return value; Expected '%s'::%d\n",
+                    curr_symbol->name, ((ASTNode*)curr_symbol->children->arr[0])->name, symbol_line);
             printf("Exited with code 1\n");
             exit(1);
         }
 
     }
-
-    if (curr_symbol->type == AST_VAR || curr_symbol->type == AST_CALL) {
-        if (!verify_symbol_dec(curr_symbol)) {
-            clean_symbol(parser, curr_symbol, symbol_scope);
-        }
-
-    }
-
-    //printf("\n\nParent %s", astnode_to_string(curr_symbol));
-
-    if (curr_symbol->children->num_items > 0) {
-        for (int i = 0; i < curr_symbol->children->num_items; i++) {
-            // printf("Index %d->\n", i);
-            //printf("-> %s", astnode_to_string(curr_symbol->children->arr[i]));
-            clean(parser, curr_symbol->children->arr[i], symbol_scope);
-            //printf("end\n");
-        }
-    }
-    symbol_scope = parser->root;
-}*/
+}

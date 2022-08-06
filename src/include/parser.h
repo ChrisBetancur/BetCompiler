@@ -58,7 +58,7 @@ ASTNode* parse_func_params(Parser* parser);
 
 ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* def_type);
 
-ASTNode* parse_func_call_params(Parser* parser);
+ASTNode* parse_func_call_params(Parser* parser, ASTNode* func_call);
 
 ASTNode* parse_func_call(Parser* parser, Token* symbol_name_token);
 

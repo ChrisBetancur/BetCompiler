@@ -8,6 +8,8 @@ Compiler for my own language. Combination of my favorite features of python, C a
   - [x] Expressions
   - [x] Functions
   - [x] Symbol declaration 
+  - [x] Calling functions
+  - [ ] Bug fixes
 
 - [ ] Translating to x86 Assembly
 
@@ -24,7 +26,22 @@ if (!list_struct->arr) {
 -  Solution
     - Created new list append where I copied the list to a new array and free the old one
 
+
+#### 2. Error: Symbol scope
+- Issue in ast_clean.c where its checking if symbol was previously defined in scope but instead it checks in any scope
+
+```c
+void main() {
+    int i = 0;
+    return;
+}
+
+i = 99;
+```
+
+
 ### Next Steps
+- Make parser only check prev declared vars IN SCOPE
 - Translate AST to assembly to compile code
 
 

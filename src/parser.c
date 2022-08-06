@@ -22,7 +22,6 @@ void parser_eat(Parser* parser, int type) {
         exit(1);
     }
     parser->curr_token = lexer_next_token(parser->lexer);
-
 }
 
 bool is_prim_type(char* name) {
@@ -147,7 +146,6 @@ ASTNode* parse_expr(Parser* parser) {
         list_append(symbol->children, right_term, sizeof(struct AST_NODE_STRUCT));
     }
     
-    print_ast_at_node(symbol);
     return symbol;
 }
 
@@ -156,8 +154,6 @@ void parse_int_var(Parser* parser, ASTNode* symbol) {
     ASTNode* expr = init_ASTNode(NULL, AST_EXPR);
     list_append(symbol->children, expr, sizeof(struct AST_NODE_STRUCT));
     list_append(expr->children, parse_expr(parser), sizeof(struct AST_NODE_STRUCT));
-    printf("Hello\n");
-    print_ast_at_node(expr);
 }
 
 void parse_string_var(Parser* parser, ASTNode* symbol) {
@@ -169,8 +165,6 @@ ASTNode* parse_var(Parser* parser, Token* symbol_name_token, ASTNode* def_type) 
 
     if (def_type != NULL)
         list_append(symbol->children, def_type, sizeof(struct AST_NODE_STRUCT));
-
-
    
     if (strcmp(parser->curr_token->value, ";") == 0) {
         list_append(symbol->children, init_ASTNode(NULL, AST_NULL), sizeof(struct AST_NODE_STRUCT));
@@ -260,15 +254,6 @@ ASTNode* parse_keyword(Parser* parser) {
     }
 
 
-    /*
-    if (strcmp(parser->curr_token->value, "void") == 0) {
-        ASTNode* def_type = init_ASTNode(parser->curr_token->value, AST_DEC_TYPE); 
-        parser_eat(parser, TOKEN_ID);
-        return def_type;
-    }*/
-
-
-
     if (strcmp(parser->curr_token->value, "return") == 0) {
         parser_eat(parser, TOKEN_ID);
         if (!is_prim_type(parser->curr_token->value)) {
@@ -316,7 +301,7 @@ ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* ret_type)
 
     if (ret_type != NULL)
         list_append(symbol->children, ret_type, sizeof(struct AST_NODE_STRUCT));
-    
+
     ASTNode* params = parse_func_params(parser);
 
     if (params->children->num_items != 0)
@@ -329,11 +314,12 @@ ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* ret_type)
         list_append(symbol->children, parse_block(parser), sizeof(struct AST_NODE_STRUCT));
 
     }
-
+    
+    clean_func(parser, symbol, parser->root, parser->curr_token->line_num);
     return symbol;
 }
 
-ASTNode* parse_func_call_params(Parser* parser) { //NOT DONE
+ASTNode* parse_func_call_params(Parser* parser, ASTNode* func_call) { //NOT DONE
     ASTNode* params = init_ASTNode(NULL, AST_PARAMS);
     parser_eat(parser, TOKEN_LPARAN);
 
@@ -343,16 +329,57 @@ ASTNode* parse_func_call_params(Parser* parser) { //NOT DONE
         return NULL;
     }
 
-    bool param_done = false;
+    ASTNode* func_def = get_symbol_in_scope(parser->root, func_call);
 
-    while (param_done != true) {
+    for (int i = 0; i < ((ASTNode*) func_def->children->arr[1])->children->num_items; i++) {
+        ASTNode* curr_param = ((ASTNode*) func_def->children->arr[1])->children->arr[i];
+        
+        if (strcmp(((ASTNode*) curr_param->children->arr[0])->name, "int") == 0 && parser->curr_token->type == TOKEN_INT) {
+            list_append(params->children, parse_expr(parser), sizeof(struct AST_NODE_STRUCT));
+        }
+
+        else if (strcmp(((ASTNode*) curr_param->children->arr[0])->name, "string") == 0) {
+            if (parser->curr_token->type == TOKEN_STRING) {
+                list_append(params->children, parse_literal(parser), sizeof(struct AST_NODE_STRUCT));
+            }
+        }
+        else {
+            printf("Parser: Value '%s' passed as param for function '%s'; Expecting '%s'::'%d'\n",
+                    parser->curr_token->value, func_def->name, ((ASTNode*) curr_param->children->arr[0])->name, parser->curr_token->line_num);
+            printf("Exited with code 1\n");
+            exit(1);
+        }
+
+        printf("%s\n", astnode_to_string(curr_param));
+        if (parser->curr_token->type == TOKEN_RPARAN) {
+            if (i < ((ASTNode*) func_def->children->arr[1])->children->num_items - 1) {
+                printf("Parser: Function call '%s' not enough arguments; Expecting %zu::%d\n",
+                func_def->name, ((ASTNode*) func_def->children->arr[1])->children->num_items, parser->curr_token->line_num);
+                printf("Exited with code 1\n");
+                exit(1);
+            }
+            parser_eat(parser, TOKEN_RPARAN);
+            break;
+        }
+        parser_eat(parser, TOKEN_COMMA);
     }
+
+    if (parser->curr_token->type != TOKEN_EOL) {
+        printf("Parser: Function call '%s' too much arguments; Expecting %zu::%d\n",
+                func_def->name, ((ASTNode*) func_def->children->arr[1])->children->num_items, parser->curr_token->line_num);
+        printf("Exited with code 1\n");
+        exit(1);
+ 
+    }
+    //parser_eat(parser, TOKEN_EOL);
+
+    return params;
 }
 
 ASTNode* parse_func_call(Parser* parser, Token* symbol_name_token) {
     ASTNode* symbol = init_ASTNode(symbol_name_token->value, AST_CALL);
 
-    ASTNode* params = parse_func_params(parser);
+    ASTNode* params = parse_func_call_params(parser, symbol);
 
     
     if (params->children->num_items != 0)

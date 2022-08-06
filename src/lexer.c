@@ -61,9 +61,9 @@ Token* lexer_advance_num(Lexer* lexer) {
 
 Token* lexer_advance_once(Lexer* lexer, int type) {
 
-    if (type == TOKEN_EOL) {
+    /*if (type == TOKEN_EOL) {
         lexer->curr_line++;
-    }
+    }*/
 
     char* token_buffer = calloc(2, sizeof(char));
     token_buffer[0] = lexer->curr;
