@@ -26,27 +26,48 @@ bool verify_symbol_dec(ASTNode* symbol) {
     return true;
 }
 
-bool is_symbol_in_scope(ASTNode* curr_symbol, ASTNode* symbol) {
+bool is_symbol_called_in_scope(ASTNode* scope, ASTNode* symbol) {
+    for (int i = 0; i < scope->children->num_items; i++) {
+        if (strcmp(((ASTNode*) scope->children->arr[i])->name, symbol->name) == 0 
+                && ((ASTNode*) scope->children->arr[i])->type != AST_DEC_TYPE) {
+            return true;
+        }
+    }
+    return false;
+}
 
+bool is_symbol_in_scope(ASTNode* curr_symbol, ASTNode* symbol, ASTNode* curr_scope) { //FIxing scope issues
     if (curr_symbol->type == AST_RETURN) {
         return false;
     }
+
+    ASTNode* prev_scope = NULL;
+
+    if (curr_symbol->type == AST_FUNC) {
+        prev_scope = curr_scope;
+        curr_scope = curr_symbol;
+    }
+
 
     if (curr_symbol->type == symbol->type || (curr_symbol->type == AST_FUNC && symbol->type == AST_CALL)) {
         if (!verify_symbol_dec(curr_symbol)) {
             return false;
         }
 
-        if (strcmp(curr_symbol->name, symbol->name) == 0) {
+        if (strcmp(curr_symbol->name, symbol->name) == 0 && is_symbol_called_in_scope(curr_scope, symbol)) {
             return true;
         }
     }
 
     if (curr_symbol->children->num_items > 0) {
         for (int i = 0; i < curr_symbol->children->num_items; i++) {
-            bool in_scope = is_symbol_in_scope(curr_symbol->children->arr[i], symbol);
+            bool in_scope = is_symbol_in_scope(curr_symbol->children->arr[i], symbol, curr_scope);
             if (in_scope)
                 return true;
+
+            if (curr_scope->type != AST_GLOBAL) {
+                curr_scope = prev_scope;
+            }
         }
     }
 
@@ -81,9 +102,8 @@ ASTNode* get_symbol_in_scope(ASTNode* curr_symbol, ASTNode* symbol) {
 }
 
 
-
 bool is_symbol_declared(Parser* parser, ASTNode* symbol, ASTNode* symbol_scope) {
-    if (is_symbol_in_scope(symbol_scope, symbol) || is_symbol_declared_global(parser, symbol->name))
+    if (is_symbol_in_scope(symbol_scope, symbol, parser->root) || is_symbol_declared_global(parser, symbol->name))
         return true;    
     return false;
 }

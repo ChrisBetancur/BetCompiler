@@ -17,7 +17,8 @@ Parser* init_parser(Lexer* lexer) {
 void parser_eat(Parser* parser, int type) {
 
     if (parser->curr_token->type != type) {
-        printf("Parser: '%s' unexpected token; Expected: '%s'::%d\n", parser->curr_token->value, token_type_to_string(type), parser->curr_token->line_num);
+        printf("Parser: '%s' unexpected token; Expected: '%s'::%d\n",
+                parser->curr_token->value, token_type_to_string(type), parser->curr_token->line_num);
         printf("Exited with code 1\n");
         exit(1);
     }
@@ -139,8 +140,14 @@ ASTNode* parse_expr(Parser* parser) {
         symbol = init_ASTNode(NULL, AST_BINARY_OP);
 
         if (parser->curr_token->type == TOKEN_ADD) {
+            list_append(symbol->children, init_ASTNode(parser->curr_token->value, AST_OPERATOR), sizeof(struct AST_NODE_STRUCT));
             parser_eat(parser, TOKEN_ADD);
         }
+        if (parser->curr_token->type == TOKEN_SUB) {
+            list_append(symbol->children, init_ASTNode(parser->curr_token->value, AST_OPERATOR), sizeof(struct AST_NODE_STRUCT));
+            parser_eat(parser, TOKEN_SUB);
+        }
+ 
         list_append(symbol->children, prev_symbol, sizeof(struct AST_NODE_STRUCT));
         ASTNode* right_term = parse_term(parser);
         list_append(symbol->children, right_term, sizeof(struct AST_NODE_STRUCT));
@@ -438,7 +445,7 @@ ASTNode* parser_parse(Parser* parser) {
 }
 
 void parser_parse_tokens(Parser* parser) {
-    parser->root = init_ASTNode(NULL, AST_GLOBAL);
+    parser->root = init_ASTNode("root", AST_GLOBAL);
 
     //printf("\n\n\n\t-----TOKENS-----\n\n");
     

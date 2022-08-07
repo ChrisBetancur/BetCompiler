@@ -14,9 +14,9 @@ bool is_symbol_declared_global(Parser* parser, char* symbol_name);
 
 bool verify_symbol_dec(ASTNode* symbol);
 
-bool is_symbol_in_scope(ASTNode* curr_symbol, ASTNode* symbol);
+bool is_symbol_called_in_scope(ASTNode* scope, ASTNode* symbol);
 
-bool is_symbol_declared(Parser* parser, ASTNode* symbol, ASTNode* symbol_scope);
+bool is_symbol_in_scope(ASTNode* curr_symbol, ASTNode* symbol, ASTNode* curr_scope);
 
 ASTNode* get_symbol_in_scope(ASTNode* curr_symbol, ASTNode* symbol);
 

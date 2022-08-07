@@ -27,7 +27,7 @@ if (!list_struct->arr) {
     - Created new list append where I copied the list to a new array and free the old one
 
 
-#### 2. Error: Symbol scope
+#### 2. Error: Symbol scope (Solved)
 - Issue in ast_clean.c where its checking if symbol was previously defined in scope but instead it checks in any scope
 
 ```c
@@ -38,6 +38,8 @@ void main() {
 
 i = 99;
 ```
+ - Solution
+    - Passed the current scope as param in is_symbol_in_scope function
 
 
 ### Next Steps
