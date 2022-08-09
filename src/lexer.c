@@ -5,6 +5,14 @@
 
 #include "include/lexer.h"
 
+/*
+ * Function: init_lexer
+ *
+ * Creates lexer to use to conver source code into tokens
+ *
+ * src: source code
+ */
+
 Lexer* init_lexer(char* src) {
     Lexer* lexer = calloc(1, sizeof(struct LEXER_STRUCT));
 
@@ -17,14 +25,40 @@ Lexer* init_lexer(char* src) {
     return lexer;
 }
 
+/*
+ * Function: lexer_peek
+ *
+ * Peaks the next char of the src code
+ *
+ * lexer: peak char of lexer
+ *
+ * returns: the next char in the src code
+ */
+
 char lexer_peek(Lexer* lexer) {
     return lexer->src[lexer->index + 1];
 }
+
+/*
+ * Function: lexer_advance
+ *
+ * Advancing lexer to the next char
+ *
+ * lexer: advancing lexer
+ */
 
 void lexer_advance(Lexer* lexer) {
     lexer->index++;
     lexer->curr = lexer->src[lexer->index];
 }
+
+/*
+ * Function: lexer_skip_whitespace
+ *
+ * If curr_char is whitespace, func will skip it
+ *
+ * lexer: skipping whitespace in lexer
+ */
 
 void lexer_skip_whitespace(Lexer* lexer) {
     while (lexer->curr == ' ' || lexer->curr == '\t' || lexer->curr == '\n' || lexer->curr == '\0') {
@@ -33,6 +67,16 @@ void lexer_skip_whitespace(Lexer* lexer) {
         lexer_advance(lexer);
     }
 }
+
+/*
+ * Function: lexer_advance_string
+ *
+ * Advancing strings in src code
+ *
+ * lexer: advancing string in lexer
+ *
+ * returns: token with string containing the the line token is currently on
+ */
 
 Token* lexer_advance_string(Lexer* lexer) {
     char* value_buffer = calloc(1, sizeof(char));
@@ -48,6 +92,16 @@ Token* lexer_advance_string(Lexer* lexer) {
     return init_token(value_buffer, TOKEN_STRING, lexer->curr_line);
 }
 
+/*
+ * Function: lexer_advance_num
+ *
+ * Advancing number in src code
+ *
+ * lexer: advancing number in lexer
+ *
+ * returns: token with integer and current line token is on
+ */
+
 Token* lexer_advance_num(Lexer* lexer) {
     char* value_buffer = calloc(1, sizeof(char));
     
@@ -59,11 +113,18 @@ Token* lexer_advance_num(Lexer* lexer) {
     return init_token(value_buffer, TOKEN_INT, lexer->curr_line);
 }
 
-Token* lexer_advance_once(Lexer* lexer, int type) {
+/*
+ * Function: lexer_advance_once
+ * 
+ * Advancing lexer once in src code
+ *
+ * lexer: advance lexer once
+ * type: type of token that is being advanced
+ *
+ * returns: token with value and current line
+ */
 
-    /*if (type == TOKEN_EOL) {
-        lexer->curr_line++;
-    }*/
+Token* lexer_advance_once(Lexer* lexer, int type) {
 
     char* token_buffer = calloc(2, sizeof(char));
     token_buffer[0] = lexer->curr;
@@ -72,6 +133,16 @@ Token* lexer_advance_once(Lexer* lexer, int type) {
 
     return init_token(token_buffer, type, lexer->curr_line);
 }
+
+/*
+ * Function: lexer_advance_id
+ *
+ * Advancing identifier in src code
+ *
+ * lexer: advance id in lexer
+ *
+ * returns: token with id and current line
+ */
 
 Token* lexer_advance_id(Lexer* lexer) {
     char* value_buffer = calloc(1, sizeof(char));
@@ -84,6 +155,16 @@ Token* lexer_advance_id(Lexer* lexer) {
     //printf("%s\n", value_buffer);
     return init_token(value_buffer, TOKEN_ID, lexer->curr_line);
 }
+
+/* 
+ * Function: lexer_next_token
+ *
+ * Tokenizes the next value in the src code
+ *
+ * lexer: getting next token in lexer
+ *
+ * return: token
+ */
 
 Token* lexer_next_token(Lexer* lexer) {
     while (lexer->index < lexer->src_size) {

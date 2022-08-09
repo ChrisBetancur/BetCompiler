@@ -11,12 +11,19 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+/*
+ * Struct: PARSER_STRUCT
+ *
+ * Struct defined to represent a parser to translate tokens into a Abstract Syntax Tree
+ *
+ * root: Node defined ast the root of the AST
+ * lexer: lexer used to get tokens from source code to use to put in AST
+ * curr_token: current token the parser is appending to the AST
+ */
 typedef struct PARSER_STRUCT {
     ASTNode* root;
-    ASTNode* curr_func;
 
     Lexer* lexer;
-    unsigned int num_tokens;
     Token* curr_token;
 } Parser;
 
@@ -43,6 +50,10 @@ ASTNode* parse_factor(Parser* parser);
 ASTNode* parse_term(Parser* parser);
 
 ASTNode* parse_expr(Parser* parser);
+
+void parse_int_var(Parser* parser, ASTNode* symbol);
+
+void parse_string_var(Parser* parser, ASTNode* symbol);
 
 ASTNode* parse_var(Parser* parser, Token* symbol_name_token, ASTNode* def_type);
 

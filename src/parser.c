@@ -8,7 +8,6 @@ Parser* init_parser(Lexer* lexer) {
     Parser* parser = malloc(sizeof(struct PARSER_STRUCT));
 
     parser->root = NULL;
-    parser->curr_func = NULL;
     parser->lexer = lexer;
     parser->curr_token = lexer_next_token(parser->lexer);
     return parser;
@@ -208,7 +207,6 @@ ASTNode* parse_block(Parser* parser) {
     
     if (parser->curr_token->type == TOKEN_RBRACE) {
         parser_eat(parser, TOKEN_RBRACE);
-        parser->curr_func = NULL;
         return block;
     } 
 
@@ -221,7 +219,6 @@ ASTNode* parse_block(Parser* parser) {
     
         if (parser->curr_token->type == TOKEN_RBRACE) {
             parser_eat(parser, TOKEN_RBRACE);
-            parser->curr_func = NULL;
             block_done = true;
         } 
     }
@@ -321,6 +318,7 @@ ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* ret_type)
         list_append(symbol->children, parse_block(parser), sizeof(struct AST_NODE_STRUCT));
 
     }
+   
     
     clean_func(parser, symbol, parser->root, parser->curr_token->line_num);
     return symbol;
@@ -378,7 +376,6 @@ ASTNode* parse_func_call_params(Parser* parser, ASTNode* func_call) { //NOT DONE
         exit(1);
  
     }
-    //parser_eat(parser, TOKEN_EOL);
 
     return params;
 }

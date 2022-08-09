@@ -1,6 +1,9 @@
+void hey(int a) {
+    return;
+}
 
 void main() {
-    int i = 0;
+    hey(4);
     return;
 }
 

@@ -1,6 +1,16 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
+/*
+ * Struct: TOKEN_STRUCT
+ *
+ * Struct defined to represent a token
+ *
+ * value: represents the value of token
+ * line_num: where token is located in file
+ * type: represents the type of token
+ */
+
 typedef struct TOKEN_STRUCT {
     char* value;
     unsigned int line_num;

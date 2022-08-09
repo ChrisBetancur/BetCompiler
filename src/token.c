@@ -11,6 +11,7 @@
  *
  * value: the string value from code to be stored in token
  * type: type of value that is stored in token
+ * line_num: the line of file where the token is located
  *
  * returns: token ref
  */

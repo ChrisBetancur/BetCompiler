@@ -3,6 +3,16 @@
 #ifndef LEXER_H
 #define LEXER_H
 
+/*
+ * Struct: LEXER_STRUCT
+ *
+ * Struct defined to represents a lexer
+ *
+ * src: contains the source code to translate into tokens
+ * src_size: size of the src code
+ * curr: curr char that the lexer will tokeize
+ * curr_line: current line that the lexer is tokenizing
+ */
 typedef struct LEXER_STRUCT {
     char* src;
     int src_size;

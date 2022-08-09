@@ -3,6 +3,16 @@
 #ifndef AST_NODE_H
 #define AST_NODE_H
 
+/*
+ * Struct: AST_NODE_STRUCT
+ *
+ * Struct defined to represent a node in a Abstract Syntax Tree
+ *
+ * name: represents the name of the current node
+ * children: list of children node
+ * type: represents the type of node
+ */
+
 typedef struct AST_NODE_STRUCT {
     char* name;
     List* children;
