@@ -11,6 +11,8 @@
  * Creates lexer to use to conver source code into tokens
  *
  * src: source code
+ *
+ * returns: lexer
  */
 
 Lexer* init_lexer(char* src) {

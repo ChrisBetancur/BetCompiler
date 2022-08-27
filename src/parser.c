@@ -4,6 +4,16 @@
 #include "include/ast_node.h"
 #include "include/ast_clean.h"
 
+/*
+ * Function: init_parser
+ *
+ * Creates parser to convert tokens from lexer to AST
+ *
+ * lexer: used to get tokens from src code to put into AST
+ *
+ * returns: parser
+ */
+
 Parser* init_parser(Lexer* lexer) {
     Parser* parser = malloc(sizeof(struct PARSER_STRUCT));
 
@@ -12,6 +22,16 @@ Parser* init_parser(Lexer* lexer) {
     parser->curr_token = lexer_next_token(parser->lexer);
     return parser;
 }
+
+/*
+ * Function: parser_eat
+ *
+ * Gets next token in the src code and stores it in the parser
+ *
+ * parser: eat the current token and get the next token
+ *
+ * type: the type of token parser is supposed to eat
+ */
 
 void parser_eat(Parser* parser, int type) {
 
@@ -23,6 +43,16 @@ void parser_eat(Parser* parser, int type) {
     }
     parser->curr_token = lexer_next_token(parser->lexer);
 }
+
+/*
+ * Function: is_prim_type
+ *
+ * Checks is string value is primitive type
+ *
+ * name: Checks if name is primitive type or not
+ *
+ * returns: boolean
+ */
 
 bool is_prim_type(char* name) {
     if (strcmp(name, "int") == 0)
@@ -38,6 +68,16 @@ bool is_prim_type(char* name) {
     return false;
 }
 
+/*
+ * Function: is_dec_type
+ *
+ * Chacks if name is declaration type
+ *
+ * name: string value to check
+ *
+ * returns: boolean
+ */
+
 bool is_dec_type(char* name) {
     if (strcmp(name, "string") == 0)
         return true;
@@ -45,6 +85,15 @@ bool is_dec_type(char* name) {
     return is_prim_type(name);
 }
 
+/*
+ * Function: is_keyword_type
+ *
+ * Checks if name is keyword
+ *
+ * name: string value to check
+ *
+ * returns: boolean
+ */
 
 bool is_keyword_type(char* name) { // 
     if (is_dec_type(name))
@@ -56,12 +105,30 @@ bool is_keyword_type(char* name) { //
     return false;
 }
 
+/*
+ * Function: is_unique_name
+ *
+ * Checks if name is a unique symbol name, not keyword type
+ *
+ * name: string to check
+ *
+ * returns: boolean
+ */
+
 bool is_unique_symbol_name(char* name) {
     if (is_keyword_type(name))
         return false;
     else
         return true;
 }
+
+/*
+ * Function: is_multdive_op
+ *
+ * Checks if name is a mult op or div
+ *
+ * name: string value to check
+ */
 
 bool is_multdiv_op(char* name) {
     if (strcmp(name, "*") == 0)
@@ -73,6 +140,16 @@ bool is_multdiv_op(char* name) {
     return false;
 }
 
+/*
+ * Function: is_addsub_op
+ *
+ * Checks if name is add op or sub op
+ *
+ * name: string valye to check
+ *
+ * returns: boolean
+ */
+
 bool is_addsub_op(char* name) {
     if (strcmp(name, "+") == 0)
         return true;
@@ -83,12 +160,29 @@ bool is_addsub_op(char* name) {
     return false;
 }
 
+/*
+ * Function: parse_literal
+ *
+ * Parses current token as literal
+ *
+ * returns: AST node containing literal
+ */
+
 ASTNode* parse_literal(Parser* parser) {
     ASTNode* symbol = init_ASTNode(parser->curr_token->value, AST_LITERAL);
     parser_eat(parser, TOKEN_STRING);
     return symbol;
 }
 
+/*
+ * Function: parse_factor
+ *
+ * Parses factor and if the curr_token is a parenthesis then parse expression
+ *
+ * parser: parser used to get the tokens from
+ *
+ * returns: factor AST node
+ */
 
 ASTNode* parse_factor(Parser* parser) {
     ASTNode* symbol;
@@ -109,6 +203,16 @@ ASTNode* parse_factor(Parser* parser) {
     parser_eat(parser, TOKEN_INT);
     return NULL;
 }
+
+/*
+ * Function: parse_term
+ *
+ * Parses term, parses factors that are multiplying or dividing together first
+ *
+ * parser: parser struct used to get the tokens
+ *
+ * returns: term AST Node
+ */
 
 ASTNode* parse_term(Parser* parser) {
     ASTNode* symbol = parse_factor(parser);
@@ -131,6 +235,16 @@ ASTNode* parse_term(Parser* parser) {
     }
     return symbol;
 }
+
+/*
+ * Function: parse_expr
+ *
+ * Parses expression, parses terms or factors that are added or subtracted together
+ *
+ * parser: parser struct to get the tokens from
+ *
+ * returns: expression AST node
+ */
 
 ASTNode* parse_expr(Parser* parser) { 
     ASTNode* symbol = parse_term(parser);
@@ -155,6 +269,14 @@ ASTNode* parse_expr(Parser* parser) {
     return symbol;
 }
 
+/*
+ * Function: parse_int_var
+ *
+ * Parses int by appending the assignment to the symbol
+ *
+ * parser: used to parse expression assignment
+ * symbol: appending expression to symbol
+ */
 
 void parse_int_var(Parser* parser, ASTNode* symbol) {
     ASTNode* expr = init_ASTNode(NULL, AST_EXPR);
@@ -162,9 +284,30 @@ void parse_int_var(Parser* parser, ASTNode* symbol) {
     list_append(expr->children, parse_expr(parser), sizeof(struct AST_NODE_STRUCT));
 }
 
+/*
+ * Function: parse_string_var
+ *
+ * Parses string by appending literal to symbol
+ *
+ * parser: used to parse literal
+ * symbol: appending literal to symbol
+ */
+
 void parse_string_var(Parser* parser, ASTNode* symbol) {
     list_append(symbol->children, parse_literal(parser), sizeof(struct AST_NODE_STRUCT));
 }
+
+/*
+ * Function: parse_var
+ *
+ * Parses var with or without assignment
+ *
+ * parser: used to parse var
+ * symbol_name_token: name of var as a token
+ * def_type: def type as a node
+ *
+ * returns: var as a symbol
+ */
 
 ASTNode* parse_var(Parser* parser, Token* symbol_name_token, ASTNode* def_type) {
     ASTNode* symbol = init_ASTNode(symbol_name_token->value, AST_VAR);
@@ -200,6 +343,15 @@ ASTNode* parse_var(Parser* parser, Token* symbol_name_token, ASTNode* def_type) 
     return symbol;
 }
 
+/*
+ * Function: parse_block
+ *
+ * Parses block of code belonging to a function
+ *
+ * parser: used to parse block
+ *
+ * returns: block node
+ */
 
 ASTNode* parse_block(Parser* parser) {
     ASTNode* block = init_ASTNode(NULL, AST_BLOCK);
@@ -226,6 +378,16 @@ ASTNode* parse_block(Parser* parser) {
     return block;
 }
 
+/*
+ * Function: parse_return_st
+ *
+ * Parses return statement which includes the return value
+ *
+ * parser: used to parse the return statement
+ *
+ * returns: return symbol node
+ */
+
 ASTNode* parse_return_st(Parser* parser) {
     ASTNode* return_symbol = init_ASTNode(NULL, AST_RETURN);
 
@@ -249,6 +411,16 @@ ASTNode* parse_return_st(Parser* parser) {
     return NULL;
 }
 
+/*
+ * Function: parse_keyword
+ *
+ * Parses keyword
+ *
+ * parser: parser used the keyword
+ *
+ * returns: keyword symbol
+ */
+
 ASTNode* parse_keyword(Parser* parser) {
    
     if (is_dec_type(parser->curr_token->value)) {
@@ -269,6 +441,15 @@ ASTNode* parse_keyword(Parser* parser) {
     return NULL;
 }
 
+/*
+ * Function: parse_func_params
+ *
+ * Parse params of a function
+ *
+ * parser: used to parse func params
+ *
+ * returns: Function params symbol
+ */
 
 ASTNode* parse_func_params(Parser* parser) {
     ASTNode* params = init_ASTNode(NULL, AST_PARAMS);
@@ -298,6 +479,17 @@ ASTNode* parse_func_params(Parser* parser) {
     return params;
 }
 
+/*
+ * Function: parse_func
+ *
+ * Parse function
+ *
+ * parser: used to parse function
+ * symbol_name_token: token of the name of the symbol being parsed
+ * ret_type: return type in ast node of the function
+ *
+ * returns: function returns as a ast symbol
+ */
 
 ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* ret_type) {
     ASTNode* symbol = init_ASTNode(symbol_name_token->value, AST_FUNC);
@@ -323,6 +515,17 @@ ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* ret_type)
     clean_func(parser, symbol, parser->root, parser->curr_token->line_num);
     return symbol;
 }
+
+/*
+ * Function: parse_func_call_params
+ *
+ * Parse function call params
+ *
+ * parser: used to parse function call params
+ * funct_call: the function that was called
+ *
+ * returns: params symbol as node
+ */
 
 ASTNode* parse_func_call_params(Parser* parser, ASTNode* func_call) { //NOT DONE
     ASTNode* params = init_ASTNode(NULL, AST_PARAMS);
@@ -394,6 +597,15 @@ ASTNode* parse_func_call(Parser* parser, Token* symbol_name_token) {
     return symbol;
 }
 
+/*
+ * Function: parse_id
+ *
+ * Parse identifier token to node
+ *
+ * parser: used to parse id
+ *
+ * returns: parsed id
+ */
 
 ASTNode* parse_id(Parser* parser) {
     if (is_keyword_type(parser->curr_token->value)) {
@@ -430,6 +642,16 @@ ASTNode* parse_id(Parser* parser) {
     return NULL;
 }
 
+/*
+ * Function: parser_parse
+ *
+ * Parses id
+ *
+ * parser: parser use to parse id
+ *
+ * returns: parse_id
+ */
+
 ASTNode* parser_parse(Parser* parser) {
     switch (parser->curr_token->type) {
         case TOKEN_ID:
@@ -440,6 +662,14 @@ ASTNode* parser_parse(Parser* parser) {
             break;
     };
 }
+
+/*
+ * Function: parser_parse_tokens
+ *
+ * Parses all tokens processed by lexer until it reaches the end of the file
+ *
+ * parser: parser_used to parse tokens
+ */
 
 void parser_parse_tokens(Parser* parser) {
     parser->root = init_ASTNode("root", AST_GLOBAL);
@@ -452,6 +682,14 @@ void parser_parse_tokens(Parser* parser) {
     }
 }
 
+/*
+ * Function: count_nodes
+ *
+ * Counts all nodes in tree starting from the current point
+ *
+ * returns: num of nodes
+ */
+
 int count_nodes(ASTNode* curr) { 
     static int count = 0;
     if (curr != NULL) {
@@ -462,6 +700,17 @@ int count_nodes(ASTNode* curr) {
     }
     return count;
 }
+
+/*
+ * Function: traverse_print_ast
+ *
+ * Prints the AST in user friendly fashion by traversing throught the tree
+ *
+ * node: the current node it is at
+ * flag: the list of bool value to keep track of visited nodes
+ * depth: the current level the abstract tree is on currently
+ * is_last: keeps track if current node is on the last node
+ */
 
 void traverse_print_ast(ASTNode* node, List* flag, int depth, bool is_last) {
     if (node == NULL)
@@ -493,6 +742,13 @@ void traverse_print_ast(ASTNode* node, List* flag, int depth, bool is_last) {
     flag->arr[depth] = (void*)true;
 }
 
+/*
+ * Function: print_ast_at_node
+ *
+ * Prints AST at the specified node, traverses all nodes underneath
+ *
+ * node: root of the tree to be printed
+ */
 
 void print_ast_at_node(ASTNode* node) {
     List* flag = init_list(sizeof(bool));
@@ -505,6 +761,14 @@ void print_ast_at_node(ASTNode* node) {
 
     printf("\n\n");
 }
+
+/*
+ * Function: print_ast
+ *
+ * Prints AST from root in parser
+ *
+ * parser: contains the root
+ */
 
 void print_ast(Parser* parser) {
      

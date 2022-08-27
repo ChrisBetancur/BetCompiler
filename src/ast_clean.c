@@ -1,5 +1,15 @@
 #include "include/ast_clean.h"
 
+/*
+ * Function: is_symbol_declared_global
+ *
+ * Checks if symbol has been declared global
+ *
+ * parser: contains the root where we check the global symbols
+ * symbol_name: symbol that we need to find that is defined globally
+ *
+ * returns: boolean if symbol is declared or not
+ */
 
 bool is_symbol_declared_global(Parser* parser, char* symbol_name) {
     if (parser->root->children->num_items < 1)
@@ -13,6 +23,15 @@ bool is_symbol_declared_global(Parser* parser, char* symbol_name) {
     return false;
 }
 
+/*
+ * Function: verify_symbol_dec
+ *
+ * Checks if symbol is declared properly
+ *
+ * symbol: symbol that is being checked if it declared properly
+ *
+ * returns: true if symbol is declared properly otherwise false
+ */
 
 bool verify_symbol_dec(ASTNode* symbol) {
     if (symbol->type == AST_VAR && ((ASTNode*)symbol->children->arr[0])->type != AST_DEC_TYPE) {
