@@ -191,6 +191,28 @@ ASTNode* parse_factor(Parser* parser) {
         parser_eat(parser, TOKEN_INT);
         return symbol;
     }
+
+    if (parser->curr_token->type == TOKEN_ID) {
+        if (is_keyword_type(parser->curr_token->value)) {
+            printf("Parser: cannot assign keyword to var '%s'::%d\n", parser->curr_token->value, parser->curr_token->line_num);
+            printf("Exited with code 1\n");
+            exit(1);
+        }
+
+        symbol = init_ASTNode(parser->curr_token->value, AST_VAR); // MUST FIND WAY TO CLEAN SYMBOL THAT IS BEING ASSIGNED TO VAR IF SYMBOL DEFINED IN FUNCTION
+                                                                   // might have to fix at runtime while translating to assembly
+        //clean_symbol(parser, symbol, parser->root, parser->curr_token->line_num); 
+
+        parser_eat(parser, TOKEN_ID);
+        return symbol;
+    }
+
+
+    if (parser->curr_token->type == TOKEN_ID && !is_keyword_type(parser->curr_token->value)) {
+        symbol = init_ASTNode(parser->curr_token->value, AST_VAR); // Figure out a way to check if previously defined
+        //clean_symbol(parser, symbol, parser->root, parser->curr_token->line_num);
+        return symbol;
+    }
     
     else if (parser->curr_token->type == TOKEN_LPARAN) {
         symbol = init_ASTNode(NULL, AST_TERM);
@@ -335,6 +357,7 @@ ASTNode* parse_var(Parser* parser, Token* symbol_name_token, ASTNode* def_type) 
         else if (strcmp(def_type->name, "string") == 0) {
             parse_string_var(parser, symbol);
         }
+
     }
 
     parser_eat(parser, TOKEN_EOL);
@@ -366,6 +389,15 @@ ASTNode* parse_block(Parser* parser) {
     while (block_done != true) {
         ASTNode* child = NULL;
         child = parse_id(parser);
+
+        /*if (child->type == AST_VAR) {
+            printf("Hello\n");
+            printf("%s\n", astnode_to_string(child));
+            if (is_symbol_in_scope(block, child, block)) {
+                printf("Not found\n");
+                exit(1);
+            }
+        }*/
 
         list_append(block->children, child, sizeof(struct AST_NODE_STRUCT));
     
@@ -494,7 +526,6 @@ ASTNode* parse_func_params(Parser* parser) {
 ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* ret_type) {
     ASTNode* symbol = init_ASTNode(symbol_name_token->value, AST_FUNC);
 
-
     if (ret_type != NULL)
         list_append(symbol->children, ret_type, sizeof(struct AST_NODE_STRUCT));
 
@@ -558,7 +589,6 @@ ASTNode* parse_func_call_params(Parser* parser, ASTNode* func_call) { //NOT DONE
             exit(1);
         }
 
-        printf("%s\n", astnode_to_string(curr_param));
         if (parser->curr_token->type == TOKEN_RPARAN) {
             if (i < ((ASTNode*) func_def->children->arr[1])->children->num_items - 1) {
                 printf("Parser: Function call '%s' not enough arguments; Expecting %zu::%d\n",
@@ -582,6 +612,18 @@ ASTNode* parse_func_call_params(Parser* parser, ASTNode* func_call) { //NOT DONE
 
     return params;
 }
+
+/*
+ * Function: parse_func_call
+ *
+ * Parse function call
+ *
+ * parser: used to parse function call params
+ * symbol_name_token: name of symbol that was called
+ *
+ * returns: func call
+ */
+
 
 ASTNode* parse_func_call(Parser* parser, Token* symbol_name_token) {
     ASTNode* symbol = init_ASTNode(symbol_name_token->value, AST_CALL);

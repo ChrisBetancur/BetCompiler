@@ -145,8 +145,28 @@ ASTNode* get_return_val(ASTNode* curr_symbol) {
 
 
 bool validate_func(ASTNode* curr_func, ASTNode* ret_val) {
-    if (ret_val == NULL)
-        return false;
+    if (ret_val == NULL) return false;
+
+    if (ret_val->children->num_items == 0) {
+        if (strcmp(((ASTNode*) curr_func->children->arr[0])->name, "void") == 0) {
+            return true;
+        }
+    }
+
+    if (((ASTNode*) ret_val->children->arr[0])->type == AST_VAR) {
+        ASTNode* symbol_def = get_symbol_in_scope(curr_func, ret_val->children->arr[0]); 
+        if (symbol_def != NULL) {
+            if (strcmp(((ASTNode*) symbol_def->children->arr[0])->name, "int") == 0 
+                && strcmp(((ASTNode*) curr_func->children->arr[0])->name, "int") == 0) {
+                    return true;
+                }
+             if (strcmp(((ASTNode*) symbol_def->children->arr[0])->name, "void") == 0 
+                && strcmp(((ASTNode*) curr_func->children->arr[0])->name, "void") == 0) {
+                    return true;
+                }
+
+        }
+    }
 
     if (strcmp(((ASTNode*) curr_func->children->arr[0])->name, "int") == 0) {
         if (ret_val->children->num_items < 1)
