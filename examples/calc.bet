@@ -1,5 +1,6 @@
 int PREV_ANSWER = 0;
 
 int mult(int a, int b) {
+    int c = a * b;
     return a * b;
 }

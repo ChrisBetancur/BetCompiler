@@ -43,7 +43,7 @@ i = 99;
 
 
 ### Next Steps
-- Make parser only check prev declared vars IN SCOPE
+- Variables
 - Translate AST to assembly to compile code
 
 
