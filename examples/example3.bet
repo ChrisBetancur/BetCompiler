@@ -8,6 +8,6 @@ void print(int s) {
 
 int main() {
     int a = 0;
-    print(0);
+    int b = a;
     return 0;
 }

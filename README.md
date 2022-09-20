@@ -41,6 +41,19 @@ i = 99;
  - Solution
     - Passed the current scope as param in is_symbol_in_scope function
 
+#### 3. Error: Assigning Var to Var (Unsolved)
+- When assigning var to another var in a function, parser does not check if var has been defined in the function scope
+  since everything in the function has not been inserted into the Abstract Syntax Tree (Ref: parser.c::202 in parse_factor function)
+
+```c
+void main() {
+    int i = 0;
+    int s = i;
+    return;
+}
+```
+
+ 
 
 ### Next Steps
 - Variables
