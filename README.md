@@ -52,6 +52,23 @@ void main() {
     return;
 }
 ```
+#### 3. Error: Returning Var (Unsolved)
+- In a int function, when returning int, parser is not allowing to return a * b, 2 * 3. Also it incorrectly allows
+  return int a = 0;
+
+```c
+int mult(int a, int b) {
+    return int a = 0; // INCORRECT
+}
+
+int mult(int a, int b) {
+    return a * b; // WON'T ALLOW
+}
+
+int mult(int a, int b) {
+    return 2 * 3; // WON'T ALLOW
+}
+```
 
  
 
