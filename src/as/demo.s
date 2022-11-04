@@ -5,23 +5,19 @@
 // X0-X2 - parameters to linux function services
 // X16 - linux function number
 //
-.global _start             // Provide program starting address to linker
+.global _main             // Provide program starting address to linker
 .align 2
 
-// Setup the parameters to print hello world
-// and then call Linux to do it.
+_main: 
+    mov x0, #1
+    adr x1, helloworld
+    mov x2, #12
+    mov x16, #4
+    svc 0
 
-_start: mov X0, #1     // 1 = StdOut
-        adr X1, helloworld // string to print
-        mov X2, #13     // length of our string
-        mov X16, #4     // MacOS write system call
-        svc 0     // Call linux to output the string
+    mov x0, #0
+    mov x16, #1
+    svc 0
 
-// Setup the parameters to exit the program
-// and then call Linux to do it.
-
-        mov     X0, #0      // Use 0 return code
-        mov     X16, #1     // Service command code 1 terminates this program
-        svc     0           // Call MacOS to terminate the program
-
-helloworld:      .ascii  "Hello World!\n"
+helloworld:
+    .ascii "Hello world\n"

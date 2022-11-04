@@ -79,6 +79,9 @@ char* astnode_type_to_string(int type) {
         case AST_INT:
             return "INTEGER";
             break;
+        case AST_BOOL:
+            return "BOOLEAN";
+            break;
         case AST_LITERAL:
             return "LITERAL";
             break;

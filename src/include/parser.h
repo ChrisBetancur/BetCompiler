@@ -20,6 +20,7 @@
  * lexer: lexer used to get tokens from source code to use to put in AST
  * curr_token: current token the parser is appending to the AST
  */
+
 typedef struct PARSER_STRUCT {
     ASTNode* root;
 
@@ -32,6 +33,8 @@ Parser* init_parser(Lexer* lexer);
 void parser_eat(Parser* parser, int type);
 
 bool is_prim_type(char* name);
+
+bool is_bool_val(char* name);
 
 bool is_dec_type(char* name);
 

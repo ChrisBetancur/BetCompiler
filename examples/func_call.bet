@@ -1,5 +1,5 @@
-void hey(int a) {
-    return;
+bool hey(int a) {
+    return true;
 }
 
 void main() {

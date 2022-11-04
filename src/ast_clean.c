@@ -151,6 +151,7 @@ bool validate_func(ASTNode* curr_func, ASTNode* ret_val) {
         if (strcmp(((ASTNode*) curr_func->children->arr[0])->name, "void") == 0) {
             return true;
         }
+        return false;
     }
 
     if (((ASTNode*) ret_val->children->arr[0])->type == AST_VAR) {
@@ -164,6 +165,11 @@ bool validate_func(ASTNode* curr_func, ASTNode* ret_val) {
                 && strcmp(((ASTNode*) curr_func->children->arr[0])->name, "void") == 0) {
                     return true;
                 }
+             if (strcmp(((ASTNode*) symbol_def->children->arr[0])->name, "bool") == 0 
+                && strcmp(((ASTNode*) curr_func->children->arr[0])->name, "bool") == 0) {
+                    return true;
+                }
+
 
         }
     }
@@ -172,11 +178,17 @@ bool validate_func(ASTNode* curr_func, ASTNode* ret_val) {
         if (ret_val->children->num_items < 1)
             return false;
         if (((ASTNode*)ret_val->children->arr[0])->type == AST_EXPR 
+                || ((ASTNode*)ret_val->children->arr[0])->type == AST_BINARY_OP
                 || ((ASTNode*)ret_val->children->arr[0])->type == AST_INT) {
             return true;
         }
     }
-
+    
+    if (strcmp(((ASTNode*) curr_func->children->arr[0])->name, "bool") == 0) {
+        if (((ASTNode*) ret_val->children->arr[0])->type == AST_BOOL) {
+            return true;
+        }
+    }
     
     if (strcmp(((ASTNode*)curr_func->children->arr[0])->name, "void") == 0) {
         if (ret_val == NULL || ret_val->children->num_items < 1) {
@@ -194,7 +206,6 @@ void clean_symbol(Parser* parser, ASTNode* curr_symbol, ASTNode* symbol_scope, i
         exit(1);
 
     }
-    printf("\n\n\n");
 }
 
 void clean_func(Parser* parser, ASTNode* curr_symbol, ASTNode* symbol_scope, int symbol_line) {
