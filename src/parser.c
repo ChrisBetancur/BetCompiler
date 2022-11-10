@@ -227,9 +227,7 @@ ASTNode* parse_factor(Parser* parser) {
                                                                    // might have to fix at runtime while translating to assembly
         //clean_symbol(parser, symbol, parser->root, parser->curr_token->line_num); 
 
-        printf("Hey %s\n", token_to_string(parser->curr_token));
         parser_eat(parser, TOKEN_ID);
-        return symbol;
     }
 
 
@@ -240,9 +238,13 @@ ASTNode* parse_factor(Parser* parser) {
     }
     
     else if (parser->curr_token->type == TOKEN_LPARAN) {
-        symbol = init_ASTNode(NULL, AST_TERM);
+        /*symbol = init_ASTNode(NULL, AST_TERM);
         parser_eat(parser, TOKEN_LPARAN);
         list_append(symbol->children, parse_expr(parser), sizeof(struct AST_NODE_STRUCT));
+        parser_eat(parser, TOKEN_RPARAN);*/
+        parser_eat(parser, TOKEN_LPARAN);
+        symbol = parse_expr(parser);
+        print_ast_at_node(symbol);
         parser_eat(parser, TOKEN_RPARAN);
         return symbol;
     }
@@ -532,7 +534,7 @@ ASTNode* parse_func_params(Parser* parser) {
         ASTNode* type = init_ASTNode(parser->curr_token->value, AST_DEC_TYPE);
         parser_eat(parser, TOKEN_ID);
         ASTNode* param_var = init_ASTNode(parser->curr_token->value, AST_VAR);
-        parser_eat(parser, TOKEN_ID); 
+        parser_eat(parser, TOKEN_ID);
         if (parser->curr_token->type == TOKEN_RPARAN)
             param_done = true;
         else

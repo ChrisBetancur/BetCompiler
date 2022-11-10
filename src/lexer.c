@@ -106,7 +106,7 @@ Token* lexer_advance_string(Lexer* lexer) {
 
 Token* lexer_advance_num(Lexer* lexer) {
     char* value_buffer = calloc(1, sizeof(char));
-    
+
     while (isdigit(lexer->curr) != 0) {
         value_buffer = realloc(value_buffer, (strlen(value_buffer) + 2) * sizeof(char));
         strcat(value_buffer, (char[]){lexer->curr, 0}); // RESEARCH
@@ -117,7 +117,7 @@ Token* lexer_advance_num(Lexer* lexer) {
 
 /*
  * Function: lexer_advance_once
- * 
+ *
  * Advancing lexer once in src code
  *
  * lexer: advance lexer once
@@ -148,7 +148,7 @@ Token* lexer_advance_once(Lexer* lexer, int type) {
 
 Token* lexer_advance_id(Lexer* lexer) {
     char* value_buffer = calloc(1, sizeof(char));
-    
+
     while (isalpha(lexer->curr) != 0 || lexer->curr == '_') {
         value_buffer = realloc(value_buffer, (strlen(value_buffer) + 2) * sizeof(char));
         strcat(value_buffer, (char[]){lexer->curr, 0}); // RESEARCH

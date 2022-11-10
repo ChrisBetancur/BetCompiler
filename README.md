@@ -11,6 +11,7 @@ Compiler for my own language. Combination of my favorite features of python, C a
   - [x] Calling functions
   - [ ] Bug fixes
 
+- [ ] Translating to xARM Assembly
 - [ ] Translating to x86 Assembly
 
 ### Current Issues

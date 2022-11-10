@@ -1,0 +1,10 @@
+as loop.s -o loop.o && ld loop.o -o loop -macosx_version_min 11.0 -L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lSystem
+
+
+To Run Debugger
+
+lldb ./executable
+
+breakpoint set --name main
+step
+register read x0

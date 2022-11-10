@@ -36,11 +36,51 @@ char* read_file(char* file_path) {
         strcat(buffer, line_buf);
         line_size = getline(&line_buf, &line_buf_size, file);
     }
-    
+
     free(line_buf);
     line_buf = NULL;
 
     fclose(file);
 
     return buffer;
+}
+
+
+char* write_file(char* file_path, char* buffer) {
+    FILE* file;
+
+    file = fopen(file_path, "wb");
+
+    if (file == NULL) {
+        printf("Error: file not found at %s", file_path);
+        exit(1);
+    }
+
+    fputs(buffer, file);
+    fclose(file);
+}
+
+
+char* sh(const char* cmd) {
+    char* output = (char*) calloc(1, sizeof(char));
+    output[0] = '\0';
+
+    FILE *fp;
+    char path[1035];
+
+    fp = popen(cmd, "r");
+
+    if (fp == NULL) {
+        printf("Failed to run command\n" );
+        exit(1);
+    }
+
+    while (fgets(path, sizeof(path), fp) != NULL) {
+        output = (char*) realloc(output, (strlen(output) + strlen(path) + 1) * sizeof(char));
+        strcat(output, path);
+    }
+
+    pclose(fp);
+
+  return output;
 }
