@@ -1,0 +1,14 @@
+
+int i = 10 + 2;
+
+Lexical Analysis
+
+input: code -> output: tokens
+
+Token <name: int, DECLARATION_TYPE>
+
+Parser:
+
+input: tokens -> output: Abstract syntax Tree
+
+

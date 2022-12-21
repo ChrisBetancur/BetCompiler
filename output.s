@@ -1,17 +1,58 @@
 .global _main
 .align 2
 _main:
-	mov x0, #10
-	mov x1, #2
-	add x3, x0, x1
-	mov x0, #2
-	add x3, x3, x0
-	mov x0, #33
-	add x3, x3, x0
-	mov x0, #31
-	add x3, x3, x0
+	mov x3, #98
 	mov x8, x3
 	str x8, [sp, #4]
+	mov x8, #0
+
+	mov x8, #66
+	str x8, [sp, #0]
+	adr x0, ascii
+	bl _printf
+
+	mov x8, #22
+	str x8, [sp, #0]
+	adr x0, ascii
+	bl _printf
+
+	mov x8, #22
+	str x8, [sp, #0]
+	adr x0, ascii
+	bl _printf
+
+	mov x8, #22
+	str x8, [sp, #0]
+	adr x0, ascii
+	bl _printf
+
+	mov x8, #22
+	str x8, [sp, #0]
+	adr x0, ascii
+	bl _printf
+
+	mov x8, #22
+	str x8, [sp, #0]
+	adr x0, ascii
+	bl _printf
+
+	mov x8, #22
+	str x8, [sp, #0]
+	adr x0, ascii
+	bl _printf
+
+	mov x8, #22
+	str x8, [sp, #0]
+	adr x0, ascii
+	bl _printf
+
+	mov x8, #13
+	str x8, [sp, #0]
+	adr x0, ascii
+	bl _printf
+
 	mov x0, #0
 	mov x16, #1
 	svc 0
+ascii:
+	.asciz "%d\n"

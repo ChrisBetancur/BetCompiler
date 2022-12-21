@@ -36,9 +36,12 @@ typedef struct AST_NODE_STRUCT {
         AST_BOOL,
         AST_LITERAL,
         AST_PARAMS,
-        AST_BLOCK
+        AST_BLOCK,
+        AST_BUILT_IN
     } type;
-}ASTNode;
+
+
+} ASTNode;
 
 ASTNode* init_ASTNode(char* name, int type);
 

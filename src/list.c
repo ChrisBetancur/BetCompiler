@@ -36,7 +36,7 @@ void list_append(List* list_struct, void* data, size_t data_size) {
         return;
     }
 
-    
+ 
     list_struct->num_items += 1;
 
     if (list_struct->arr == 0) {

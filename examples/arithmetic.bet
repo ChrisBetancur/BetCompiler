@@ -1,5 +1,1 @@
-int i;
-int b = 1;
-int g = 1;
-int s = 1;
-i = 3 + (1 + 9) * 2;
+int s = 10 / 3;

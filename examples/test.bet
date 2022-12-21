@@ -1,0 +1,15 @@
+
+int i = 9;
+
+print(i);
+
+
+int mult(int a, int b) {
+    int* b = malloc();
+    int[] c = new int[];
+    return a * b;
+}
+
+int main() {
+    print(mult(4, 9));
+}

@@ -92,7 +92,8 @@ char* astnode_type_to_string(int type) {
          case AST_BLOCK:
             return "BLOCK";
             break;
- 
+        case AST_BUILT_IN:
+            return "BUILT_IN";
         default:
             return "ERROR: AST NODE TYPE TYPE NOT STRINGABLE";
             break;

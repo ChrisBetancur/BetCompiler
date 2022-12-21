@@ -1,23 +1,18 @@
-//
-// Assembler program to print "Hello World!"
-// to stdout.
-//
-// X0-X2 - parameters to linux function services
-// X16 - linux function number
-//
-.global _main             // Provide program starting address to linker
+.globl _main
 .align 2
+_main:
 
-_main: 
-    mov x0, #1
-    adr x1, helloworld
-    mov x2, #12
-    mov x16, #4
-    svc 0
+    mov x8, 66
+    str x8, [sp]
+    adr x0, Lstr
+    bl _printf
+
+    push {x8}
 
     mov x0, #0
     mov x16, #1
     svc 0
 
-helloworld:
-    .ascii "Hello world\n"
+Lstr:
+    .asciz "test: %x\n"
+

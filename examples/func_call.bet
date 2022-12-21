@@ -3,6 +3,10 @@ bool hey(int a) {
 }
 
 void main() {
+    int i;
+    i = 0;
+    string s;
+    s = "Hello";
     hey(4);
     return;
 }

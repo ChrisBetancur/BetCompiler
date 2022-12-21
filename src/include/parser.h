@@ -38,6 +38,12 @@ bool is_bool_val(char* name);
 
 bool is_dec_type(char* name);
 
+bool is_expression(char* name);
+
+bool is_literal(char* name);
+
+bool is_built_in(char* name);
+
 bool is_keyword_type(char* name);
 
 bool is_unique_symbol_name(char* name);
@@ -64,6 +70,8 @@ ASTNode* parse_block(Parser* parser);
 
 ASTNode* parse_return_st(Parser* parser);
 
+ASTNode* parse_built_in(Parser* parser);
+
 ASTNode* parse_keyword(Parser* parser);
 
 ASTNode* get_return_val(ASTNode* curr_symbol);
@@ -72,7 +80,7 @@ ASTNode* parse_func_params(Parser* parser);
 
 ASTNode* parse_func(Parser* parser, Token* symbol_name_token, ASTNode* def_type);
 
-ASTNode* parse_func_call_params(Parser* parser, ASTNode* func_call);
+ASTNode* parse_func_call_params(Parser* parser);
 
 ASTNode* parse_func_call(Parser* parser, Token* symbol_name_token);
 

@@ -158,7 +158,7 @@ Token* lexer_advance_id(Lexer* lexer) {
     return init_token(value_buffer, TOKEN_ID, lexer->curr_line);
 }
 
-/* 
+/*
  * Function: lexer_next_token
  *
  * Tokenizes the next value in the src code
@@ -173,11 +173,11 @@ Token* lexer_next_token(Lexer* lexer) {
         if (isalpha(lexer->curr) != 0) {
             return lexer_advance_id(lexer);
         }
-        
+
         if (isdigit(lexer->curr) != 0) {
             return lexer_advance_num(lexer);
         }
-        
+
         lexer_skip_whitespace(lexer);
         switch (lexer->curr) {
             case '=':
