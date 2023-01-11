@@ -6,77 +6,39 @@
 #include <string.h>
 #include <stdbool.h>
 
-// Will use C printf .. Not a clue of how to print anything in aarch assembly
-char* built_in_print(ASTNode* node, Stack* stack_frame) {
-    return built_in_print_int(node, stack_frame);
+// for now only prints 1 element at a time
+
+char* built_in_print_var(ASTNode* call) {
+    if (strcmp(((ASTNode*) call->children->arr[0])->name, "int") == 0) {
+        const char* print_var_template = "\tmov x7, x8\n"
+                                         "%s"
+                                         "\tmov x8, #0\n";
+        char* print_int = built_in_print_int(((ASTNode*)((ASTNode*)call->children->arr[1])->children->arr[0])->name);
+
+        char* print_var = calloc(strlen(print_var_template) + strlen(print_int) + 1, sizeof(char));
+       sprintf(print_var, print_var_template, print_int);
+
+       return print_var;
+    }
+    return NULL;
 }
 
-char* built_in_print_int(ASTNode* node, Stack* stack_frame) {
-    ASTNode* value = ((ASTNode*)node->children->arr[0])->children->arr[0];
-    printf("value name %s\n", value->name);
-    printf("Hello %d\n", stack_frame->top_offset);
+char* built_in_print_int(char* integer) {
 
-    if (stack_frame->top_offset == 0x0) {
-
-        const char* print_int_template = "\tmov x8, #%s\n"
-                                     "\tstr x8, [sp]\n"
+    const char* print_int_template = "\tmov x7, #%s\n"
+                                     "\tstr x7, [sp]\n"
                                      "\tadr x0, ascii\n"
-                                     "\tbl _printf\n";
+                                     "\tbl _printf\n"
+                                     "\tmov x7, #0\n\n";
 
 
-        char* print_int = calloc(strlen(print_int_template) + strlen(value->name), sizeof(char));
-        sprintf(print_int, print_int_template, value->name);
-        return print_int;
-    }
-    const char* print_int_template = "\tmov x8, #%s\n"
-                                     "\tstr x8, [sp]\n"
-                                     "\tadr x0, ascii\n"
-                                     "\tbl _printf\n\n";
+    char* print_int = calloc(strlen(print_int_template) + strlen(integer) + 1, sizeof(char));
 
-
-    char* print_int = calloc(strlen(print_int_template) + strlen(value->name), sizeof(char));
-
-    int new_offset = stack_frame->top_offset + 0x8;
-
-    sprintf(print_int, print_int_template, value->name);
-
-    //strcpy(print_int, print_int_template);
+    sprintf(print_int, print_int_template, integer);
 
     return print_int;
 }
 
-/*char* built_in_print_digit(ASTNode* node) {
-
-    const char* print_digit_template = "_printDigit:\n";
-
-    char* print_digit_output = calloc(strlen(print_digit_template), sizeof(char));
-    strcpy(print_digit_output, print_digit_template);
-
-    bool end = false;
-
-        const char* digit_divide_template = "divide_digits:\n"
-                                           "\tmov x1, #10 ;divide value by 10 and get remainder\n"
-                                           "\t%s;divide intruction\n"
-                                           "\tstr x9, [x0] ;store remainder in memory, ref x0\n"
-                                           "\tadd x0, x0, #0x4\n"
-                                           "\tcmp x3, #0;\n"
-                                           "bgt divide_digits\n";
-
-        char* div_output = divide("x3", "x10", "x1");
-
-        char* digit_div_output = calloc(strlen(digit_divide_template) + strlen(div_output), sizeof(char));
-
-        sprintf(digit_div_output, digit_divide_template, div_output);
-
-        print_digit_output = realloc(print_digit_output, (strlen(print_digit_output) + strlen(digit_div_output)) * sizeof(char));
-
-        strcat(print_digit_output, digit_div_output);
-
-
-    //char* print_digit = calloc(strlen(print_digit_template) +
-
-    return print_digit_output;
-}*/
 
 char* built_in_print_string(ASTNode* node) {
     return NULL;

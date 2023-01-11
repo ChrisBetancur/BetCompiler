@@ -22,7 +22,7 @@ ASTNode* stack_pop(Stack* stack_frame) {
 
     free(stack_frame->stack_list->arr[stack_frame->stack_list->num_items - 1]);
     stack_frame->stack_list->num_items--;
-    realloc(stack_frame->stack_list->arr, stack_frame->stack_list->num_items * sizeof(struct STACK_STRUCT));
+    realloc(stack_frame->stack_list->arr, stack_frame->stack_list->num_items * sizeof(struct STACK_STRUCT)); // IDK WHY IM GETTING ERROR HERE
 
     return top;
 }
@@ -63,6 +63,6 @@ void print_stack_frame(Stack* stack_frame) {
     printf("--Stack--\n");
 
     for (int i = stack_frame->stack_list->num_items - 1; i >= 0; i--) {
-        printf("%s :: %p\n\n", astnode_to_string(stack_frame->stack_list->arr[i]), ((ASTNode*)stack_frame->stack_list->arr[i])->offset);
+        printf("%s :: %c\n\n", astnode_to_string(stack_frame->stack_list->arr[i]), ((ASTNode*)stack_frame->stack_list->arr[i])->offset);
     }
 }

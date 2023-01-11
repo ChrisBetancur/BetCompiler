@@ -1,7 +1,7 @@
 # BetCompiler
 Compiler for my own language. Combination of my favorite features of python, C and Java
 
-### Todo
+### Road Map
 - [x] Lexer
 
 - [x] AST
@@ -9,9 +9,12 @@ Compiler for my own language. Combination of my favorite features of python, C a
   - [x] Functions
   - [x] Symbol declaration 
   - [x] Calling functions
-  - [ ] Bug fixes
+  - [x] Bug fixes
 
 - [ ] Translating to xARM Assembly
+    - [x] Adding int varible to memory
+    - [x] Printing one variable to terminal
+    - [ ] Bug fixes
 - [ ] Translating to x86 Assembly
 
 ### Current Issues
@@ -53,6 +56,7 @@ void main() {
     return;
 }
 ```
+
 #### 4. Error: Returning Var (Solved)
 - In a int function, when returning int, parser is not allowing to return a * b, 2 * 3. Also it incorrectly allows
   return int a = 0;
@@ -74,10 +78,19 @@ int mult(int a, int b) {
     return (2 * 9) * 3; // WON'T ALLOW
 }
 ```
+
 - Solution
     - For funcs that return int it will parse return statement as expressions where parsing factors will be able to parse
       vars as a factor (IT DOES NOT CHECK IF VAR HAS BEEN DEFINED AS A INT AND DOES NOT CHECK IF IT HAS BEEN ASSIGNED VALUE)
       all other cases will have a if statement specifying how to deal with return statement
+
+#### 5. Error: Operations on intergers no assembling (UNSOLVED)
+- 
+```c
+
+```
+ - Solution
+    - Passed the current scope as param in is_symbol_in_scope function
 
 
 

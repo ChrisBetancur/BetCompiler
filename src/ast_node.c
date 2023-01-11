@@ -20,7 +20,7 @@ ASTNode* init_ASTNode(char* name, int type) {
 
     node->name = name;
     node->type = type;
-    node->offset = NULL;
+    //node->offset = NULL;
     node->children = init_list(sizeof(struct AST_NODE_STRUCT));
 
     return node;

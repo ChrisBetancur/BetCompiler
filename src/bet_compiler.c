@@ -6,7 +6,6 @@
 #include "include/io.h"
 #include "include/token.h"
 #include "include/parser.h"
-#include "include/ast_clean.h"
 #include "include/as_frontend.h"
 #include "include/stack.h"
 
@@ -25,13 +24,15 @@
 
 void bet_compile(char* src) {
     char* src_file = read_file(src);
+
+    printf("\nTokenizing bet source file '%s'...\n\n", src);
     Lexer* lexer = init_lexer(src_file);
 
     Parser* parser = init_parser(lexer);
     printf("\nParsing bet source file '%s'...\n\n", src);
     parser_parse_tokens(parser);
 
-    ///print_ast(parser);
+    print_ast(parser);
 
     Stack* stack_frame = init_stack();
     printf("Assembling bet source file '%s'...\n\n", src);

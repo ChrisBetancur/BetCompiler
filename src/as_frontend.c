@@ -1,12 +1,20 @@
 #include "include/as_frontend.h"
 #include "include/built_in.h"
 #include "include/subroutines.h"
-
+#include "include/parser.h" // ----> using parser because i need miscellaneous function, future refactor parser
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+
+// defined registers to use, define registers for adding sub operations
+
+#define RESULT_REG "x3"
+#define PRINT_REG "x7"
+#define MEM_REG "x8"
+#define REMAINDER_REG "x9"
+#define MISC_REG "x10"
 
 char* assemble(ASTNode* node, Stack* stack_frame) {
     char* output = calloc(1, sizeof(char));
@@ -177,9 +185,10 @@ char* as_int(ASTNode* node, Stack* stack_frame) {
 char* as_var_call(ASTNode* node, Stack* stack_frame) {
     if (stack_contains_symbol(stack_frame, node)) {
         ASTNode* symbol = stack_get_symbol(stack_frame, node);
+        //print_ast_at_node(symbol);
 
         const char* load_template = "\tldr x8, [sp, #%d]\n";
-        char* load_output = calloc(strlen(load_template) + 1 + 1, sizeof(char));
+        char* load_output = calloc(strlen(load_template) + 1, sizeof(char));
         sprintf(load_output, load_template, symbol->offset);
 
         return load_output;
@@ -229,8 +238,21 @@ char* as_func(ASTNode* node) {
 
 char* as_built_in(ASTNode* node, Stack* stack_frame) {
     if (strcmp(node->name, "print") == 0) {// prints one value at a time, int passing no var
-        //char* var_call = as_var_call(((ASTNode*)node->children)->arr[0], stack_frame);
-        return built_in_print(node, stack_frame);
+        // checks the first value in print function
+        ASTNode* element = ((ASTNode*) node->children->arr[0])->children->arr[0];
+
+        if (element->type == AST_VAR) {
+            char* var_call = as_var_call(element, stack_frame);
+            char* print_var =  built_in_print_var(stack_get_symbol(stack_frame, element));
+            return strcat(var_call, print_var);
+        }
+
+        ASTNode* value = ((ASTNode*)node->children->arr[0])->children->arr[0];
+
+        if (is_expression(value->name)) {
+            return built_in_print_int(value->name);
+
+        }
     }
     return NULL;
 }
