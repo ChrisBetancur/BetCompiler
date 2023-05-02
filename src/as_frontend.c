@@ -2,6 +2,7 @@
 #include "include/built_in.h"
 #include "include/subroutines.h"
 #include "include/parser.h" // ----> using parser because i need miscellaneous function, future refactor parser
+#include "include/asm.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -9,16 +10,9 @@
 #include <stdbool.h>
 
 // defined registers to use, define registers for adding sub operations
-
-#define RESULT_REG "x3"
-#define PRINT_REG "x7"
-#define MEM_REG "x8"
-#define REMAINDER_REG "x9"
-#define MISC_REG "x10"
-
 char* assemble(ASTNode* node, Stack* stack_frame) {
-    char* output = calloc(1, sizeof(char));
     char* next_val = 0;
+
 
 
     switch (node->type) {
@@ -42,10 +36,13 @@ char* assemble(ASTNode* node, Stack* stack_frame) {
             exit(1);
     }
 
-    output = realloc(output, (strlen(next_val) + 1) * sizeof(char));
-    strcat(output, next_val);
+    printf("Entered\n\n");
+    //char* output = calloc(strlen(next_val) + 1, sizeof(char));
+    //strcpy(output, next_val);
+    printf("Hello\n");
+    //printf("%s\n", output);
 
-    return output;
+    return next_val;
 }
 
 
@@ -68,6 +65,7 @@ char* as_op_eval(char* op, char* reg1, char* reg2) { // only add and sub
         const char* divide_template = "\tmov x3, #0\n%s\n";
         //char* divide_output = calloc(strlen(divide_template) + 1, sizeof(char));
         //strcpy(divide_output, divide_template);
+        printf("reg1 = %s\n", reg1);
         char* divide_sub = divide("x3", reg1, reg2);
         char* divide_output = calloc(strlen(divide_template) + strlen(divide_sub) + 1, sizeof(char));
         sprintf(divide_output, divide_template, divide_sub);
@@ -191,6 +189,7 @@ char* as_var_call(ASTNode* node, Stack* stack_frame) {
         char* load_output = calloc(strlen(load_template) + 1, sizeof(char));
         sprintf(load_output, load_template, symbol->offset);
 
+        printf("call output %s\n\n", load_output);
         return load_output;
     }
     printf("AS_Frontend: symbol '%s\n' not found in stack\n", node->name);
@@ -204,12 +203,27 @@ char* as_var(ASTNode* node, Stack* stack_frame) {
 
     if (((ASTNode*) node->children->arr[0] )->type == AST_DEC_TYPE) {
         if (strcmp(((ASTNode*) node->children->arr[0] )->name, "int") == 0) {
+            printf("STACK PUSH NODE:\n");
+            print_ast_at_node(node);
+            printf("\n\n\n");
             stack_push(stack_frame, node);
             var_assignment = as_int(node->children->arr[1], stack_frame);
+
             const char* assign_expr_template = "\tmov x8, x3\n";
             char* assign_expr = calloc(strlen(assign_expr_template) + 1, sizeof(char));
+
             strcpy(assign_expr, assign_expr_template);
-            strcat(var_assignment, assign_expr_template);
+
+
+
+            //var_assignment = calloc(strlen(int_output) + strlen(assign_expr));
+
+            printf("before get symbol\n");
+            print_stack_frame(stack_frame);
+            printf("end\n");
+
+            strcat(var_assignment, assign_expr);
+
         }
     }
     else {
@@ -241,18 +255,43 @@ char* as_built_in(ASTNode* node, Stack* stack_frame) {
         // checks the first value in print function
         ASTNode* element = ((ASTNode*) node->children->arr[0])->children->arr[0];
 
-        if (element->type == AST_VAR) {
-            char* var_call = as_var_call(element, stack_frame);
-            char* print_var =  built_in_print_var(stack_get_symbol(stack_frame, element));
-            return strcat(var_call, print_var);
+        printf("element to be printed %s\n", astnode_to_string(element));
+
+
+
+        if (is_expression(element->name)) {  // Here is the error, tf is going on
+            //char* final = built_in_print_int(element->name);
+
+            //printf("ENTERED\n");
+            /*const char* print_int_template = "\tmov x7, #%s\n"
+                                     "\tstr x7, [sp]\n"
+                                     "\tadr x0, ascii\n"
+                                     "\tbl _printf\n"
+                                     "\tmov x7, #0\n";
+
+
+            char* print_int = calloc(strlen(print_int_template) + strlen(element->name) + 1, sizeof(char));*/
+               // = calloc(strlen(print_int_template) + strlen(element->name) + 1, sizeof(char));
+
+            //sprintf(print_int, print_int_template, element->name);
+
+            //printf("%s\n\nend \n", element->name);
+            return built_in_print_int(element->name);
+
         }
 
-        ASTNode* value = ((ASTNode*)node->children->arr[0])->children->arr[0];
 
-        if (is_expression(value->name)) {
-            return built_in_print_int(value->name);
-
+        else if (element->type == AST_VAR) {
+            //char* var_call = as_var_call(element, stack_frame);
+            ASTNode* call = stack_get_symbol(stack_frame, element);
+            printf("ENTERED\n\n\n\n\n\n\n\n\n");
+            char* print_var =  built_in_print_var(call);
+            //char* final = strcat(var_call, print_var);
+            //printf("final\n %s\n\n\n", final);
+            printf("when printing -> %s\n", print_var);
+            return print_var;
         }
+
     }
     return NULL;
 }
@@ -264,7 +303,7 @@ char* as_global(ASTNode* node, Stack* stack_frame) {
     char* output = calloc(1, sizeof(char));
 
     const char* main_template = ".global _main\n"
-                              ".align 2\n"
+                              ".align 4\n"
                               "_main:\n";
 
     char* main_output = calloc(strlen(main_template) + 1, sizeof(char));
@@ -275,22 +314,38 @@ char* as_global(ASTNode* node, Stack* stack_frame) {
     for (int i = 0; i < (int) node->children->num_items; i++) {
         ASTNode* child = node->children->arr[i];
 
+        printf("CHILD NODE\n");
+        print_ast_at_node(child);
         char* child_output = assemble(child, stack_frame);
+
+                printf("Child :%s\n\n", child_output);
         output = realloc(output, (strlen(output) + strlen(child_output) + 1) * sizeof(char));
         strcat(output, child_output);
     }
 
+
     // Is this how I should end arm assembly code???
     const char* end_template = "\tmov x0, #0\n"
                                "\tmov x16, #1\n"
-                               "\tsvc 0\n"
+                               "\tsvc 0\n\n"//";not being used, might use later\n%s\n"
                                "ascii:\n\t.asciz \"\%d\\n\"\n"; //to hold integer that will be printed
+                               //"\n\t%s\n";
+
+    char* print = divide(RESULT_REG, OP_REG1, OP_REG2);
+
 
     char* end_output = calloc(strlen(end_template) + 1, sizeof(char));
     strcpy(end_output, end_template);
-    output = realloc(output, (strlen(output) + strlen(end_output) + 1) * sizeof(char));
+    /*sprintf(end_output, end_template, print);
+    printf("Passes\n");
+    printf("%s\n", end_output);*/
+
+    output = realloc(output, (strlen(output)  + 1) * sizeof(char));
     strcat(output, end_output);
 
 
+    printf("\n\n%s\n\n", output);
+
     return output;
+
 }

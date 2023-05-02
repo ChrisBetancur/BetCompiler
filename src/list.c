@@ -1,5 +1,6 @@
 #include "include/list.h"
 #include "include/ast_node.h"
+#include <string.h>
 
 /*
  * Function: init_list
@@ -36,7 +37,6 @@ void list_append(List* list_struct, void* data, size_t data_size) {
         return;
     }
 
- 
     list_struct->num_items += 1;
 
     if (list_struct->arr == 0) {
@@ -57,3 +57,5 @@ void list_append(List* list_struct, void* data, size_t data_size) {
     list_struct->arr = new_arr;
     list_struct->arr[list_struct->num_items - 1] = data;
 }
+
+

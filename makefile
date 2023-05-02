@@ -18,5 +18,8 @@ clean:
 	-rm output.o
 	-rm output
 
+run:
+	make && ./a.out examples/func_call.bet
+
 lint:
 	clang-tidy src/*.c src/include/*.h

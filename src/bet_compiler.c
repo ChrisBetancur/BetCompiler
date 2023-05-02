@@ -40,9 +40,9 @@ void bet_compile(char* src) {
 
     //print_stack_frame(stack_frame);
 
-    printf("Compiling...\n\n");
+    /*printf("Compiling...\n\n");
     write_file(OUTPUT_FILE, output);
     system(COMPILE_OBJ);
     system(MAKE_EXECUTABLE);
-    system(RUN_EXEC);
+    system(RUN_EXEC);*/
 }

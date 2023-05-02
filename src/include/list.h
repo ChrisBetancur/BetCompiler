@@ -16,7 +16,7 @@
 typedef struct LIST_STRUCT {
     void** arr;
     size_t data_size;
-    size_t num_items;
+    unsigned int num_items;
 } List;
 
 List* init_list(size_t type_size);

@@ -1,2 +1,2 @@
-int a = 10;
-print(a);
+int i = 1000;
+int b = 44;
