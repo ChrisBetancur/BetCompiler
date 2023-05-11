@@ -1,5 +1,5 @@
 # BetCompiler
-Compiler for my own language. Combination of my favorite features of python, C and Java
+Compiler for my own language. Combination of my favorite features of python, C and Java. Currently able to process basic arithmetic, store 64 bit integer variables and print one expression or integer variable at a time.
 
 ### Road Map
 - [x] Lexer
