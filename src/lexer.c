@@ -228,4 +228,22 @@ Token* lexer_next_token(Lexer* lexer) {
     return init_token("EOF", TOKEN_EOF, lexer->curr_line);
 }
 
+/*
+ * Function: free_lexer
+ *
+ * Frees lexer pointer from memory
+ *
+ * token: lexer pointer to be freed
+ *
+ * returns: 0 if succesfully freed otherwise 1
+ */
 
+int free_lexer(Lexer* lexer) {
+    if (lexer == NULL)
+        return 1;
+
+    free(lexer->src);
+    free(lexer);
+
+    return 0;
+}

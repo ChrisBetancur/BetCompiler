@@ -11,11 +11,11 @@ Compiler for my own language. Combination of my favorite features of python, C a
   - [x] Calling functions
   - [x] Bug fixes
 
-- [ ] Translating to xARM Assembly
-    - [x] Adding int varible to memory
+- [ ] Translating to x86 Assembly
+    - [x] Pushing integer variables to memory
     - [x] Printing one variable to terminal
     - [ ] Bug fixes
-- [ ] Translating to x86 Assembly
+- [ ] Translating to ARM Assembly
 
 ### Current Issues
 
@@ -92,13 +92,10 @@ int mult(int a, int b) {
  - Solution
     - Passed the current scope as param in is_symbol_in_scope function
 
-
-
- 
-
 ### Next Steps
-- Variables
-- Translate AST to assembly to compile code
+- Handling Errors
+- Handling multiple params in print function
+- Handling functions
 
 
 ### How to compile code

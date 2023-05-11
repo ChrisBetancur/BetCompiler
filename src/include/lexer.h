@@ -41,4 +41,6 @@ int lexer_resize_token_arr(Token*** tokens, int index, int size);
 
 Token* lexer_next_token(Lexer* lexer);
 
+int free_lexer(Lexer* lexer);
+
 #endif

@@ -43,4 +43,6 @@ char* token_type_to_string(int type);
 
 char* token_to_string(Token* token);
 
+int free_token(Token* token);
+
 #endif

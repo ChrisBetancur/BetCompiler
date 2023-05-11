@@ -1,15 +1,14 @@
+int i = 4;
+int b = 1;
+int x = 9;
+int r = 99+(2*3);
 
-int i = 9;
+print(x);
+print(r);
+x = 66;
+r = 22;
 
+print(b);
 print(i);
-
-
-int mult(int a, int b) {
-    int* b = malloc();
-    int[] c = new int[];
-    return a * b;
-}
-
-int main() {
-    print(mult(4, 9));
-}
+print(r);
+print(x);

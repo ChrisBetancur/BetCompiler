@@ -8,11 +8,21 @@
 #include "include/parser.h"
 #include "include/as_frontend.h"
 #include "include/stack.h"
+#include "include/x86_frontend.h"
 
-#define OUTPUT_FILE "output.s"
-#define COMPILE_OBJ "as output.s -o output.o"
-#define MAKE_EXECUTABLE "ld output.o -o output -macosx_version_min 13.0 -L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lSystem"
-#define RUN_EXEC "./output"
+#if __APPLE__
+    #define OUTPUT_FILE "output.s"
+    #define COMPILE_OBJ "as output.s -o output.o"
+    #define MAKE_EXECUTABLE "ld output.o -o output -macosx_version_min 13.0 -L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lSystem"
+    #define RUN_EXEC "./output"
+#elif defined(__x86_64__)
+    #define OUTPUT_FILE "output.asm"
+    #define COMPILE_OBJ "nasm -f elf64 -o output.o output.asm"
+    #define MAKE_EXECUTABLE "ld -o output output.o"
+    #define RUN_EXEC "./output"
+
+#endif
+
 
 /*
  * Function: bet_compile
@@ -34,15 +44,16 @@ void bet_compile(char* src) {
 
     print_ast(parser);
 
+    free(lexer);
     Stack* stack_frame = init_stack();
     printf("Assembling bet source file '%s'...\n\n", src);
-    char* output = assemble(parser->root, stack_frame);
+    char* output = x86_assemble(parser->root, stack_frame);
 
-    //print_stack_frame(stack_frame);
+    print_stack_frame(stack_frame);
 
-    /*printf("Compiling...\n\n");
+    printf("Compiling...\n\n");
     write_file(OUTPUT_FILE, output);
     system(COMPILE_OBJ);
     system(MAKE_EXECUTABLE);
-    system(RUN_EXEC);*/
+    system(RUN_EXEC);
 }

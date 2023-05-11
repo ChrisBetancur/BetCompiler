@@ -18,7 +18,6 @@
 
 Token* init_token(char* value, int type, int line_num) {
     Token* token = calloc(1, sizeof(struct TOKEN_STRUCT));
-    
     token->value = value;
     token->type = type;
     token->line_num = line_num;
@@ -74,11 +73,9 @@ char* token_type_to_string(int type) {
         case TOKEN_LESS:
             return "<";
             break;
- 
         case TOKEN_GREATER:
             return ">";
             break;
-        
         case TOKEN_STRING:
             return "STRING";
             break;
@@ -90,11 +87,9 @@ char* token_type_to_string(int type) {
         case TOKEN_EOL:
             return "';' EOL";
             break;
- 
         case TOKEN_EOF:
             return "EOF";
             break;
- 
         default:
             return "ERROR: TOKEN TYPE NOT STRINGABLE";
             break;
@@ -119,4 +114,25 @@ char* token_to_string(Token* token) {
     sprintf(token_str, template, token->value, type_str);
 
     return token_str;
+}
+
+
+/*
+ * Function: free_token
+ *
+ * Frees token pointer from memory
+ *
+ * token: token pointer to be freed
+ *
+ * returns: 0 if succesfully freed otherwise 1
+ */
+
+int free_token(Token* token) {
+    if (token == NULL)
+        return 1;
+
+    free(token->value);
+    free(token);
+
+    return 0;
 }
