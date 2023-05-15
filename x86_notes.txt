@@ -60,3 +60,21 @@ Ex.
     pop rdi
     sub rdi, hello_len
     syscall
+
+
+----ARM ASSEMBLY----
+
+as loop.s -o loop.o && ld loop.o -o loop -macosx_version_min 11.0 -L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lSystem
+
+
+To Run Debugger
+
+lldb ./executable
+
+breakpoint set --name main
+step
+register read x0
+
+----x86-64 ASSEMBLY----
+
+nasm -f elf64 -o myapp.o myapp.asm && ld -o myapp myapp.o

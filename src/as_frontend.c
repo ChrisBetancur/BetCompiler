@@ -263,14 +263,14 @@ char* as_built_in(ASTNode* node, Stack* stack_frame) {
             //char* final = built_in_print_int(element->name);
 
             //printf("ENTERED\n");
-            /*const char* print_int_template = "\tmov x7, #%s\n"
+            const char* print_int_template = "\tmov x7, #%s\n"
                                      "\tstr x7, [sp]\n"
                                      "\tadr x0, ascii\n"
                                      "\tbl _printf\n"
                                      "\tmov x7, #0\n";
 
 
-            char* print_int = calloc(strlen(print_int_template) + strlen(element->name) + 1, sizeof(char));*/
+            char* print_int = calloc(strlen(print_int_template) + strlen(element->name) + 1, sizeof(char));
                // = calloc(strlen(print_int_template) + strlen(element->name) + 1, sizeof(char));
 
             //sprintf(print_int, print_int_template, element->name);
@@ -336,9 +336,9 @@ char* as_global(ASTNode* node, Stack* stack_frame) {
 
     char* end_output = calloc(strlen(end_template) + 1, sizeof(char));
     strcpy(end_output, end_template);
-    /*sprintf(end_output, end_template, print);
+    sprintf(end_output, end_template, print);
     printf("Passes\n");
-    printf("%s\n", end_output);*/
+    printf("%s\n", end_output);
 
     output = realloc(output, (strlen(output)  + 1) * sizeof(char));
     strcat(output, end_output);

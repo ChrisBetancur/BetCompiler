@@ -154,7 +154,7 @@ Token* lexer_advance_id(Lexer* lexer) {
         strcat(value_buffer, (char[]){lexer->curr, 0}); // RESEARCH
         lexer_advance(lexer);
     }
-    //printf("%s\n", value_buffer);
+
     return init_token(value_buffer, TOKEN_ID, lexer->curr_line);
 }
 

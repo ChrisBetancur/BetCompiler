@@ -22,7 +22,7 @@ ASTNode* stack_pop(Stack* stack_frame) {
 
     free(stack_frame->stack_list->arr[stack_frame->stack_list->num_items - 1]);
     stack_frame->stack_list->num_items--;
-    realloc(stack_frame->stack_list->arr, stack_frame->stack_list->num_items * sizeof(struct STACK_STRUCT)); // IDK WHY IM GETTING ERROR HERE
+    stack_frame->stack_list->arr = realloc(stack_frame->stack_list->arr, stack_frame->stack_list->num_items * sizeof(struct STACK_STRUCT)); // IDK WHY IM GETTING ERROR HERE
 
     return top;
 }

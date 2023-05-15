@@ -191,3 +191,30 @@ bool is_addsub_op(char* name) {
     return false;
 }
 
+void parser_error_handler(int error, char* token_value, int expected_type, int line_num) {
+    switch (error) {
+        case UNEXPECTED_TOKEN:
+            printf("Parser: '%s' unexpected token; Expected: '%s'::%d\n", token_value, token_type_to_string(expected_type), line_num);
+            printf("Exited with code 1\n");
+            exit(1);
+            break;
+
+        case INVALID_ASSIGNMENT:
+            printf("Parser: '%s' invalid assignment for var::%d\n", token_value, line_num);
+            printf("Exited with code 1\n");
+            exit(1);
+            break;
+
+        case INVALID_RETURN:
+            printf("Parser:'%s' invalid return value for function::%d\n", token_value, line_num);
+            printf("Exited with code 1\n");
+            exit(1);
+            break;
+
+        default:
+            printf("wEIRd\n");
+            break;
+    };
+}
+
+void x86_error_handler(int error, ASTNode* node);

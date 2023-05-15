@@ -1,14 +1,12 @@
-int i = 4;
 int b = 1;
 int x = 9;
-int r = 99+(2*3);
+int r = 99+(2*3) / 3;
 
-print(x);
+print(r);
 print(r);
 x = 66;
 r = 22;
 
 print(b);
-print(i);
 print(r);
 print(x);

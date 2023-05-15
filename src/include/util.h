@@ -1,4 +1,6 @@
 #include <stdbool.h>
+#include "token.h"
+#include "ast_node.h"
 
 #ifndef UTIL_H
 #define UTIL_H
@@ -22,5 +24,20 @@ bool is_unique_symbol_name(char* name);
 bool is_multdiv_op(char* name);
 
 bool is_addsub_op(char* name);
+
+typedef enum {
+    UNEXPECTED_TOKEN,
+    INVALID_ASSIGNMENT,
+    INVALID_RETURN
+} ParserError;
+
+typedef enum {
+    UNEXPECTED_NODE,
+    UNDEFINED_VAR
+} x86_ERROR;
+
+void parser_error_handler(int error, char* token_value, int expected_type, int line_num);
+
+void x86_error_handler(int error, ASTNode* node);
 
 #endif

@@ -54,7 +54,7 @@ char* x86_assemble(ASTNode* node, Stack* stack_frame) {
             break;
 
         default:
-            printf("Assembler: Unable to process node type '%s' for '%s'\n", astnode_type_to_string(node->type), node->name);
+            printf("Assembler: Unexpected node type '%s' for '%s'\n", astnode_type_to_string(node->type), node->name);
             exit(1);
     }
 

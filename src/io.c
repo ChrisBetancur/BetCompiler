@@ -46,7 +46,7 @@ char* read_file(char* file_path) {
 }
 
 
-char* write_file(char* file_path, char* buffer) {
+void write_file(char* file_path, char* buffer) {
     FILE* file;
 
     file = fopen(file_path, "wb");

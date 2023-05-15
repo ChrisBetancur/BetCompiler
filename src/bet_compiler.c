@@ -23,7 +23,6 @@
 
 #endif
 
-
 /*
  * Function: bet_compile
  *
@@ -35,25 +34,49 @@
 void bet_compile(char* src) {
     char* src_file = read_file(src);
 
-    printf("\nTokenizing bet source file '%s'...\n\n", src);
+    //system("clear");
+    printf("Tokenizing bet source file '%s'...\n", src);
     Lexer* lexer = init_lexer(src_file);
 
     Parser* parser = init_parser(lexer);
-    printf("\nParsing bet source file '%s'...\n\n", src);
+    printf("Parsing bet source file '%s'...\n", src);
     parser_parse_tokens(parser);
 
-    print_ast(parser);
+    //print_ast(parser);
 
     free(lexer);
     Stack* stack_frame = init_stack();
-    printf("Assembling bet source file '%s'...\n\n", src);
+    printf("Assembling bet source file '%s'...\n", src);
     char* output = x86_assemble(parser->root, stack_frame);
 
-    print_stack_frame(stack_frame);
+    //print_stack_frame(stack_frame);
 
     printf("Compiling...\n\n");
     write_file(OUTPUT_FILE, output);
     system(COMPILE_OBJ);
     system(MAKE_EXECUTABLE);
     system(RUN_EXEC);
+}
+
+
+void bet_ide_compile(char* src) {
+    char* src_file = read_file(src);
+    Lexer* lexer = init_lexer(src_file);
+
+    Parser* parser = init_parser(lexer);
+    parser_parse_tokens(parser);
+
+    //print_ast(parser);
+
+    free(lexer);
+    Stack* stack_frame = init_stack();
+    char* output = x86_assemble(parser->root, stack_frame);
+
+    //print_stack_frame(stack_frame);
+
+    write_file(OUTPUT_FILE, output);
+    system(COMPILE_OBJ);
+    system(MAKE_EXECUTABLE);
+    system(RUN_EXEC);
+
 }

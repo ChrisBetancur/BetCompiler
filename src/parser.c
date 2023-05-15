@@ -37,12 +37,12 @@ Parser* init_parser(Lexer* lexer) {
 void parser_eat(Parser* parser, int type) {
 
     if (parser->curr_token->type != type) {
-        printf("Parser: '%s' unexpected token; Expected: '%s'::%d\n",
+        /*printf("Parser: '%s' unexpected token; Expected: '%s'::%d\n",
                 parser->curr_token->value, token_type_to_string(type), parser->curr_token->line_num);
         printf("Exited with code 1\n");
-        exit(1);
+        exit(1);*/
+        parser_error_handler(UNEXPECTED_TOKEN, parser->curr_token->value, type, parser->curr_token->line_num);
     }
-    printf("%s\n", token_to_string(parser->curr_token));
     parser->curr_token = lexer_next_token(parser->lexer);
 }
 
@@ -81,9 +81,7 @@ ASTNode* parse_factor(Parser* parser) {
 
     if (parser->curr_token->type == TOKEN_ID) {
         if (is_keyword_type(parser->curr_token->value)) {
-            printf("Parser: cannot assign keyword to var '%s'::%d\n", parser->curr_token->value, parser->curr_token->line_num);
-            printf("Exited with code 1\n");
-            exit(1);
+            parser_error_handler(INVALID_ASSIGNMENT, parser->curr_token->value, 0, parser->curr_token->line_num);
         }
 
         symbol = init_ASTNode(parser->curr_token->value, AST_VAR); // MUST FIND WAY TO CLEAN SYMBOL THAT IS BEING ASSIGNED TO VAR IF SYMBOL DEFINED IN FUNCTION
@@ -333,9 +331,10 @@ ASTNode* parse_return_st(Parser* parser) {
                 parser_eat(parser, TOKEN_EOL);
                 return return_symbol;
             }
-            printf("Parser: cannot return keyword '%s'::%d\n", parser->curr_token->value, parser->curr_token->line_num);
+            /*printf("Parser: cannot return keyword '%s'::%d\n", parser->curr_token->value, parser->curr_token->line_num);
             printf("Exited with code 1\n");
-            exit(1);
+            exit(1);*/
+            parser_error_handler(INVALID_RETURN, parser->curr_token->value, 0, parser->curr_token->line_num);
     }
 
     list_append(return_symbol->children, parse_expr(parser), sizeof(struct AST_NODE_STRUCT));

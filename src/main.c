@@ -5,7 +5,8 @@
 #include "include/stack.h"
 
 int main(int argc, char* argv[]) {
-    bet_compile(argv[1]);
+    //bet_compile(argv[1]);
+    bet_ide_compile(argv[1]);
 
     /*Stack* stack = init_stack();
 

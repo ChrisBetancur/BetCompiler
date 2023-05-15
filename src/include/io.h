@@ -3,7 +3,7 @@
 
 char* read_file(char* file_path);
 
-char* write_file(char* file_path, char* buffer);
+void write_file(char* file_path, char* buffer);
 
 char* sh(const char* cmd);
 
