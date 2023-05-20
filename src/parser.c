@@ -647,32 +647,32 @@ int count_nodes(ASTNode* curr) {
  * is_last: keeps track if current node is on the last node
  */
 
-void traverse_print_ast(ASTNode* node, List* flag, int depth, bool is_last) {
+void traverse_print_ast(ASTNode* node, List* flag, int depth, bool is_last, FILE* file) {
     if (node == NULL)
         return;
 
     for (int i = 1; i < depth; i++) {
         if (flag->arr[i] == (void*)true) {
-            printf("|     ");
+            fprintf(file, "|     ");
         }
 
         else
-            printf("      ");
+            fprintf(file, "      ");
     }
 
     if (depth == 0)
-        printf("%s\n", astnode_to_string(node));
+        fprintf(file, "%s\n", astnode_to_string(node));
 
     else if (is_last) {
-        printf("+--- %s\n", astnode_to_string(node));
+        fprintf(file, "+--- %s\n", astnode_to_string(node));
         flag->arr[depth] = false;
     }
     else {
-        printf("+--- %s\n", astnode_to_string(node));
+        fprintf(file, "+--- %s\n", astnode_to_string(node));
     }
 
     for (int i = 0; i < node->children->num_items; i++) {
-        traverse_print_ast(node->children->arr[i], flag, depth + 1, (i == (node->children->num_items - 1)));
+        traverse_print_ast(node->children->arr[i], flag, depth + 1, (i == (node->children->num_items - 1)), file);
     }
     flag->arr[depth] = (void*)true;
 }
@@ -692,7 +692,7 @@ void print_ast_at_node(ASTNode* node) {
         list_append(flag, (void*)true, sizeof(bool));
     }
     printf("\n\n\n\t----------\n\n");
-    traverse_print_ast(node, flag, 0, false);
+    traverse_print_ast(node, flag, 0, false, stdout);
 
     printf("\n\n");
 }
@@ -712,6 +712,17 @@ void print_ast(Parser* parser) {
         list_append(flag, (void*)true, sizeof(bool));
     }
     printf("\n\n\n\t-----AST-----\n\n");
-    traverse_print_ast(parser->root, flag, 0, false);
+    traverse_print_ast(parser->root, flag, 0, false, stdout);
+}
+
+void ast_to_file(Parser* parser, FILE* file) {
+    List* flag = init_list(sizeof(bool));
+    int count = count_nodes(parser->root);
+    for (int i = 0; i < count; i++) {
+        list_append(flag, (void*)true, sizeof(bool));
+    }
+    fprintf(file, "\n\n\n\t-----AST-----\n\n");
+    traverse_print_ast(parser->root, flag, 0, false, file);
+
 }
 

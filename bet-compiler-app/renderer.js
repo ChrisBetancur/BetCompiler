@@ -1,9 +1,10 @@
+
 const { ipcRenderer } = require("electron");
 const { exec } = require("child_process")
 //const { spawn } = require("child_process")
 const path = require("path")
 const makefile_path = "/home/c_bet/Projects/BetCompiler"
-const compiler_make = "make"
+const compiler_make = "make run"
 
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -44,49 +45,27 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 
     el.runFile.addEventListener("click", (e) => {
-
         exec(compiler_make, {cwd: makefile_path}, (error, stdout, stderr) => {
-            console.log(el.documentName.innerHTML)
             if (error) {
-                console.error(`exec error: ${error}`);
+            console.error(`exec error: ${error}`)
+            return
+        }
+        console.log(`stdout: ${stdout}`)
+        console.log(`stderr: ${stderr}`)
+
+        exec("./output examples/test.bet", {cwd: makefile_path}, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`exec error: ${error}`)
                 return
             }
+                console.log(`stdout: ${stdout}`)
+                console.log(`stderr: ${stderr}`)
 
-            //console.log("\n\n" + arr[0])
-            //el.output.innerHTML = stdout
 
+            const formattedOutput = stdout.replace(/\n/g, "<br>");
+
+            el.output.innerHTML = formattedOutput;            })
         })
-
-        exec("./output examples/" + el.documentName.innerHTML, {cwd: makefile_path}, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`exec error: ${error}`);
-                return
-            }
-            //let output = stdout.split("Leaving directory").pop()
-            //console.log(`stdout: ${output}`)
-            //arr = stdout.split(/\s+/).map((elem) => parseInt(elem.replace(/[^0-9]/g, '')))
-            console.log(`stdout:\n${stdout}`)
-
-            //console.log("\n\n" + arr[0])
-            el.output.innerHTML = stdout
-
-        })
-
-        exec("make clean", {cwd: makefile_path}, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`exec error: ${error}`);
-                return
-            }
-            //let output = stdout.split("Leaving directory").pop()
-            //console.log(`stdout: ${output}`)
-            //arr = stdout.split(/\s+/).map((elem) => parseInt(elem.replace(/[^0-9]/g, '')))
-            console.log(`stdout:\n${stdout}`)
-
-            //console.log("\n\n" + arr[0])
-
-        })
-
     })
-
 })
 

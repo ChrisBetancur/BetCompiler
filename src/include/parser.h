@@ -94,10 +94,12 @@ int parser_count_nodes(ASTNode* node, int count);
 
 void bfs_ast(ASTNode* root);
 
-void traverse_print_ast(ASTNode* node, List* flag, int depth, bool is_last);
+void traverse_print_ast(ASTNode* node, List* flag, int depth, bool is_last, FILE* file);
 
 void print_ast_at_node(ASTNode* node);
 
 void print_ast(Parser* parser);
+
+void ast_to_file(Parser* parser, FILE* file);
 
 #endif

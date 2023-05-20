@@ -6,6 +6,7 @@ const {
   Notification,
   Menu,
 } = require("electron");
+
 const path = require("path");
 const fs = require("fs");
 
@@ -21,21 +22,22 @@ let mainWindow;
 let openedFilePath;
 
 const createWindow = () => {
-  mainWindow = new BrowserWindow({
-    width: 900,
-    height: 700,
-    titleBarStyle: "hiddenInset",
-    webPreferences: {
-        sandbox: false,
-        preload: path.join(app.getAppPath(), "renderer.js"),
-    },
-  });
+    mainWindow = new BrowserWindow({
+        width: 1280,
+        height: 720,
+        titleBarStyle: "hiddenInset",
+        webPreferences: {
+            devTools: false,
+            sandbox: false,
+            preload: path.join(app.getAppPath(), "renderer.js"),
+        },
+    });
 
-  if (isDevEnv) {
+      if (isDevEnv) {
     mainWindow.webContents.openDevTools();
   }
 
-  mainWindow.loadFile("index.html");
+    mainWindow.loadFile("index.html");
 
   const menuTemplate = [
     {

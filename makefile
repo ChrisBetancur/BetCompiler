@@ -18,12 +18,12 @@ clean_output:
 
 clean:
 	-rm *.o
-	-rm *.a
+	#-rm *.a
 	-rm src/*.o
 	$(MAKE) clean_output
 
 run:
-	#$(MAKE) clean_output
+	$(MAKE) clean_output
 	#-make && ./$(exec) examples/test.bet
 	-make
 

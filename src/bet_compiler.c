@@ -23,6 +23,7 @@
 
 #endif
 
+#define AST_OUTPUT "abstract_syntax_tree.txt"
 /*
  * Function: bet_compile
  *
@@ -61,12 +62,17 @@ void bet_compile(char* src) {
 
 void bet_ide_compile(char* src) {
     char* src_file = read_file(src);
+
     Lexer* lexer = init_lexer(src_file);
 
     Parser* parser = init_parser(lexer);
     parser_parse_tokens(parser);
 
-    //print_ast(parser);
+    FILE* ast_output_file = fopen(AST_OUTPUT, "w");
+
+    ast_to_file(parser, ast_output_file);
+
+    fclose(ast_output_file);
 
     free(lexer);
     Stack* stack_frame = init_stack();
