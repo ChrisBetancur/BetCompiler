@@ -1,6 +1,0 @@
-int main() {
-    int var = 0;
-    int new_var = var;
-    return 0;
-}
-
