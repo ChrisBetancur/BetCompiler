@@ -1,0 +1,4 @@
+int mult(int a, int b) {
+    int c = b;
+    return a * b;
+}

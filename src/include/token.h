@@ -1,0 +1,48 @@
+#ifndef TOKEN_H
+#define TOKEN_H
+
+/*
+ * Struct: TOKEN_STRUCT
+ *
+ * Struct defined to represent a token
+ *
+ * value: represents the value of token
+ * line_num: where token is located in file
+ * type: represents the type of token
+ */
+
+typedef struct TOKEN_STRUCT {
+    char* value;
+    unsigned int line_num;
+
+    enum {
+        TOKEN_ID,
+        TOKEN_EQUAL,
+        TOKEN_ADD,
+        TOKEN_MULT,
+        TOKEN_DIV,
+        TOKEN_SUB,
+        TOKEN_LPARAN,
+        TOKEN_RPARAN,
+        TOKEN_LBRACE,
+        TOKEN_RBRACE,
+        TOKEN_SEMI,
+        TOKEN_COMMA,
+        TOKEN_LESS,
+        TOKEN_GREATER,
+        TOKEN_STRING,
+        TOKEN_INT,
+        TOKEN_EOL,
+        TOKEN_EOF
+    } type;
+} Token;
+
+Token* init_token(char* value, int type, int line_num);
+
+char* token_type_to_string(int type);
+
+char* token_to_string(Token* token);
+
+int free_token(Token* token);
+
+#endif

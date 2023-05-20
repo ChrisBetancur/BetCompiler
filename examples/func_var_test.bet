@@ -1,0 +1,13 @@
+int test() {
+    return 2;
+}
+
+void print(int s) {
+    return;
+}
+
+int main() {
+    int a = 0;
+    int b = a;
+    return 0;
+}

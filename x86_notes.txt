@@ -1,0 +1,80 @@
+----Registers in Depth----
+
+RAX: The accumulator register. It is used for arithmetic and logic operations, as well as for returning function results.
+
+RBX: The base register. It is typically used as a pointer to data in memory.
+
+RCX: The count register. It is used as a loop counter, as well as for passing function arguments.
+
+RDX: The data register. It is used for arithmetic and logic operations, as well as for passing function arguments.
+
+RSI: The source index register. It is typically used as a pointer to the source data in memory.
+
+RDI: The destination index register. It is typically used as a pointer to the destination data in memory.
+
+RSP: The stack pointer register. It points to the top of the stack, which is used to store temporary data and function call information.
+
+RBP: The base pointer register. It is used as a base pointer for accessing local variables and function parameters on the stack.
+
+R8-R15: The general-purpose registers. These registers can be used for any purpose, such as storing data, performing arithmetic and logic operations, or controlling program flow.
+
+----Constants----
+SYS_WRITE equ 1 -> rax
+SYS_EXIT equ 60 -> rax
+STDOUT equ 1 -> rdi
+
+- When calling a syscall, it is call on rax and then you can pass parameters by putting params in a certain order
+    -> The order of the registers is: rdi, rsi, rdx, r10, r8, r9.
+    -> rcx is used instead of r10 when calling a C function
+
+1. SYS_WRITE (1) - Writes value to a file, normally used to write to STDOUT
+    -> Parameters
+        Unsigned int - File descriptor (rdi)
+        const char* - Pointer to the string (rsi)
+        size_t - number of bytes to write (rdx)
+    -> Return value (rax)
+        The number of bytes of the pointer string on the file descriptor
+
+Ex.
+    mov rax, SYS_WRITE ; initialize syscall by moving the type of syscall to rax
+    ; Passing 3 params following the order of registers above
+    mov rdi, STDOUT ; rdi takes the type of file to write to
+    mov rsi, hello ; rsi takes the pointer/label of the string to write to
+    mov rdx, hello_len ; rdx takes the length in bytes to write (the size of the label)
+    syscall
+
+Remark: To get the size of a pointer to string, use $-label_of_string and define the label pointing the size using equ
+
+Ex.
+    hello db "Hello World", 10
+    length equ $-hello
+
+2. SYS_EXIT (60) - Exits the current program
+    -> Parameters
+        int - Error code
+    -> Return value (rax)
+        No return value
+
+Ex.
+    mov rax, SYS_EXIT
+    pop rdi
+    sub rdi, hello_len
+    syscall
+
+
+----ARM ASSEMBLY----
+
+as loop.s -o loop.o && ld loop.o -o loop -macosx_version_min 11.0 -L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lSystem
+
+
+To Run Debugger
+
+lldb ./executable
+
+breakpoint set --name main
+step
+register read x0
+
+----x86-64 ASSEMBLY----
+
+nasm -f elf64 -o myapp.o myapp.asm && ld -o myapp myapp.o
