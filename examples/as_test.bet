@@ -1,4 +1,4 @@
-
-
-int i = 1000;
+int i = 667;
 int b = 44;
+print(i);
+print(b);

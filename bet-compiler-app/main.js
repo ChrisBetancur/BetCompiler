@@ -27,7 +27,7 @@ const createWindow = () => {
         height: 720,
         titleBarStyle: "hiddenInset",
         webPreferences: {
-            devTools: false,
+            devTools: true,
             sandbox: false,
             preload: path.join(app.getAppPath(), "renderer.js"),
         },

@@ -35,13 +35,13 @@ body {
   outline: none;
 }
 
-.run-section {
+.button-section {
   display: flex;
   align-items: center;
   margin-left: auto; /* Push the run section button to the right end */
 }
 
-.run-section button {
+.button-section button {
   background-color: rgb(94, 94, 94);
   margin-right: 10px; /* Add spacing between the button and the right end */
   outline: none;

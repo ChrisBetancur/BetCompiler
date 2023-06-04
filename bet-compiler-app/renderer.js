@@ -53,7 +53,7 @@ window.addEventListener("DOMContentLoaded", () => {
         console.log(`stdout: ${stdout}`)
         console.log(`stderr: ${stderr}`)
 
-        exec("./output examples/test.bet", {cwd: makefile_path}, (error, stdout, stderr) => {
+        exec("./output examples/" + documentName.innerHTML, {cwd: makefile_path}, (error, stdout, stderr) => {
             if (error) {
                 console.error(`exec error: ${error}`)
                 return
