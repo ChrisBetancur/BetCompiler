@@ -19,6 +19,7 @@ Parser* init_parser(Lexer* lexer) {
     Parser* parser = malloc(sizeof(struct PARSER_STRUCT));
 
     parser->root = NULL;
+    parser->tokens = init_list(sizeof(struct TOKEN_STRUCT));
     parser->lexer = lexer;
     parser->curr_token = lexer_next_token(parser->lexer);
     return parser;
@@ -44,6 +45,7 @@ void parser_eat(Parser* parser, int type) {
         parser_error_handler(UNEXPECTED_TOKEN, parser->curr_token->value, type, parser->curr_token->line_num);
     }
     parser->curr_token = lexer_next_token(parser->lexer);
+    list_append(parser->tokens, parser->curr_token, sizeof(struct TOKEN_STRUCT));
 }
 
 
@@ -721,8 +723,15 @@ void ast_to_file(Parser* parser, FILE* file) {
     for (int i = 0; i < count; i++) {
         list_append(flag, (void*)true, sizeof(bool));
     }
-    fprintf(file, "\n\n\n\t-----AST-----\n\n");
+    fprintf(file, "\n");
     traverse_print_ast(parser->root, flag, 0, false, file);
 
+}
+
+void tokens_to_file(Parser* parser, FILE* file) {
+    fprintf(file, "\n");
+    for (int i = 0; i < parser->tokens->num_items; i++) {
+        fprintf(file, "%s\n", token_to_string(parser->tokens->arr[i]));
+    }
 }
 

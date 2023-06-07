@@ -23,7 +23,7 @@
 
 typedef struct PARSER_STRUCT {
     ASTNode* root;
-
+    List* tokens;
     Lexer* lexer;
     Token* curr_token;
 } Parser;
@@ -101,5 +101,7 @@ void print_ast_at_node(ASTNode* node);
 void print_ast(Parser* parser);
 
 void ast_to_file(Parser* parser, FILE* file);
+
+void tokens_to_file(Parser* parser, FILE* file);
 
 #endif

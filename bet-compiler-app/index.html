@@ -1,47 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self';" />
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="Content-Security-Policy" content="script-src 'self';" />
 
-    <link
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="./styles.css" />
-    <title>Document</title>
-  </head>
-  <body>
-    <div class="title-bar">
-      <div class="file-section">
-        <button id="openDocumentBtn">
-          <span class="button-section"> launch </span>
-        </button>
-        <button id="createDocumentBtn">
-          <span class="material-icons"> note_add </span>
-        </button>
-        <span class="document-name" id="documentName"></span>
+		<link rel="stylesheet" href="./styles.css" />
+		<title>Document</title>
+	</head>
+	<body>
 
-      </div>
+        <div class="title-bar">
+			<div class="file-section">
+				<button id="openDocumentBtn">
+					<span>Open File</span>
+				</button>
+				<button id="createDocumentBtn">
+					<span>New File</span>
+				</button>
+					<span id="fileName"></span>
+				</div>
+			<button id="runBetFile">
+				<img src="images/run.png" width="25" height="25" />
+			</button>
+		</div>
 
-        <button id="runBetFile" class="button-section">
-            <img src="images/run.png" width="25" height="25">
-        </button>
+		<div class="wrapper">
+			<div class="tabs">
+				<div class="tab">
+					<input type="radio" name="css-tabs" id="main-tab" checked class="tab-switch" />
+					<label for="main-tab" class="tab-label" id="fileNameTab">File Name</label>
+					<div class="tab-content">
+						<main>
+							<div class="main-container">
+								<div class="main-panel">
+									<textarea id="fileTextarea" disabled></textarea>
+								</div>
+								<div class="console-container">
+									<div class="console">
+										<span class="output" id="output"></span>
+									</div>
+								</div>
+							</div>
+						</main>
+					</div>
+				</div>
 
-        </div>
+                <div class="tab">
+					<input type="radio" name="css-tabs" id="token-tab" class="tab-switch" />
+					<label for="token-tab" class="tab-label">Tokens</label>
+					<div class="tab-content">
+                        <span id="tokenOutput" class="output"><span>
+					</div>
+				</div>
 
-        <main>
-            <div class="main-container">
-                <div class="main-panel">
-                    <textarea id="fileTextarea" disabled></textarea>
-                </div>
-                <div class="console-container">
-                    <div class="console">
-                        <span class="output" id="output"></span>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </body>
+				<div class="tab">
+					<input type="radio" name="css-tabs" id="ast-tab" class="tab-switch" />
+					<label for="ast-tab" class="tab-label">Abstract Syntax Tree</label>
+					<div class="tab-content">
+                        <span id="astOutput" class="output"><span>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</body>
 </html>
+

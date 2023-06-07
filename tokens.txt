@@ -1,0 +1,331 @@
+
+Token <value: b type: ID>
+
+Token <value: = type: =>
+
+Token <value: 14500 type: INT>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: int type: ID>
+
+Token <value: x type: ID>
+
+Token <value: = type: =>
+
+Token <value: 99 type: INT>
+
+Token <value: + type: +>
+
+Token <value: 1 type: INT>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: int type: ID>
+
+Token <value: r type: ID>
+
+Token <value: = type: =>
+
+Token <value: 99 type: INT>
+
+Token <value: + type: +>
+
+Token <value: ( type: (>
+
+Token <value: 2 type: INT>
+
+Token <value: * type: *>
+
+Token <value: 3 type: INT>
+
+Token <value: ) type: )>
+
+Token <value: / type: />
+
+Token <value: 3 type: INT>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: b type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: r type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: x type: ID>
+
+Token <value: = type: =>
+
+Token <value: 66 type: INT>
+
+Token <value: + type: +>
+
+Token <value: 34 type: INT>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: r type: ID>
+
+Token <value: = type: =>
+
+Token <value: 22 type: INT>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: b type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: r type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: x type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: b type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: r type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: x type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: b type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: r type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: x type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: b type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: r type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: x type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: b type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: r type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: x type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: b type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: r type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: x type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: b type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: r type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: x type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: b type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: r type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: print type: ID>
+
+Token <value: ( type: (>
+
+Token <value: x type: ID>
+
+Token <value: ) type: )>
+
+Token <value: ; type: ';' EOL>
+
+Token <value: EOF type: EOF>
+

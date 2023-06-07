@@ -24,6 +24,7 @@
 #endif
 
 #define AST_OUTPUT "abstract_syntax_tree.txt"
+#define TOKENS_OUTPUT "tokens.txt"
 /*
  * Function: bet_compile
  *
@@ -75,6 +76,11 @@ void bet_ide_compile(char* src) {
     fclose(ast_output_file);
 
     free(lexer);
+
+    FILE* token_output_file = fopen(TOKENS_OUTPUT, "w");
+    tokens_to_file(parser, token_output_file);
+    fclose(token_output_file);
+
     Stack* stack_frame = init_stack();
     char* output = x86_assemble(parser->root, stack_frame);
 
