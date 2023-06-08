@@ -1,5 +1,0 @@
-int i = 667;
-int b = 44;
-print(i);
-print(b);
-print(i);

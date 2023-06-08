@@ -118,10 +118,16 @@ app.on("open-file", (_, filePath) => {
 });
 
 ipcMain.on("open-document-triggered", () => {
-  dialog
+
+    const appDir = path.dirname(__dirname);
+    const defaultDir = path.join(appDir, "bet_files");
+    console.log(defaultDir);
+
+    dialog
     .showOpenDialog({
       properties: ["openFile"],
       filters: [{ name: "text files", extensions: ["bet"] }],
+        defaultPath: defaultDir,
     })
     .then(({ filePaths }) => {
       const filePath = filePaths[0];

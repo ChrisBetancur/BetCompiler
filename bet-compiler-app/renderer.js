@@ -7,6 +7,7 @@ const compiler_path = "/home/c_bet/Projects/BetCompiler/";
 const compiler_make = "make run";
 const ast_file_path = compiler_path + "abstract_syntax_tree.txt";
 const tokens_file_path = compiler_path + "tokens.txt";
+const asm_file_path = compiler_path + "output.asm";
 
 const fs = require("fs");
 
@@ -43,6 +44,8 @@ window.addEventListener("DOMContentLoaded", () => {
         output: document.getElementById("output"),
         astOutput: document.getElementById("astOutput"),
         tokensOutput: document.getElementById("tokenOutput"),
+        asmOutput: document.getElementById("asmOutput"),
+
     };
 
     const handleFileChange = (filePath, content = "") => {
@@ -82,7 +85,7 @@ window.addEventListener("DOMContentLoaded", () => {
             console.log(`stdout: ${stdout}`);
             console.log(`stderr: ${stderr}`);
 
-            exec("./output examples/" + fileName.innerHTML, { cwd: compiler_path }, (error, stdout, stderr) => {
+            exec("./output bet_files/" + fileName.innerHTML, { cwd: compiler_path }, (error, stdout, stderr) => {
                 if (error) {
                     console.error(`exec error: ${error}`);
                     return;
@@ -105,6 +108,14 @@ window.addEventListener("DOMContentLoaded", () => {
                 readFile(tokens_file_path).then((fileContents) => {
                     const formattedContents = formatASTContent(fileContents);
                     el.tokensOutput.innerHTML = formattedContents;
+                }).catch((error) => {
+                    console.error('Error reading file:', error);
+                });
+
+
+                readFile(asm_file_path).then((fileContents) => {
+                    const formattedContents = formatASTContent(fileContents);
+                    el.asmOutput.innerHTML = formattedContents;
                 }).catch((error) => {
                     console.error('Error reading file:', error);
                 });
