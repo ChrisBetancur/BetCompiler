@@ -1,5 +1,5 @@
 # BetCompiler
-Compiler for my own language. Combination of my favorite features of python, C and Java. Currently able to process basic arithmetic, store 64 bit integer variables and print one expression or integer variable at a time.
+Compiler for my own language. Combination of my favorite features of Python, C and Java. Currently able to process basic arithmetic, store 64 bit integer variables an print one expression or integer variable at a time.
 
 ### Road Map
 - [x] Lexer
@@ -13,10 +13,51 @@ Compiler for my own language. Combination of my favorite features of python, C a
 
 - [ ] Translating to x86 Assembly
     - [x] Pushing integer variables to memory
-    - [x] Printing one variable to terminal
+    - [ ] Pushing char variables to memory
+    - [ ] Pushing string variables to memory
+    - [x] Printing integer variable
+    - [x] Printing string literals
+    - [ ] Printing multiple arguments
+    - [ ] Printing integer literals 
     - [ ] Bug fixes
 - [ ] Translating to ARM Assembly
+- [ ] Electron Frontend
+    - [x] Create and edit bet files
+    - [x] Compile bet file and show output
+    - [ ] Make frontend look nice
+    - [x] Show tokens
+    - [x] Show AST
+    - [x] Show Assembly code
+    - [ ] Refactor frontend
 
+
+### Next Steps
+- Refactor frontend
+- Make frontend look nice
+
+
+### To compile bet files directly
+
+Compile the compiler using
+`make`
+
+Compile the bet file using executable
+`./output "path/to/bet/file`
+
+### To compile through Electron frontend
+At bet-compiler-app directory
+
+Install packages with
+
+`npm install`
+
+Start a local development environmnt
+
+`npm run start`
+
+Build the application if you want to get installable files
+
+`npm run build`
 ### Current Issues
 
 #### 1. Error: List Append (SOLVED)
@@ -92,14 +133,3 @@ int mult(int a, int b) {
  - Solution
     - Passed the current scope as param in is_symbol_in_scope function
 
-### Next Steps
-- Handling Errors
-- Handling multiple params in print function
-- Handling functions
-
-
-### How to compile code
-
-1. Open terminal and go to where Bet is stored
-2. make
-3. ./a.out <bet file name>
