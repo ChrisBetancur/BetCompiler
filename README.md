@@ -42,7 +42,7 @@ Compile the compiler using
 `make`
 
 Compile the bet file using executable
-`./output "path/to/bet/file`
+`./output path/to/bet/file`
 
 ### To compile through Electron frontend
 At bet-compiler-app directory
