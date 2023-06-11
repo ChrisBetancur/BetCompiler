@@ -54,8 +54,8 @@ char* x86_assemble(ASTNode* node, Stack* stack_frame) {
             break;
 
         default:
-            printf("Assembler: Unexpected node type '%s' for '%s'\n", astnode_type_to_string(node->type), node->name);
-            exit(1);
+            x86_error_handler(UNEXPECTED_NODE, node);
+            break;
     }
 
     return next_val;
@@ -115,8 +115,9 @@ char* x86_var_call(ASTNode* node, Stack* stack_frame) {
         return output;
     }
 
-    printf("Assembler:: Variable %s not defined\n", node->name);
-    exit(1);
+
+    x86_error_handler(UNDEFINED_VAR, node);
+
 }
 
 char* x86_var(ASTNode* node, Stack* stack_frame) {
@@ -209,8 +210,41 @@ char* x86_built_in(ASTNode* node, Stack* stack_frame) {
 
             return output;
         }
+
+        if (element->type == AST_LITERAL) { // only handles string literals
+            const char* print_literal_str_template = "    mov rax, SYS_WRITE\n"
+                                                     "    mov rdi, STDOUT\n"
+                                                     "    mov rsi, %s_str\n"
+                                                     "    mov rdx, %s_len\n"
+                                                     "    syscall\n";
+
+            char* output = calloc(strlen(print_literal_str_template) + strlen(element->name) * 2, sizeof(char));
+            sprintf(output, print_literal_str_template, element->name, element->name, sizeof(char));
+
+            return output;
+        }
     }
     return NULL;
+}
+
+// TODO: Identify duplicate literals to not repeat
+char* x86_identify_literals(char* root_data, ASTNode* node) {
+    if (node->type == AST_LITERAL) {
+        const char* literal_template = "%s    %s_str db '%s', 10\n"
+                                       "    %s_len equ $ -%s_str\n\n";
+
+        char* new_root_data = calloc(strlen(literal_template) + strlen(root_data) + (strlen(node->name) * 4) + 1, sizeof(char));
+        sprintf(new_root_data, literal_template, root_data, node->name, node->name, node->name, node->name);
+        return new_root_data;
+    }
+
+    char* literals = root_data;
+    for (int i = 0; i < node->children->num_items; i++) {
+        literals = x86_identify_literals(literals, node->children->arr[i]);
+
+    }
+
+    return literals;
 }
 
 char* x86_global(ASTNode* node, Stack* stack_frame) {
@@ -219,6 +253,7 @@ char* x86_global(ASTNode* node, Stack* stack_frame) {
     char* end_root = read_file(END_ROOT);
 
     char* root_data = read_file(ROOT_DATA);
+    root_data = x86_identify_literals(root_data, node);
 
     char* root_bss = read_file(ROOT_BSS);
 
@@ -245,9 +280,9 @@ char* x86_global(ASTNode* node, Stack* stack_frame) {
         }
     }
 
-    char* buffer = calloc(strlen(start_root) + strlen(body_output) + strlen(end_root) + strlen(print_int) + strlen(root_const) + strlen(root_data) + strlen(root_bss) + 6, sizeof(char)); //4 keeps track of the number of new lines in sprintf
+    char* buffer = calloc(strlen(start_root) + strlen(body_output) + strlen(end_root) + strlen(print_int) + strlen(root_const) + strlen(root_data) + strlen(root_bss) + 1, sizeof(char)); //4 keeps track of the number of new lines in sprintf
 
-    sprintf(buffer, "%s%s\n%s\n%s\n%s\n%s\n%s", start_root, body_output, end_root, print_int, root_const, root_data, root_bss);
+    sprintf(buffer, "%s%s%s%s%s%s%s", start_root, body_output, end_root, print_int, root_const, root_data, root_bss);
 
     return buffer;
 }

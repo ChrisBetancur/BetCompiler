@@ -118,15 +118,13 @@ app.on("open-file", (_, filePath) => {
 });
 
 ipcMain.on("open-document-triggered", () => {
-
     const appDir = path.dirname(__dirname);
     const defaultDir = path.join(appDir, "bet_files");
-    console.log(defaultDir);
 
     dialog
     .showOpenDialog({
       properties: ["openFile"],
-      filters: [{ name: "text files", extensions: ["bet"] }],
+      filters: [{ name: "bet files", extensions: ["bet"] }],
         defaultPath: defaultDir,
     })
     .then(({ filePaths }) => {
@@ -137,9 +135,13 @@ ipcMain.on("open-document-triggered", () => {
 });
 
 ipcMain.on("create-document-triggered", () => {
+    const appDir = path.dirname(__dirname);
+    const defaultDir = path.join(appDir, "bet_files");
+
   dialog
     .showSaveDialog(mainWindow, {
-      filters: [{ name: "text files", extensions: ["txt"] }],
+      filters: [{ name: "bet files", extensions: ["bet"] }],
+        defaultPath: defaultDir,
     })
     .then(({ filePath }) => {
       fs.writeFile(filePath, "", (error) => {

@@ -1,0 +1,4 @@
+print("Hello");
+int i = 0;
+print("Hello");
+print(i);

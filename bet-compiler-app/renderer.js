@@ -86,16 +86,17 @@ window.addEventListener("DOMContentLoaded", () => {
             console.log(`stderr: ${stderr}`);
 
             exec("./output bet_files/" + fileName.innerHTML, { cwd: compiler_path }, (error, stdout, stderr) => {
-                if (error) {
-                    console.error(`exec error: ${error}`);
-                    return;
-                }
                 console.log(`stdout: ${stdout}`);
-                console.log(`stderr: ${stderr}`);
+                                console.log(`stderr: ${stderr}`);
 
                 const formattedOutput = stdout.replace(/\n/g, "<br>");
 
                 el.output.innerHTML = formattedOutput;
+
+                if (error) {
+                    console.error(`exec error: ${error}`);
+                    return;
+                }
 
                 readFile(ast_file_path).then((fileContents) => {
                     const formattedContents = formatASTContent(fileContents);

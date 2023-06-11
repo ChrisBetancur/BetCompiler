@@ -1,8 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 
 #include "include/token.h"
+
 
 /*
  * Function: init_token
@@ -85,7 +87,7 @@ char* token_type_to_string(int type) {
             break;
 
         case TOKEN_EOL:
-            return "';' EOL";
+            return ";";
             break;
         case TOKEN_EOF:
             return "EOF";
@@ -109,9 +111,14 @@ char* token_type_to_string(int type) {
 
 char* token_to_string(Token* token) {
     const char* type_str = token_type_to_string(token->type);
-    const char* template = "Token <value: %s type: %s>\n";
-    char* token_str = calloc(strlen(type_str) + strlen(template) + strlen(token->value), sizeof(char));
-    sprintf(token_str, template, token->value, type_str);
+    const char* template = "Token <value: %s type: %s line: %s>\n";
+
+    int length = snprintf(NULL, 0, "%d", token->line_num);
+    char line_num[length];
+    snprintf(line_num, length + 1, "%d", token->line_num);
+
+    char* token_str = calloc(strlen(type_str) + strlen(template) + strlen(token->value) + strlen(line_num) + 1, sizeof(char));
+    sprintf(token_str, template, token->value, type_str, line_num);
 
     return token_str;
 }

@@ -1,103 +1,41 @@
 
-Token <value: i type: ID>
+Token <value: ( type: ( line: 1>
 
-Token <value: = type: =>
+Token <value: Hello type: STRING line: 1>
 
-Token <value: 667 type: INT>
+Token <value: ) type: ) line: 1>
 
-Token <value: ; type: ';' EOL>
+Token <value: ; type: ; line: 1>
 
-Token <value: int type: ID>
+Token <value: int type: ID line: 2>
 
-Token <value: b type: ID>
+Token <value: i type: ID line: 2>
 
-Token <value: = type: =>
+Token <value: = type: = line: 2>
 
-Token <value: 44 type: INT>
+Token <value: 0 type: INT line: 2>
 
-Token <value: ; type: ';' EOL>
+Token <value: ; type: ; line: 2>
 
-Token <value: print type: ID>
+Token <value: print type: ID line: 3>
 
-Token <value: ( type: (>
+Token <value: ( type: ( line: 3>
 
-Token <value: i type: ID>
+Token <value: Hello type: STRING line: 3>
 
-Token <value: ) type: )>
+Token <value: ) type: ) line: 3>
 
-Token <value: ; type: ';' EOL>
+Token <value: ; type: ; line: 3>
 
-Token <value: print type: ID>
+Token <value: print type: ID line: 4>
 
-Token <value: ( type: (>
+Token <value: ( type: ( line: 4>
 
-Token <value: b type: ID>
+Token <value: i type: ID line: 4>
 
-Token <value: ) type: )>
+Token <value: ) type: ) line: 4>
 
-Token <value: ; type: ';' EOL>
+Token <value: ; type: ; line: 4>
 
-Token <value: print type: ID>
-
-Token <value: ( type: (>
-
-Token <value: i type: ID>
-
-Token <value: ) type: )>
-
-Token <value: ; type: ';' EOL>
-
-Token <value: int type: ID>
-
-Token <value: c type: ID>
-
-Token <value: = type: =>
-
-Token <value: 12 type: INT>
-
-Token <value: + type: +>
-
-Token <value: 9 type: INT>
-
-Token <value: - type: ->
-
-Token <value: 1 type: INT>
-
-Token <value: / type: />
-
-Token <value: 4 type: INT>
-
-Token <value: + type: +>
-
-Token <value: ( type: (>
-
-Token <value: 9 type: INT>
-
-Token <value: / type: />
-
-Token <value: ( type: (>
-
-Token <value: 1 type: INT>
-
-Token <value: + type: +>
-
-Token <value: 2 type: INT>
-
-Token <value: ) type: )>
-
-Token <value: ) type: )>
-
-Token <value: ; type: ';' EOL>
-
-Token <value: print type: ID>
-
-Token <value: ( type: (>
-
-Token <value: c type: ID>
-
-Token <value: ) type: )>
-
-Token <value: ; type: ';' EOL>
-
-Token <value: EOF type: EOF>
+Token <value: EOF type: EOF line: 4>
 
