@@ -1,3 +1,4 @@
+
 const {
   BrowserWindow,
   app,
@@ -10,6 +11,8 @@ const {
 const path = require("path");
 const fs = require("fs");
 
+const { createCompilerWindow } = require("./compilerWindow");
+
 const isDevEnv = process.env.NODE_ENV === "development";
 
 if (isDevEnv) {
@@ -18,81 +21,14 @@ if (isDevEnv) {
   } catch {}
 }
 
-let mainWindow;
+let compilerWindow;
 let openedFilePath;
 
-const createWindow = () => {
-    mainWindow = new BrowserWindow({
-        width: 1280,
-        height: 720,
-        titleBarStyle: "hiddenInset",
-        webPreferences: {
-            devTools: true,
-            sandbox: false,
-            preload: path.join(app.getAppPath(), "renderer.js"),
-        },
-    });
-
-      if (isDevEnv) {
-    mainWindow.webContents.openDevTools();
-  }
-
-    mainWindow.loadFile("index.html");
-
-  const menuTemplate = [
-    {
-      label: "File",
-      submenu: [
-        {
-          label: "Add New File",
-          click: () => ipcMain.emit("open-document-triggered"),
-        },
-        {
-          label: "Create New File",
-          click: () => ipcMain.emit("create-document-triggered"),
-        },
-        { type: "separator" },
-        {
-          label: "Open Recent",
-          role: "recentdocuments",
-          submenu: [
-            {
-              label: "Clear Recent",
-              role: "clearrecentdocuments",
-            },
-          ],
-        },
-        {
-          role: "quit",
-        },
-      ],
-    },
-    {
-      label: "Edit",
-      submenu: [
-        { role: "undo" },
-        { role: "redo" },
-        { type: "separator" },
-        { role: "cut" },
-        { role: "copy" },
-        { role: "paste" },
-        { role: "pasteAndMatchStyle" },
-        { role: "delete" },
-        { role: "selectAll" },
-        { type: "separator" },
-        {
-          label: "Speech",
-          submenu: [{ role: "startSpeaking" }, { role: "stopSpeaking" }],
-        },
-      ],
-    },
-  ];
-
-  const menu = Menu.buildFromTemplate(menuTemplate);
-  Menu.setApplicationMenu(menu);
+const initCompilerWindow = (isDevEnv) => {
+    compilerWindow = createCompilerWindow();
 };
 
-app.whenReady().then(createWindow);
+app.whenReady().then(initCompilerWindow);
 
 const handleError = () => {
   new Notification({
@@ -101,20 +37,20 @@ const handleError = () => {
   }).show();
 };
 
-const openFile = (filePath) => {
+const openFile = (window, filePath) => {
   fs.readFile(filePath, "utf8", (error, content) => {
     if (error) {
       handleError();
     } else {
       app.addRecentDocument(filePath);
       openedFilePath = filePath;
-      mainWindow.webContents.send("document-opened", { filePath, content });
+      window.webContents.send("document-opened", { filePath, content });
     }
   });
 };
 
 app.on("open-file", (_, filePath) => {
-  openFile(filePath);
+  openFile(compilerWindow, filePath);
 });
 
 ipcMain.on("open-document-triggered", () => {
@@ -130,7 +66,7 @@ ipcMain.on("open-document-triggered", () => {
     .then(({ filePaths }) => {
       const filePath = filePaths[0];
 
-      openFile(filePath);
+      openFile(compilerWindow, filePath);
     });
 });
 
@@ -139,7 +75,7 @@ ipcMain.on("create-document-triggered", () => {
     const defaultDir = path.join(appDir, "bet_files");
 
   dialog
-    .showSaveDialog(mainWindow, {
+    .showSaveDialog(compilerWindow, {
       filters: [{ name: "bet files", extensions: ["bet"] }],
         defaultPath: defaultDir,
     })
@@ -150,7 +86,7 @@ ipcMain.on("create-document-triggered", () => {
         } else {
           app.addRecentDocument(filePath);
           openedFilePath = filePath;
-          mainWindow.webContents.send("document-created", filePath);
+          compilerWindow.webContents.send("document-created", filePath);
         }
       });
     });

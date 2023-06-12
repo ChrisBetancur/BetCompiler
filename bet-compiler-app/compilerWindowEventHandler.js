@@ -1,10 +1,7 @@
-
-
 const { ipcRenderer } = require("electron");
-const { exec } = require("child_process");
 const path = require("path");
 
-const  {
+const {
     readFile,
     formatASTContent,
     compiler_path,
@@ -14,30 +11,18 @@ const  {
     asm_file_path
 } = require("./util");
 
-window.addEventListener("DOMContentLoaded", () => {
-    const el = {
-        fileName: document.getElementById("fileName"),
-        fileNameTab: document.getElementById("fileNameTab"),
-        createDocumentBtn: document.getElementById("createDocumentBtn"),
-        openDocumentBtn: document.getElementById("openDocumentBtn"),
-        fileTextarea: document.getElementById("fileTextarea"),
-        runFile: document.getElementById("runBetFile"),
-        output: document.getElementById("output"),
-        astOutput: document.getElementById("astOutput"),
-        tokensOutput: document.getElementById("tokenOutput"),
-        asmOutput: document.getElementById("asmOutput"),
+const handleFileChange = (filePath, content = "") => {
+    el.fileName.innerHTML = path.parse(filePath).base;
+    el.fileNameTab.innerHTML = path.parse(filePath).base;
+    el.fileTextarea.removeAttribute("disabled");
+    el.fileTextarea.value = content;
+    el.fileTextarea.focus();
+};
 
-    };
 
-    const handleFileChange = (filePath, content = "") => {
-        el.fileName.innerHTML = path.parse(filePath).base;
-        el.fileNameTab.innerHTML = path.parse(filePath).base;
-        el.fileTextarea.removeAttribute("disabled");
-        el.fileTextarea.value = content;
-        el.fileTextarea.focus();
-    };
-
+const compilerEventHandler = (el) => {
     el.createDocumentBtn.addEventListener("click", () => {
+        console.log("Yo\n");
         ipcRenderer.send("create-document-triggered");
     });
 
@@ -101,11 +86,10 @@ window.addEventListener("DOMContentLoaded", () => {
                 }).catch((error) => {
                     console.error('Error reading file:', error);
                 });
-
-
             });
         });
     });
-});
-
-
+}
+module.exports = {
+    compilerEventHandler
+};

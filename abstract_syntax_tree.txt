@@ -1,29 +1,17 @@
 
 Ast Node <name: root type: GLOBAL SCOPE>
 
-+--- Ast Node <name: print type: BUILT_IN>
-
-|     +--- Ast Node <type: PARAMS>
-
-|           +--- Ast Node <name: Hello type: LITERAL>
-
-+--- Ast Node <name: i type: VARIABLE>
++--- Ast Node <name: b type: VARIABLE>
 
 |     +--- Ast Node <name: int type: DECLARATION TYPE>
 
 |     +--- Ast Node <type: EXPRESSION>
 
-|           +--- Ast Node <name: 0 type: INTEGER>
-
-+--- Ast Node <name: print type: BUILT_IN>
-
-|     +--- Ast Node <type: PARAMS>
-
-|           +--- Ast Node <name: Hello type: LITERAL>
+|           +--- Ast Node <name: 99 type: INTEGER>
 
 +--- Ast Node <name: print type: BUILT_IN>
 
       +--- Ast Node <type: PARAMS>
 
-            +--- Ast Node <name: i type: VARIABLE>
+            +--- Ast Node <name: b type: VARIABLE>
 

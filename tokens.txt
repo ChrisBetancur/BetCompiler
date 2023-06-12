@@ -1,41 +1,21 @@
 
-Token <value: ( type: ( line: 1>
+Token <value: b type: ID line: 1>
 
-Token <value: Hello type: STRING line: 1>
+Token <value: = type: = line: 1>
 
-Token <value: ) type: ) line: 1>
+Token <value: 99 type: INT line: 1>
 
 Token <value: ; type: ; line: 1>
-
-Token <value: int type: ID line: 2>
-
-Token <value: i type: ID line: 2>
-
-Token <value: = type: = line: 2>
-
-Token <value: 0 type: INT line: 2>
-
-Token <value: ; type: ; line: 2>
 
 Token <value: print type: ID line: 3>
 
 Token <value: ( type: ( line: 3>
 
-Token <value: Hello type: STRING line: 3>
+Token <value: b type: ID line: 3>
 
 Token <value: ) type: ) line: 3>
 
 Token <value: ; type: ; line: 3>
 
-Token <value: print type: ID line: 4>
-
-Token <value: ( type: ( line: 4>
-
-Token <value: i type: ID line: 4>
-
-Token <value: ) type: ) line: 4>
-
-Token <value: ; type: ; line: 4>
-
-Token <value: EOF type: EOF line: 4>
+Token <value: EOF type: EOF line: 3>
 
