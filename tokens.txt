@@ -1,9 +1,57 @@
 
-Token <value: b type: ID line: 1>
+Token <value: ( type: ( line: 1>
 
-Token <value: = type: = line: 1>
+Token <value: 1 type: INT line: 1>
 
-Token <value: 99 type: INT line: 1>
+Token <value: , type: , line: 1>
+
+Token <value: 2 type: INT line: 1>
+
+Token <value: , type: , line: 1>
+
+Token <value: 3 type: INT line: 1>
+
+Token <value: , type: , line: 1>
+
+Token <value: yobro type: STRING line: 1>
+
+Token <value: , type: , line: 1>
+
+Token <value: ( type: ( line: 1>
+
+Token <value: 10 type: INT line: 1>
+
+Token <value: + type: + line: 1>
+
+Token <value: 15 type: INT line: 1>
+
+Token <value: * type: * line: 1>
+
+Token <value: 2 type: INT line: 1>
+
+Token <value: ) type: ) line: 1>
+
+Token <value: / type: / line: 1>
+
+Token <value: ( type: ( line: 1>
+
+Token <value: 2 type: INT line: 1>
+
+Token <value: + type: + line: 1>
+
+Token <value: 8 type: INT line: 1>
+
+Token <value: ) type: ) line: 1>
+
+Token <value: , type: , line: 1>
+
+Token <value: 6 type: INT line: 1>
+
+Token <value: , type: , line: 1>
+
+Token <value: 7 type: INT line: 1>
+
+Token <value: ) type: ) line: 1>
 
 Token <value: ; type: ; line: 1>
 

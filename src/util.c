@@ -67,13 +67,10 @@ bool is_dec_type(char* name) {
     return is_prim_type(name);
 }
 
-
 bool is_expression(char* name) {
     char* curr_char = name;
 
-    if (strlen(name) == 1) {
-        return isdigit(*name);
-    }
+
 
     while (curr_char != NULL && *curr_char != '\0') {
         if (!isdigit(*curr_char) && !is_multdiv_op(curr_char) && !is_addsub_op(curr_char)) {
@@ -109,6 +106,9 @@ bool is_literal(char* name) {
 
 bool is_built_in(char* name) {
     if (strcmp(name, "puts") == 0)
+        return true;
+
+    if (strcmp(name, "print") == 0)
         return true;
 
     return false;
@@ -190,6 +190,7 @@ bool is_addsub_op(char* name) {
         return true;
     return false;
 }
+
 
 void parser_error_handler(int error, char* token_value, int expected_type, int line_num) {
     switch (error) {

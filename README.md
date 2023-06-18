@@ -32,7 +32,8 @@ Compiler for my own language. Combination of my favorite features of Python, C a
 
 
 ### Next Steps
-- Fix Dropdown list bug where when I open a file error pops up but it works when I use open file butoon
+- Fix Dropdown list bug where when I open a file error pops up but it works when I use open file buton
+- Make puts and print functions handle strings with spaces
 
 
 ### To compile bet files directly

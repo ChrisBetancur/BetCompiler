@@ -1,11 +1,45 @@
 
 Ast Node <name: root type: GLOBAL SCOPE>
 
-+--- Ast Node <name: b type: VARIABLE>
++--- Ast Node <name: print type: BUILT_IN>
 
-      +--- Ast Node <name: int type: DECLARATION TYPE>
+      +--- Ast Node <type: PARAMS>
 
-      +--- Ast Node <type: EXPRESSION>
+            +--- Ast Node <name: 1 type: INTEGER>
 
-            +--- Ast Node <name: 99 type: INTEGER>
+            +--- Ast Node <name: 2 type: INTEGER>
+
+            +--- Ast Node <name: 3 type: INTEGER>
+
+            +--- Ast Node <name: yobro type: LITERAL>
+
+            +--- Ast Node <type: BINARY OPERATION>
+
+            |     +--- Ast Node <name: / type: OPERATOR>
+
+            |     +--- Ast Node <type: BINARY OPERATION>
+
+            |     |     +--- Ast Node <name: + type: OPERATOR>
+
+            |     |     +--- Ast Node <name: 10 type: INTEGER>
+
+            |     |     +--- Ast Node <type: BINARY OPERATION>
+
+            |     |           +--- Ast Node <name: * type: OPERATOR>
+
+            |     |           +--- Ast Node <name: 15 type: INTEGER>
+
+            |     |           +--- Ast Node <name: 2 type: INTEGER>
+
+            |     +--- Ast Node <type: BINARY OPERATION>
+
+            |           +--- Ast Node <name: + type: OPERATOR>
+
+            |           +--- Ast Node <name: 2 type: INTEGER>
+
+            |           +--- Ast Node <name: 8 type: INTEGER>
+
+            +--- Ast Node <name: 6 type: INTEGER>
+
+            +--- Ast Node <name: 7 type: INTEGER>
 

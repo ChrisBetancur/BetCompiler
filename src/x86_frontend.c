@@ -181,51 +181,77 @@ char* x86_eval_expr(ASTNode* node, Stack* stack_frame) {
     return output;
 }
 
+char* x86_print_element(ASTNode* element, Stack* stack_frame) {
+    if (element->type == AST_BINARY_OP) {
+        char* expr =  x86_eval_expr(element, stack_frame);
+        char* output = calloc(strlen(expr) + strlen("    pop rax\n    call print_int\n") + 1, sizeof(char));
+        sprintf(output, "%s    pop rax\n    call print_int\n", expr);
+
+        return output;
+    }
+
+    if (element->type == AST_INT) {
+        const char* print_int_template = "    mov rax, %s\n"
+                                         "    call print_int\n";
+        char* output = calloc(strlen(print_int_template) + strlen(element->name) + 1, sizeof(char));
+        sprintf(output, print_int_template, element->name);
+        return output;
+    }
+
+    if (element->type == AST_VAR) {
+        char* var_call = x86_var(element, stack_frame);
+        const char* print_var_template = "%s\n    pop rax\n"
+                                            "     call print_int\n";
+
+        char* output = calloc(strlen(var_call) + strlen(print_var_template) + 1, sizeof(char));
+        sprintf(output, print_var_template, var_call);
+
+        return output;
+    }
+
+    if (element->type == AST_LITERAL) { // only handles string literals -> only handles strings with NO SPACES
+        const char* print_literal_str_template = "    mov rax, SYS_WRITE\n"
+                                                 "    mov rdi, STDOUT\n"
+                                                 "    mov rsi, %s_str\n"
+                                                 "    mov rdx, %s_len\n"
+                                                 "    syscall\n";
+
+        char* output = calloc(strlen(print_literal_str_template) + strlen(element->name) * 2, sizeof(char));
+        sprintf(output, print_literal_str_template, element->name, element->name, sizeof(char));
+
+        return output;
+    }
+
+    return NULL;
+}
 
 char* x86_built_in(ASTNode* node, Stack* stack_frame) {
-    if (strcmp(node->name, "puts") == 0) { // prints only one value at a time
+    if (strcmp(node->name, "puts") == 0) {
         ASTNode* element = ((ASTNode*) node->children->arr[0])->children->arr[0];
 
-        if (element->type == AST_BINARY_OP) {
-            char* expr =  x86_eval_expr(element, stack_frame);
-            char* output = calloc(strlen(expr) + strlen("    pop rax\n    call print_int\n") + 1, sizeof(char));
-            sprintf(output, "%s    pop rax\n    call print_int\n", expr);
-
-            return output;
-        }
-
-        if (element->type == AST_INT) {
-            const char* print_int_template = "    mov rax, %s\n"
-                                             "    call print_int\n";
-            char* output = calloc(strlen(print_int_template) + strlen(element->name) + 1, sizeof(char));
-            sprintf(output, print_int_template, element->name);
-            return output;
-        }
-
-        if (element->type == AST_VAR) {
-            char* var_call = x86_var(element, stack_frame);
-            const char* print_var_template = "%s\n    pop rax\n"
-                                                "     call print_int\n";
-
-            char* output = calloc(strlen(var_call) + strlen(print_var_template) + 1, sizeof(char));
-            sprintf(output, print_var_template, var_call);
-
-            return output;
-        }
-
-        if (element->type == AST_LITERAL) { // only handles string literals
-            const char* print_literal_str_template = "    mov rax, SYS_WRITE\n"
-                                                     "    mov rdi, STDOUT\n"
-                                                     "    mov rsi, %s_str\n"
-                                                     "    mov rdx, %s_len\n"
-                                                     "    syscall\n";
-
-            char* output = calloc(strlen(print_literal_str_template) + strlen(element->name) * 2, sizeof(char));
-            sprintf(output, print_literal_str_template, element->name, element->name, sizeof(char));
-
-            return output;
-        }
+        return x86_print_element(element, stack_frame);
     }
+
+    else if (strcmp(node->name, "print") == 0) {
+        ASTNode* params = node->children->arr[0];
+
+        char* output = NULL;
+        for (int i = 0; i < params->children->num_items; i++) {
+            char* print_output = x86_print_element(params->children->arr[i], stack_frame);
+
+            if (output == NULL) {
+                output = print_output;
+            }
+
+            else {
+                output = realloc(output, (strlen(output) + strlen(print_output) + 2) * sizeof(char));
+                strcat(output, print_output);
+            }
+        }
+
+        return output;
+    }
+
     return NULL;
 }
 

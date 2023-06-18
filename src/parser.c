@@ -347,6 +347,14 @@ ASTNode* parse_return_st(Parser* parser) {
 }
 
 ASTNode* parse_built_in(Parser* parser) {
+    if (strcmp(parser->curr_token->value, "print") == 0) { // puts should only have one param, might remove this in the future
+        ASTNode* symbol = init_ASTNode(parser->curr_token->value, AST_BUILT_IN);
+        parser_eat(parser, TOKEN_ID);
+        list_append(symbol->children, parse_func_call_params(parser), sizeof(struct AST_NODE_STRUCT));
+        //parser_eat(parser, TOKEN_EOL);
+        return symbol;
+    }
+
     if (strcmp(parser->curr_token->value, "puts") == 0) {
         ASTNode* symbol = init_ASTNode(parser->curr_token->value, AST_BUILT_IN);
         parser_eat(parser, TOKEN_ID);
@@ -354,6 +362,7 @@ ASTNode* parse_built_in(Parser* parser) {
         //parser_eat(parser, TOKEN_EOL);
         return symbol;
     }
+
     return NULL;
 }
 
@@ -479,20 +488,23 @@ ASTNode* parse_func_call_params(Parser* parser) { // USES FUNC DEF (GET SYMBOL I
     }
 
     while (parser->curr_token->type != TOKEN_RPARAN) {
-
         if (parser->curr_token->type == TOKEN_ID && !is_keyword_type(parser->curr_token->value)) {
             ASTNode* symbol = init_ASTNode(parser->curr_token->value, AST_VAR);
             list_append(params->children, symbol, sizeof(struct AST_NODE_STRUCT));
             parser_eat(parser, TOKEN_ID);
         }
 
-        else if(is_expression(parser->curr_token->value)) {
+        else if(is_expression(parser->curr_token->value) || strcmp(parser->curr_token->value, "(") == 0) {
             list_append(params->children, parse_expr(parser), sizeof(struct AST_NODE_STRUCT));
         }
 
-        else if(is_literal(parser->curr_token->value)) {
+        /*else if(is_literal(parser->curr_token->value)) {
+            list_append(params->children, parse_literal(parser), sizeof(struct AST_NODE_STRUCT));
+        }*/
+        else if(parser->curr_token->type == TOKEN_STRING) {
             list_append(params->children, parse_literal(parser), sizeof(struct AST_NODE_STRUCT));
         }
+
 
         if (parser->curr_token->type != TOKEN_RPARAN) {
             parser_eat(parser, TOKEN_COMMA);

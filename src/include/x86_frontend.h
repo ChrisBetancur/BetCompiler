@@ -6,6 +6,9 @@
 
 char* x86_assemble(ASTNode* node, Stack* stack_frame);
 
+
+char* x86_print_element(ASTNode* element, Stack* stack_frame);
+
 char* x86_built_in(ASTNode* node, Stack* stack_frame);
 
 char* x86_op_evaluate(char* op);
