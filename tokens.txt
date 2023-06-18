@@ -7,15 +7,5 @@ Token <value: 99 type: INT line: 1>
 
 Token <value: ; type: ; line: 1>
 
-Token <value: print type: ID line: 3>
-
-Token <value: ( type: ( line: 3>
-
-Token <value: b type: ID line: 3>
-
-Token <value: ) type: ) line: 3>
-
-Token <value: ; type: ; line: 3>
-
-Token <value: EOF type: EOF line: 3>
+Token <value: EOF type: EOF line: 2>
 

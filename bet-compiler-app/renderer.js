@@ -1,8 +1,10 @@
-
-
-const { ipcRenderer } = require("electron");
+const { ipcRenderer, remote } = require("electron");
 const { exec } = require("child_process");
 const path = require("path");
+const fs = require('fs')
+
+const { listDir } = require("./compilerWindow");
+const { bet_dir_path } = require("./util");
 
 const  {
     readFile,
@@ -14,7 +16,19 @@ const  {
     asm_file_path
 } = require("./util");
 
+
+
 window.addEventListener("DOMContentLoaded", () => {
+    /*listDir(bet_dir_path) .then((result) => {
+        if (result) {
+            nav.innerHTML = result;
+            console.log(nav.innerHTML);
+        }
+    }).catch((err) => {
+        console.log('Error: ' + err);
+    });*/
+
+
     const el = {
         fileName: document.getElementById("fileName"),
         fileNameTab: document.getElementById("fileNameTab"),
@@ -26,7 +40,8 @@ window.addEventListener("DOMContentLoaded", () => {
         astOutput: document.getElementById("astOutput"),
         tokensOutput: document.getElementById("tokenOutput"),
         asmOutput: document.getElementById("asmOutput"),
-
+        dirList: document.getElementById("dirList"),
+        betfile: document.getElementById("betfile")
     };
 
     const handleFileChange = (filePath, content = "") => {
@@ -45,7 +60,36 @@ window.addEventListener("DOMContentLoaded", () => {
         ipcRenderer.send("open-document-triggered");
     });
 
+
+
+    listDir(bet_dir_path).then((result) => {
+        if (result) {
+            el.dirList.innerHTML = result;
+
+
+            setTimeout(() => {
+                const betfileElements = document.getElementsByClassName("betfile");
+                Array.from(betfileElements).forEach((element) => {
+                    element.addEventListener("click", (e) => {
+                        const filePath = e.target.getAttribute("data-filepath");
+                        readFile(filePath)
+                            .then((fileContents) => {
+                                handleFileChange(filePath, fileContents);
+                            })
+                            .catch((error) => {
+                                console.error('Error reading file:', error);
+                            });
+                    });
+                });
+            }, 0);
+        }
+    })
+    .catch((err) => {
+        console.log('Error: ' + err);
+    });
+
     el.fileTextarea.addEventListener("input", (e) => {
+        console.log("hello\n");
         ipcRenderer.send("file-content-updated", e.target.value);
     });
 
@@ -66,6 +110,7 @@ window.addEventListener("DOMContentLoaded", () => {
             console.log(`stdout: ${stdout}`);
             console.log(`stderr: ${stderr}`);
 
+            console.log(fileName.innerHTML);
             exec("./output bet_files/" + fileName.innerHTML, { cwd: compiler_path }, (error, stdout, stderr) => {
                 console.log(`stdout: ${stdout}`);
                                 console.log(`stderr: ${stderr}`);
@@ -75,7 +120,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 el.output.innerHTML = formattedOutput;
 
                 if (error) {
-                    console.error(`exec error: ${error}`);
+                    console.log("yo");
                     return;
                 }
 
@@ -107,5 +152,4 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
-
 

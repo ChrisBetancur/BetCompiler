@@ -16,9 +16,13 @@ char* x86_var(ASTNode* node, Stack* stack_frame);
 
 char* x86_int(ASTNode* node);
 
-char* x86_binary_op(ASTNode* node);
+char* x86_binary_op(ASTNode* node, Stack* stack_frame);
 
 char* x86_eval_expr(ASTNode* node, Stack* stack_frame);
+
+char* x86_func_call(ASTNode* node, Stack* stack_frame);
+
+char* x86_func(ASTNode* node, Stack* stack_frame);
 
 char* x86_global(ASTNode* node, Stack* stack_frame);
 

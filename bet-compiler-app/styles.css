@@ -9,18 +9,46 @@ body {
     overflow: hidden;
 }
 
+.directory-list {
+    list-style: none;
+}
+
+.dirList {
+    height: calc(90vh - 2.86rem);
+    position: absolute;
+    z-index: 1;
+    background: #323232;
+    color: #2c3e50;
+    border-bottom: 0.25rem;
+    width: 235px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.primary-navigation {
+    resize: both;
+    width: 235px;
+    height: calc(90vh - 6rem);
+}
+
 .wrapper {
     max-width: 700rem;
-    width: 100%;
-    margin: 0 auto;
+    width: calc(100% - 235px);
+    margin-left: 235px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align items to the right */
 }
 
 .tabs {
-    position: relative;
+    position: absolute;
     background: #323232;
-    /*align-items: stretch;*/
-    /*height: calc(90vh - 6rem);*/
-    width: calc(100% - 2rem);
+    width: calc(80%);
+    top: 50px;
+    right: 20px;
     box-sizing: border-box;
     margin: 0 auto;
 }
@@ -50,7 +78,7 @@ body {
     height: 3em;
     padding: 0 1.618em;
     background: #;
-    border-right: 0.125rem solid green;
+    border-bottom: 0.125rem solid green;
     color: #fff;
     cursor: pointer;
     top: 0;
@@ -62,49 +90,33 @@ body {
     transition: top 0.25s;
 }
 
-.tab-content {
+.content {
     height: calc(90vh - 6rem);
-    position: absolute;
     z-index: 1;
-    top: 2.75em;
-    left: 0;
+    position: absolute;
     background: #323232;
-    border-bottom: 0.25rem solid green;
+    color: #2c3e50;
+    border-bottom: 0.25rem;
     opacity: 0;
     transition: all 0.35s;
     flex-grow: 1;
     width: 100%;
     box-sizing: border-box;
-}
-
-.tab-content {
-  height: calc(90vh - 6rem);
-  position: absolute;
-  z-index: 1;
-  background: #323232;
-  color: #2c3e50;
-  border-bottom: 0.25rem;
-  opacity: 0;
-  transition: all 0.35s;
-  flex-grow: 1;
-  width: 100%;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .tab-switch:checked + .tab-label {
     background: #5E5E5E;
     color: #FFFFFF;
-    border-bottom: 0;
-    border-right: 0.125rem solid #fff;
+    border-bottom: 0.125rem solid #fff;
     transition: all 0.35s;
     z-index: 1;
     top: -0.0625rem;
 }
 
-.tab-switch:checked + label + .tab-content {
+.tab-switch:checked + label + .content {
     z-index: 2;
     opacity: 1;
     transition: all 0.35s;

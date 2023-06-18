@@ -108,7 +108,7 @@ bool is_literal(char* name) {
  */
 
 bool is_built_in(char* name) {
-    if (strcmp(name, "print") == 0)
+    if (strcmp(name, "puts") == 0)
         return true;
 
     return false;
@@ -229,7 +229,7 @@ void x86_error_handler(int error, ASTNode* node) {
             exit(1);
             break;
 
-        defualt:
+        default:
             printf("Error Handler: Unexpected error code %d", error);
             exit(1);
             break;

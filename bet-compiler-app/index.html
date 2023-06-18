@@ -26,12 +26,18 @@
 			</button>
 		</div>
 
+        <nav role="navigation" class="primary-navigation" id="nav">
+				<div class="dirList" id="dirList">
+              </div>
+        </nav>
+
 		<div class="wrapper">
 			<div class="tabs">
+
 				<div class="tab">
 					<input type="radio" name="css-tabs" id="main-tab" checked class="tab-switch" />
 					<label for="main-tab" class="tab-label" id="fileNameTab">File Name</label>
-					<div class="tab-content">
+					<div class="content">
 						<main>
 							<div class="main-container">
 								<div class="main-panel">
@@ -52,7 +58,7 @@
                 <div class="tab">
 					<input type="radio" name="css-tabs" id="token-tab" class="tab-switch" />
 					<label for="token-tab" class="tab-label">Tokens</label>
-					<div class="tab-content">
+					<div class="content">
                         <span id="tokenOutput" class="output"><span>
 					</div>
 				</div>
@@ -60,7 +66,7 @@
 				<div class="tab">
 					<input type="radio" name="css-tabs" id="ast-tab" class="tab-switch" />
 					<label for="ast-tab" class="tab-label">Abstract Syntax Tree</label>
-					<div class="tab-content">
+					<div class="content">
                         <span id="astOutput" class="output"><span>
 					</div>
 				</div>
@@ -68,14 +74,17 @@
                 <div class="tab">
 					<input type="radio" name="css-tabs" id="asm-tab" class="tab-switch" />
 					<label for="asm-tab" class="tab-label">Assembly</label>
-					<div class="tab-content">
+					<div class="content">
                         <span id="asmOutput" class="output"><span>
 					</div>
 				</div>
 
 
+
+
+
 			</div>
-		</div>
+            	</div>
 
 	</body>
 </html>

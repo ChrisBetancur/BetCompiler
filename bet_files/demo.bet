@@ -1,4 +1,1 @@
-print("Hello");
-int i = 0;
-print("bro");
-print(i);
+puts(1);

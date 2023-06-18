@@ -347,7 +347,7 @@ ASTNode* parse_return_st(Parser* parser) {
 }
 
 ASTNode* parse_built_in(Parser* parser) {
-    if (strcmp(parser->curr_token->value, "print") == 0) {
+    if (strcmp(parser->curr_token->value, "puts") == 0) {
         ASTNode* symbol = init_ASTNode(parser->curr_token->value, AST_BUILT_IN);
         parser_eat(parser, TOKEN_ID);
         list_append(symbol->children, parse_func_call_params(parser), sizeof(struct AST_NODE_STRUCT));

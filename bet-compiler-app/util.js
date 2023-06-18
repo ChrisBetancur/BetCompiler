@@ -4,6 +4,7 @@ const compiler_make = "make run";
 const ast_file_path = compiler_path + "abstract_syntax_tree.txt";
 const tokens_file_path = compiler_path + "tokens.txt";
 const asm_file_path = compiler_path + "output.asm";
+const bet_dir_path = compiler_path + "bet_files";
 
 
 
@@ -39,5 +40,6 @@ module.exports = {
     compiler_make,
     ast_file_path,
     tokens_file_path,
-    asm_file_path
+    asm_file_path,
+    bet_dir_path
 };

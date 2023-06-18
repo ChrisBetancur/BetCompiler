@@ -32,8 +32,7 @@ Compiler for my own language. Combination of my favorite features of Python, C a
 
 
 ### Next Steps
-- Refactor frontend
-- Make frontend look nice
+- Fix Dropdown list bug where when I open a file error pops up but it works when I use open file butoon
 
 
 ### To compile bet files directly

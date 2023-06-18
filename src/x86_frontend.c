@@ -30,6 +30,7 @@
  */
 
 char* x86_assemble(ASTNode* node, Stack* stack_frame) {
+
     char* next_val = 0;
 
     switch (node->type) {
@@ -42,7 +43,7 @@ char* x86_assemble(ASTNode* node, Stack* stack_frame) {
             break;
 
         case AST_BINARY_OP:
-            next_val = x86_binary_op(node);
+            next_val = x86_binary_op(node, stack_frame);
             break;
 
         case AST_VAR:
@@ -61,11 +62,12 @@ char* x86_assemble(ASTNode* node, Stack* stack_frame) {
     return next_val;
 }
 
-char* x86_binary_op(ASTNode* node) {
+char* x86_binary_op(ASTNode* node, Stack* stack_frame) {
     char* op;
 
-    char* left = x86_assemble(node->children->arr[1], NULL);
-    char* right = x86_assemble(node->children->arr[2], NULL);
+
+    char* left = x86_assemble(node->children->arr[1], stack_frame);
+    char* right = x86_assemble(node->children->arr[2], stack_frame);
 
 
     if (strcmp(((ASTNode*) node->children->arr[0])->name, "+") == 0){ // does not check if adding vars together
@@ -117,7 +119,7 @@ char* x86_var_call(ASTNode* node, Stack* stack_frame) {
 
 
     x86_error_handler(UNDEFINED_VAR, node);
-
+    return NULL;
 }
 
 char* x86_var(ASTNode* node, Stack* stack_frame) {
@@ -175,13 +177,13 @@ char* x86_var(ASTNode* node, Stack* stack_frame) {
 char* x86_eval_expr(ASTNode* node, Stack* stack_frame) {
     if (node->type != AST_BINARY_OP)
         return x86_int(node);
-    char* output = x86_binary_op(node);
+    char* output = x86_binary_op(node, stack_frame);
     return output;
 }
 
 
 char* x86_built_in(ASTNode* node, Stack* stack_frame) {
-    if (strcmp(node->name, "print") == 0) { // prints only one value at a time
+    if (strcmp(node->name, "puts") == 0) { // prints only one value at a time
         ASTNode* element = ((ASTNode*) node->children->arr[0])->children->arr[0];
 
         if (element->type == AST_BINARY_OP) {
@@ -246,6 +248,10 @@ char* x86_identify_literals(char* root_data, ASTNode* node) {
 
     return literals;
 }
+
+char* x86_func_call(ASTNode* node, Stack* stack_frame);
+
+char* x86_func(ASTNode* node, Stack* stack_frame);
 
 char* x86_global(ASTNode* node, Stack* stack_frame) {
     char* start_root = read_file(START_ROOT);
