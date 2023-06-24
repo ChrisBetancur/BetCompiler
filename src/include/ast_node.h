@@ -34,7 +34,7 @@ typedef struct AST_NODE_STRUCT {
         AST_NULL,
         AST_INT,
         AST_BOOL,
-        AST_LITERAL,
+        AST_STRING,
         AST_PARAMS,
         AST_BLOCK,
         AST_BUILT_IN

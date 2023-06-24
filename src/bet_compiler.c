@@ -6,8 +6,8 @@
 #include "include/io.h"
 #include "include/token.h"
 #include "include/parser.h"
-#include "include/as_frontend.h"
 #include "include/stack.h"
+#include "include/symbol_table.h"
 #include "include/x86_frontend.h"
 
 #if __APPLE__
@@ -25,6 +25,7 @@
 
 #define AST_OUTPUT "abstract_syntax_tree.txt"
 #define TOKENS_OUTPUT "tokens.txt"
+#define TABLE_SIZE 15
 /*
  * Function: bet_compile
  *
@@ -47,10 +48,12 @@ void bet_compile(char* src) {
     //print_ast(parser);
 
     free(lexer);
-    Stack* stack_frame = init_stack();
+    //Stack* stack_frame = init_stack();
+    SymbolTable* table = init_symbol_table(15);
     printf("Assembling bet source file '%s'...\n", src);
-    char* output = x86_assemble(parser->root, stack_frame);
+    char* output = x86_assemble(parser->root, table);
 
+    puts(symbol_table_to_string(table));
     //print_stack_frame(stack_frame);
 
     printf("Compiling...\n\n");
@@ -81,14 +84,14 @@ void bet_ide_compile(char* src) {
     tokens_to_file(parser, token_output_file);
     fclose(token_output_file);
 
-    Stack* stack_frame = init_stack();
-    char* output = x86_assemble(parser->root, stack_frame);
+    SymbolTable* table = init_symbol_table(15);
+    printf("Assembling bet source file '%s'...\n", src);
+    char* output = x86_assemble(parser->root, table);
 
-    //print_stack_frame(stack_frame);
+    puts(symbol_table_to_string(table));
 
     write_file(OUTPUT_FILE, output);
     system(COMPILE_OBJ);
     system(MAKE_EXECUTABLE);
     system(RUN_EXEC);
-
 }

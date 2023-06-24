@@ -25,6 +25,8 @@ bool is_multdiv_op(char* name);
 
 bool is_addsub_op(char* name);
 
+char* str_to_asm_usage(char* str);
+
 typedef enum {
     UNEXPECTED_TOKEN,
     INVALID_ASSIGNMENT,

@@ -83,8 +83,8 @@ char* astnode_type_to_string(int type) {
         case AST_BOOL:
             return "BOOLEAN";
             break;
-        case AST_LITERAL:
-            return "LITERAL";
+        case AST_STRING:
+            return "STRING";
             break;
          case AST_PARAMS:
             return "PARAMS";
@@ -114,6 +114,7 @@ char* astnode_type_to_string(int type) {
 char* astnode_to_string(ASTNode* node) {
     const char* type_str = astnode_type_to_string(node->type);
     char* node_str;
+
     if (node->name != NULL) {
         const char* template = "Ast Node <name: %s type: %s>\n";
         node_str = calloc(strlen(type_str) + strlen(template) + strlen(node->name), sizeof(char));

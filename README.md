@@ -19,6 +19,7 @@ Compiler for my own language. Combination of my favorite features of Python, C a
     - [x] Printing string literals
     - [ ] Printing multiple arguments
     - [ ] Printing integer literals 
+    - [x] Symbol table created
     - [ ] Bug fixes
 - [ ] Translating to ARM Assembly
 - [ ] Electron Frontend
@@ -32,8 +33,8 @@ Compiler for my own language. Combination of my favorite features of Python, C a
 
 
 ### Next Steps
-- Fix Dropdown list bug where when I open a file error pops up but it works when I use open file buton
-- Make puts and print functions handle strings with spaces
+- Printing integer literals
+- Pushing string variable to memory
 
 
 ### To compile bet files directly

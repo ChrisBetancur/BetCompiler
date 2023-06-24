@@ -57,8 +57,8 @@ void parser_eat(Parser* parser, int type) {
  * returns: AST node containing literal
  */
 
-ASTNode* parse_literal(Parser* parser) {
-    ASTNode* symbol = init_ASTNode(parser->curr_token->value, AST_LITERAL);
+ASTNode* parse_string(Parser* parser) {
+    ASTNode* symbol = init_ASTNode(parser->curr_token->value, AST_STRING);
     parser_eat(parser, TOKEN_STRING);
     return symbol;
 }
@@ -217,7 +217,7 @@ void parse_bool_var(Parser* parser, ASTNode* symbol) { // not able to parse bool
  */
 
 void parse_string_var(Parser* parser, ASTNode* symbol) {
-    list_append(symbol->children, parse_literal(parser), sizeof(struct AST_NODE_STRUCT));
+    list_append(symbol->children, parse_string(parser), sizeof(struct AST_NODE_STRUCT));
 }
 
 /*
@@ -502,7 +502,7 @@ ASTNode* parse_func_call_params(Parser* parser) { // USES FUNC DEF (GET SYMBOL I
             list_append(params->children, parse_literal(parser), sizeof(struct AST_NODE_STRUCT));
         }*/
         else if(parser->curr_token->type == TOKEN_STRING) {
-            list_append(params->children, parse_literal(parser), sizeof(struct AST_NODE_STRUCT));
+            list_append(params->children, parse_string(parser), sizeof(struct AST_NODE_STRUCT));
         }
 
 

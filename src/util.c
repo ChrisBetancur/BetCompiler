@@ -192,6 +192,22 @@ bool is_addsub_op(char* name) {
 }
 
 
+char* str_to_asm_usage(char* str) {
+    /*char* new_str = calloc(1, sizeof(char));
+
+    for (int i = 0; i < strlen(str); i++) {
+        new_str = realloc(new_str, (i + 2) * sizeof(char));
+        if (str[i] == ' ') {
+            new_str[i] = '_';
+        }
+        else {
+            new_str[i] = str[i];
+        }
+    }*/
+
+}
+
+
 void parser_error_handler(int error, char* token_value, int expected_type, int line_num) {
     switch (error) {
         case UNEXPECTED_TOKEN:
