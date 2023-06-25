@@ -21,6 +21,8 @@
 #define MUL PATH "mul.asm"
 #define DIV PATH "div.asm"
 
+
+
 /*
  * Function: x86_assemble
  *
@@ -30,13 +32,13 @@
  * stack_frame:
  */
 
-char* x86_assemble(ASTNode* node, SymbolTable* table) {
+char* x86_assemble(ASTNode* node, SymbolTable* table, char* proc) {
 
     char* next_val = 0;
 
     switch (node->type) {
         case AST_GLOBAL:
-            next_val = x86_global(node, table);
+            next_val = x86_global(node, table, PROC_GLOBAL);
             break;
 
         case AST_INT:
@@ -44,15 +46,19 @@ char* x86_assemble(ASTNode* node, SymbolTable* table) {
             break;
 
         case AST_BINARY_OP:
-            next_val = x86_binary_op(node, table);
+            next_val = x86_binary_op(node, table, proc);
             break;
 
         case AST_VAR:
-            next_val = x86_var(node, table);
+            next_val = x86_var(node, table, proc);
             break;
 
         case AST_BUILT_IN:
-            next_val = x86_built_in(node, table);
+            next_val = x86_built_in(node, table, proc);
+            break;
+
+        case AST_FUNC:
+            next_val = x86_func(node, table, proc);
             break;
 
         default:
@@ -63,12 +69,12 @@ char* x86_assemble(ASTNode* node, SymbolTable* table) {
     return next_val;
 }
 
-char* x86_binary_op(ASTNode* node, SymbolTable* table) {
+char* x86_binary_op(ASTNode* node, SymbolTable* table, char* proc) {
     char* op;
 
 
-    char* left = x86_assemble(node->children->arr[1], table);
-    char* right = x86_assemble(node->children->arr[2], table);
+    char* left = x86_assemble(node->children->arr[1], table, proc);
+    char* right = x86_assemble(node->children->arr[2], table, proc);
 
 
     if (strcmp(((ASTNode*) node->children->arr[0])->name, "+") == 0){ // does not check if adding vars together
@@ -105,13 +111,16 @@ char* x86_int(ASTNode* node) {
 }
 
 
-char* x86_var_call(ASTNode* node, SymbolTable* table) {
+char* x86_var_call(ASTNode* node, SymbolTable* table, char* proc) {
     const char* call_var_template = "\n    mov rdi, [var_stack + %d]\n"
                                       "    push rdi\n";
 
+    if (!symbol_in_scope(table, proc, node->name)) {
+        x86_error_handler(SYMBOL_NOT_IN_SCOPE, node);
+    }
+
     Entry* entry = symbol_table_lookup(table, node->name);
 
-    puts(astnode_to_string(node));
     if (entry == NULL) {
         x86_error_handler(UNDEFINED_VAR, node);
     }
@@ -122,17 +131,17 @@ char* x86_var_call(ASTNode* node, SymbolTable* table) {
     return output;
 }
 
-char* x86_var(ASTNode* node, SymbolTable* table) { // SHOULD PASS A SCOPE ARGUMENT IN ORDER TO PUSH A VALID ENTRY, FOR NOW ITS JUST GLOBAL
+char* x86_var(ASTNode* node, SymbolTable* table, char* proc) { // SHOULD PASS A SCOPE ARGUMENT IN ORDER TO PUSH A VALID ENTRY, FOR NOW ITS JUST GLOBAL
     if (node->children->num_items == 0) {
-        return x86_var_call(node, table);
+        return x86_var_call(node, table, proc);
     }
 
     ASTNode* child = node->children->arr[0];
 
     if (child->type == AST_DEC_TYPE) {
         if (strcmp(child->name, "int") == 0) {
-            Entry* entry = init_entry_mem(node->name, ENTRY_INT, table->top_offset += 0x10, PROC_GLOBAL);
-            symbol_table_insert(table, entry);
+            Entry* entry = init_entry_mem(node->name, ENTRY_INT, table->top_offset += 0x10);
+            symbol_table_insert(table, proc, entry);
 
             const char* stack_push_template = "\n%s    pop rsi\n"
                                                   "    mov [var_stack + %d], rsi\n\n";
@@ -142,7 +151,7 @@ char* x86_var(ASTNode* node, SymbolTable* table) { // SHOULD PASS A SCOPE ARGUME
 
             char* expr = NULL;
             if (((ASTNode*) node->children->arr[1])->type == AST_EXPR) {
-                expr = x86_eval_expr(((ASTNode*) node->children->arr[1])->children->arr[0], table);
+                expr = x86_eval_expr(((ASTNode*) node->children->arr[1])->children->arr[0], table, proc);
             }
 
             char* output;
@@ -163,7 +172,11 @@ char* x86_var(ASTNode* node, SymbolTable* table) { // SHOULD PASS A SCOPE ARGUME
         const char* stack_push_template = "%s\n    pop rsi\n"
                                             "    mov [var_stack + %d], rsi\n\n";
 
-        char* expr = x86_eval_expr(child->children->arr[0], table);
+        char* expr = x86_eval_expr(child->children->arr[0], table, proc);
+
+        if (!symbol_in_scope(table, proc, node->name)) {
+            x86_error_handler(SYMBOL_NOT_IN_SCOPE, node);
+        }
 
         Entry* entry_stored = symbol_table_lookup(table, node->name);
 
@@ -180,16 +193,17 @@ char* x86_var(ASTNode* node, SymbolTable* table) { // SHOULD PASS A SCOPE ARGUME
     return NULL;
 }
 
-char* x86_eval_expr(ASTNode* node, SymbolTable* table) {
+char* x86_eval_expr(ASTNode* node, SymbolTable* table, char* proc) {
     if (node->type != AST_BINARY_OP)
         return x86_int(node);
-    char* output = x86_binary_op(node, table);
+
+    char* output = x86_binary_op(node, table, proc);
     return output;
 }
 
-char* x86_print_element(ASTNode* element, SymbolTable* table) {
+char* x86_print_element(ASTNode* element, SymbolTable* table, char* proc) {
     if (element->type == AST_BINARY_OP) {
-        char* expr =  x86_eval_expr(element, table);
+        char* expr =  x86_eval_expr(element, table, proc);
         char* output = calloc(strlen(expr) + strlen("    pop rax\n    call print_int\n") + 1, sizeof(char));
         sprintf(output, "%s    pop rax\n    call print_int\n", expr);
 
@@ -205,7 +219,7 @@ char* x86_print_element(ASTNode* element, SymbolTable* table) {
     }
 
     if (element->type == AST_VAR) {
-        char* var_call = x86_var(element, table);
+        char* var_call = x86_var(element, table, proc);
         const char* print_var_template = "%s\n    pop rax\n"
                                             "     call print_int\n";
 
@@ -233,11 +247,11 @@ char* x86_print_element(ASTNode* element, SymbolTable* table) {
     return NULL;
 }
 
-char* x86_built_in(ASTNode* node, SymbolTable* table) {
+char* x86_built_in(ASTNode* node, SymbolTable* table, char* proc) {
     if (strcmp(node->name, "puts") == 0) {
         ASTNode* element = ((ASTNode*) node->children->arr[0])->children->arr[0];
 
-        return x86_print_element(element, table);
+        return x86_print_element(element, table, proc);
     }
 
     else if (strcmp(node->name, "print") == 0) {
@@ -245,7 +259,7 @@ char* x86_built_in(ASTNode* node, SymbolTable* table) {
 
         char* output = NULL;
         for (int i = 0; i < params->children->num_items; i++) {
-            char* print_output = x86_print_element(params->children->arr[i], table);
+            char* print_output = x86_print_element(params->children->arr[i], table, proc);
 
             if (output == NULL) {
                 output = print_output;
@@ -263,14 +277,14 @@ char* x86_built_in(ASTNode* node, SymbolTable* table) {
     return NULL;
 }
 
-// TODO: Identify duplicate literals to not repeat and seperate string and int literals
+// TODO: Identify duplicate literals to not repeat and seperate string and int literals; MIGHT HAVE TO CHANGE WHEN STRING VARS ARE INTRODUCED
 char* x86_identify_literals(char* root_data, ASTNode* node, SymbolTable* table) {
     if (node->type == AST_STRING && symbol_table_lookup(table, node->name) == NULL) {
-        const char* literal_template = "%s    %s db '%s', 10\n"
+        const char* literal_template = "%s    %s db '%s'\n"
                                        "    %s_len equ $ -%s\n\n";
 
-        Entry* entry = init_entry_label(node->name, ENTRY_STRING, &table->num_labels, PROC_GLOBAL);
-        symbol_table_insert(table, entry);
+        Entry* entry = init_entry_label(node->name, ENTRY_STRING, &table->num_labels);
+        symbol_table_insert(table, PROC_GLOBAL, entry);
 
         char* new_root_data = calloc(strlen(literal_template) + strlen(root_data) + strlen(node->name) + (strlen(entry->label) * 3) + 1, sizeof(char));
         sprintf(new_root_data, literal_template, root_data, entry->label, node->name, entry->label, entry->label);
@@ -286,8 +300,14 @@ char* x86_identify_literals(char* root_data, ASTNode* node, SymbolTable* table) 
     return literals;
 }
 
+char* x86_func_call(ASTNode* node, SymbolTable* table, char* proc) {
+}
 
-char* x86_global(ASTNode* node, SymbolTable* table) {
+char* x86_func(ASTNode* node, SymbolTable* table, char* proc) { // processes integer functions with no arguments
+    char* func_template = "%s:\n%s";
+}
+
+char* x86_global(ASTNode* node, SymbolTable* table, char* proc) {
     char* start_root = read_file(START_ROOT);
 
     char* end_root = read_file(END_ROOT);
@@ -306,7 +326,7 @@ char* x86_global(ASTNode* node, SymbolTable* table) {
     size_t body_size = 0;
 
     for (int i = 0; i < node->children->num_items; i++) {
-        char* curr_node = x86_assemble(node->children->arr[i], table);
+        char* curr_node = x86_assemble(node->children->arr[i], table, proc);
 
         body_size += strlen(curr_node) * sizeof(char);
 

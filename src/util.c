@@ -246,6 +246,12 @@ void x86_error_handler(int error, ASTNode* node) {
             exit(1);
             break;
 
+        case SYMBOL_NOT_IN_SCOPE:
+            printf("Assembler: Variable '%s' not defined in scope\n", node->name);
+            exit(1);
+            break;
+
+
         default:
             printf("Error Handler: Unexpected error code %d", error);
             exit(1);

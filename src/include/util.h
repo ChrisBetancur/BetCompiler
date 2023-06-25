@@ -35,7 +35,8 @@ typedef enum {
 
 typedef enum {
     UNEXPECTED_NODE,
-    UNDEFINED_VAR
+    UNDEFINED_VAR,
+    SYMBOL_NOT_IN_SCOPE
 } x86_ERROR;
 
 void parser_error_handler(int error, char* token_value, int expected_type, int line_num);

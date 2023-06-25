@@ -51,7 +51,7 @@ void bet_compile(char* src) {
     //Stack* stack_frame = init_stack();
     SymbolTable* table = init_symbol_table(15);
     printf("Assembling bet source file '%s'...\n", src);
-    char* output = x86_assemble(parser->root, table);
+    char* output = x86_assemble(parser->root, table, -1);
 
     puts(symbol_table_to_string(table));
     //print_stack_frame(stack_frame);
@@ -61,6 +61,7 @@ void bet_compile(char* src) {
     system(COMPILE_OBJ);
     system(MAKE_EXECUTABLE);
     system(RUN_EXEC);
+    printf("\n");
 }
 
 
@@ -84,14 +85,12 @@ void bet_ide_compile(char* src) {
     tokens_to_file(parser, token_output_file);
     fclose(token_output_file);
 
-    SymbolTable* table = init_symbol_table(15);
-    printf("Assembling bet source file '%s'...\n", src);
-    char* output = x86_assemble(parser->root, table);
-
-    puts(symbol_table_to_string(table));
+    SymbolTable* table = init_symbol_table(3);
+    char* output = x86_assemble(parser->root, table, NULL);
 
     write_file(OUTPUT_FILE, output);
     system(COMPILE_OBJ);
     system(MAKE_EXECUTABLE);
     system(RUN_EXEC);
+    printf("\n");
 }

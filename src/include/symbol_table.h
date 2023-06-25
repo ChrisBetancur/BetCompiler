@@ -1,8 +1,13 @@
+#include <stdbool.h>
+#include "list.h"
+
 #ifndef SYMBOL_TABLE_H
 #define SYMBOL_TABLE_H
 
 #define HASH 33
 #define PRIME_NUM 997
+
+#define PROC_GLOBAL "global"
 
 typedef struct ENTRY_STRUCT {
     char* name;
@@ -16,18 +21,12 @@ typedef struct ENTRY_STRUCT {
     int mem_addr;
     char* label;
 
-    enum {
-        PROC_GLOBAL,
-        PROC_FUNC,
-        PROC_INNER
-    } proc;
-
     struct ENTRY_STRUCT* next;
 } Entry;
 
-Entry* init_entry_mem(char* name, int type, int mem_addr, int proc); // for vars
+Entry* init_entry_mem(char* name, int type, int mem_addr); // for vars
 
-Entry* init_entry_label(char* name, int type, unsigned int* label_id, int proc); // for literals
+Entry* init_entry_label(char* name, int type, unsigned int* label_id); // for literals
 
 Entry* copy_entry(Entry* entry);
 
@@ -37,21 +36,32 @@ char* entry_proc_to_string(int proc);
 
 char* entry_to_string(Entry* entry);
 
+typedef struct PROC_STRUCT {
+    char* name;
+    Entry* entry;
+} Proc;
+
+Proc* init_proc(char* name);
+
 typedef struct SYMBOL_TABLE_STRUCT {
-    Entry** buckets;
+    List* procs;
     unsigned int size;
     unsigned int num_symbols;
     unsigned int top_offset;
     unsigned int num_labels;
 } SymbolTable;
 
-SymbolTable* init_symbol_table(int size);
+SymbolTable* init_symbol_table();
 
 int generate_hash(char* key);
 
 int compress_hash(int hash_code, unsigned int size);
 
-void symbol_table_insert(SymbolTable* table, Entry* entry);
+bool symbol_in_scope(SymbolTable* table, char* proc, char* name);
+
+void symbol_table_insert(SymbolTable* table,  char* proc_name, Entry* entry);
+
+Proc* symbol_table_lookup_proc(SymbolTable* table, char* proc_name);
 
 Entry* symbol_table_lookup(SymbolTable* table, char* symbol_name);
 
