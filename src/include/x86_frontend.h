@@ -25,6 +25,10 @@ char* x86_eval_expr(ASTNode* node, SymbolTable* table, Proc* proc);
 
 char* x86_identify_literals(char* root_data, ASTNode* node, SymbolTable* table, Proc* proc);
 
+char* x86_identify_funcs(ASTNode* node, SymbolTable* table);
+
+char* x86_func_block(ASTNode* node, SymbolTable* table, Proc* proc);
+
 char* x86_func_call(ASTNode* node, SymbolTable* table, Proc* proc);
 
 char* x86_func(ASTNode* node, SymbolTable* table);

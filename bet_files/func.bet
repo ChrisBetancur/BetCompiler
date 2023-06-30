@@ -2,3 +2,5 @@ int main(int i, int j, int k, int l) {
     int m = i + j + k + l;
     return m;
 }
+
+int i = main(1, 2, 3, 4);

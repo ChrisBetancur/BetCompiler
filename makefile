@@ -13,7 +13,7 @@ $(exec): $(objects)
 clean_output:
 	-rm output.asm
 	-rm output.o
-	-rm output
+	-rm ./output
 
 
 clean:

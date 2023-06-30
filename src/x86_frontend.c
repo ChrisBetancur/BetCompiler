@@ -56,6 +56,14 @@ char* x86_assemble(ASTNode* node, SymbolTable* table, Proc* proc) {
             next_val = x86_built_in(node, table, proc);
             break;
 
+        case AST_BLOCK:
+            next_val = x86_func_block(node, table, proc);
+            break;
+
+        case AST_FUNC:
+            next_val = x86_func(node, table);
+            break;
+
         default:
             x86_error_handler(UNEXPECTED_NODE, node);
             break;
@@ -178,7 +186,6 @@ char* x86_var(ASTNode* node, SymbolTable* table, Proc* proc) { // SHOULD PASS A 
 
         char* expr = x86_eval_expr(child->children->arr[0], table, proc);
 
-        puts(symbol_table_to_string(table));
         if (!symbol_in_scope(table, proc, node->name)) {
             x86_error_handler(SYMBOL_NOT_IN_SCOPE, node);
         }
@@ -305,7 +312,32 @@ char* x86_identify_literals(char* root_data, ASTNode* node, SymbolTable* table, 
     return literals;
 }
 
-/*char* x86_func(ASTNode* node, SymbolTable* table) {
+char* x86_identify_funcs(ASTNode* node, SymbolTable* table) {
+    char* subroutines = calloc(1, sizeof(char));
+
+    for (int i = 0; i < node->children->num_items; i++) {
+        if (((ASTNode*) node->children->arr[i])->type == AST_FUNC) {
+            char* curr_node = x86_func(node->children->arr[i], table);
+            subroutines = realloc(subroutines, (strlen(subroutines) + strlen(curr_node)) * sizeof(char));
+            strcat(subroutines, curr_node);
+
+        }
+    }
+
+    return subroutines;
+}
+
+char* x86_func_block(ASTNode* node, SymbolTable* table, Proc* proc) {
+    char* output = calloc(1, sizeof(char));
+    for (int i = 0; i < node->children->num_items - 1; i++) {
+        char* curr_output = x86_assemble(node->children->arr[i], table, proc);
+        strcat(output, curr_output);
+    }
+
+    return output;
+}
+
+char* x86_func(ASTNode* node, SymbolTable* table) {
     const char* subroutine_template = "%s:\n"
                                       "    push rbp\n"
                                       "    mov rbp, rsp\n"
@@ -322,6 +354,9 @@ char* x86_identify_literals(char* root_data, ASTNode* node, SymbolTable* table, 
     unsigned int offset = 0x8;
     unsigned char access_offset = 0x8;
 
+    Proc* proc = init_proc(node);
+    symbol_table_insert_proc(table, proc);
+
     for (int i = 0; i < params->children->num_items; i++) {
         ASTNode* param_type = ((ASTNode*) params->children->arr[i])->children->arr[0];
         if (strcmp(param_type->name, "i64") == 0) {
@@ -333,11 +368,8 @@ char* x86_identify_literals(char* root_data, ASTNode* node, SymbolTable* table, 
         }
 
         Entry* entry = init_entry_mem(((ASTNode*)params->children->arr[i])->name, ENTRY_INT, "rbp", offset);
+        symbol_table_insert(table, proc, entry);
 
-        puts("entered\n");
-        symbol_table_insert(table, node->name, entry);
-
-        puts("end");
         if (i > 1) {
             access_offset += 0x8;
             const char* param_init_template = "%s    mov r8, QWORD [rbp + 0x%x]\n"
@@ -360,9 +392,7 @@ char* x86_identify_literals(char* root_data, ASTNode* node, SymbolTable* table, 
         }
     }
 
-    print_ast_at_node(node->children->arr[2]);
-
-    char* body = x86_assemble(node->children->arr[2], table, node->name);
+    char* body = x86_assemble(node->children->arr[2], table, proc);
     //puts(body);
 
     char* return_val = calloc(1, sizeof(char));
@@ -380,7 +410,7 @@ char* x86_identify_literals(char* root_data, ASTNode* node, SymbolTable* table, 
 
     sprintf(output, subroutine_template, node->name, offset, params_to_local, body, return_val);
     return output;
-}*/
+}
 
 char* x86_global(ASTNode* node, SymbolTable* table) {
     Proc* proc = init_proc(node);
@@ -400,27 +430,26 @@ char* x86_global(ASTNode* node, SymbolTable* table) {
     char* print_int = read_file(PRINT_INT);
 
 
-    char* body_output = NULL;
+    char* body_output = calloc(1, sizeof(char));
     size_t body_size = 0;
 
+
+    char* subroutines = x86_identify_funcs(node, table);
+
     for (int i = 0; i < node->children->num_items; i++) {
-        char* curr_node = x86_assemble(node->children->arr[i], table, proc);
+        if (((ASTNode*) node->children->arr[i])->type != AST_FUNC) {
+            char* curr_node = x86_assemble(node->children->arr[i], table, proc);
 
-        body_size += strlen(curr_node) * sizeof(char);
+            body_size += strlen(curr_node) * sizeof(char);
 
-        if (body_output == NULL) {
-            body_output = calloc(strlen(curr_node) + 1, sizeof(char));
-            strcpy(body_output, curr_node);
-        }
-        else {
             body_output = realloc(body_output, body_size + 1);
             strcat(body_output, curr_node);
         }
     }
 
-    char* buffer = calloc(strlen(start_root) + strlen(body_output) + strlen(end_root) + strlen(print_int) + strlen(root_const) + strlen(root_data) + strlen(root_bss) + 1, sizeof(char)); //4 keeps track of the number of new lines in sprintf
+    char* buffer = calloc(strlen(start_root) + strlen(body_output) + strlen(end_root) + strlen(subroutines) + strlen(print_int) + strlen(root_const) + strlen(root_data) + strlen(root_bss) + 1, sizeof(char)); //4 keeps track of the number of new lines in sprintf
 
-    sprintf(buffer, "%s%s%s%s%s%s%s", start_root, body_output, end_root, print_int, root_const, root_data, root_bss);
+    sprintf(buffer, "%s%s%s%s%s%s%s%s", start_root, body_output, end_root, subroutines, print_int, root_const, root_data, root_bss);
 
     return buffer;
 }

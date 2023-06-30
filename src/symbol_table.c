@@ -161,7 +161,6 @@ int compress_hash(int hash_code, unsigned int size) {
 bool symbol_in_scope(SymbolTable* table, Proc* proc, char* name) {
     Entry* curr_entry = proc->entry;
 
-    puts(name);
     while (curr_entry != NULL) {
         if (strcmp(curr_entry->name, name) == 0) { // no entries can have the same symbol name
             return true;
