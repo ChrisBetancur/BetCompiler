@@ -25,11 +25,45 @@ Token <value: 33 type: INT line: 3>
 
 Token <value: ; type: ; line: 3>
 
-Token <value: i type: ID line: 4>
+Token <value: int type: ID line: 4>
+
+Token <value: x type: ID line: 4>
 
 Token <value: = type: = line: 4>
 
-Token <value: 10 type: INT line: 4>
+Token <value: 93 type: INT line: 4>
+
+Token <value: - type: - line: 4>
+
+Token <value: 7 type: INT line: 4>
+
+Token <value: + type: + line: 4>
+
+Token <value: 4 type: INT line: 4>
+
+Token <value: * type: * line: 4>
+
+Token <value: ( type: ( line: 4>
+
+Token <value: 40 type: INT line: 4>
+
+Token <value: * type: * line: 4>
+
+Token <value: 2 type: INT line: 4>
+
+Token <value: ) type: ) line: 4>
+
+Token <value: / type: / line: 4>
+
+Token <value: ( type: ( line: 4>
+
+Token <value: 3 type: INT line: 4>
+
+Token <value: + type: + line: 4>
+
+Token <value: 3 type: INT line: 4>
+
+Token <value: ) type: ) line: 4>
 
 Token <value: ; type: ; line: 4>
 
@@ -37,33 +71,51 @@ Token <value: print type: ID line: 5>
 
 Token <value: ( type: ( line: 5>
 
-Token <value: Hello type: STRING line: 5>
+Token <value: x type: ID line: 5>
 
 Token <value: ) type: ) line: 5>
 
 Token <value: ; type: ; line: 5>
 
-Token <value: print type: ID line: 6>
-
-Token <value: ( type: ( line: 6>
-
-Token <value: Hello type: STRING line: 6>
-
-Token <value: , type: , line: 6>
-
-Token <value: my man joey type: STRING line: 6>
-
-Token <value: , type: , line: 6>
-
 Token <value: i type: ID line: 6>
 
-Token <value: , type: , line: 6>
+Token <value: = type: = line: 6>
 
-Token <value:  l o bsbkhbd nnnr mammia yoooooooooooooooooooooooooooo no way type: STRING line: 6>
-
-Token <value: ) type: ) line: 6>
+Token <value: 10 type: INT line: 6>
 
 Token <value: ; type: ; line: 6>
 
-Token <value: EOF type: EOF line: 7>
+Token <value: print type: ID line: 7>
+
+Token <value: ( type: ( line: 7>
+
+Token <value: Hello type: STRING line: 7>
+
+Token <value: ) type: ) line: 7>
+
+Token <value: ; type: ; line: 7>
+
+Token <value: print type: ID line: 8>
+
+Token <value: ( type: ( line: 8>
+
+Token <value: Hello type: STRING line: 8>
+
+Token <value: , type: , line: 8>
+
+Token <value: my man joey type: STRING line: 8>
+
+Token <value: , type: , line: 8>
+
+Token <value: i type: ID line: 8>
+
+Token <value: , type: , line: 8>
+
+Token <value:  l o bsbkhbd nnnr mammia yoooooooooooooooooooooooooooo no way type: STRING line: 8>
+
+Token <value: ) type: ) line: 8>
+
+Token <value: ; type: ; line: 8>
+
+Token <value: EOF type: EOF line: 9>
 

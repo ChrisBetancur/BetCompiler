@@ -16,7 +16,7 @@
 typedef struct AST_NODE_STRUCT {
     char* name;
     List* children;
-    unsigned char offset;
+    unsigned char offset; // do WE NEED THIS?????
 
     enum {
         AST_GLOBAL,

@@ -1,5 +1,6 @@
 #include "include/symbol_table.h"
 #include "include/list.h"
+#include "include/ast_node.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,11 +8,12 @@
 #include <stdbool.h>
 
 
-Entry* init_entry_mem(char* name, int type, int mem_addr) {
+Entry* init_entry_mem(char* name, int type, char* base, int mem_addr) {
     Entry* entry = calloc(1, sizeof(struct ENTRY_STRUCT));
 
     entry->name = name;
     entry->type = type;
+    entry->base = base;
     entry->mem_addr = mem_addr;
     entry->label = NULL;
     entry->next = NULL;
@@ -48,6 +50,7 @@ Entry* copy_entry(Entry* entry) {
     entry_copy->name = calloc(strlen(entry->name), sizeof(char));
     strcpy(entry_copy->name, entry->name);
     entry_copy->type = entry->type;
+    entry_copy->base = entry->base;
     entry_copy->mem_addr = entry->mem_addr;
     if (entry->label != NULL) {
         entry_copy->label = calloc(strlen(entry->label), sizeof(char));
@@ -89,13 +92,13 @@ char* entry_to_string(Entry* entry) {
     char* entry_str = NULL;
 
     if (entry->label == NULL) {
-        const char* template = "Entry <name: %s type: %s addr: %s>";
+        const char* template = "Entry <name: %s type: %s base:%s addr: %s>";
         int addr_str_len = snprintf(NULL, 0, "%d", entry->mem_addr);
         char addr_str[addr_str_len];
 
         snprintf(addr_str, addr_str_len + 1, "%d", entry->mem_addr);
-        entry_str = calloc(strlen(template) + strlen(entry->name) + strlen(type_str) + strlen(addr_str)  + 1, sizeof(char));
-        sprintf(entry_str, template, entry->name, type_str, addr_str);
+        entry_str = calloc(strlen(template) + strlen(entry->name) + strlen(type_str) + strlen(entry->base) + strlen(addr_str)  + 1, sizeof(char));
+        sprintf(entry_str, template, entry->name, type_str, entry->base, addr_str);
     }
     else {
         const char* template = "Entry <name: %s type: %s label: %s>";
@@ -107,10 +110,11 @@ char* entry_to_string(Entry* entry) {
     return entry_str;
 }
 
-Proc* init_proc(char* name) {
+Proc* init_proc(ASTNode* node) {
     Proc* proc = calloc(1, sizeof(struct PROC_STRUCT));
-    proc->name = calloc(strlen(name) + 1, sizeof(char));
-    strcpy(proc->name, name);
+    proc->name = calloc(strlen(node->name) + 1, sizeof(char));
+    proc->def = node;
+    strcpy(proc->name, node->name);
     proc->entry = NULL;
 
     return proc;
@@ -154,35 +158,45 @@ int compress_hash(int hash_code, unsigned int size) {
 }
 
 
-bool symbol_in_scope(SymbolTable* table, char* proc, char* name) {
-    if (strcmp(proc, PROC_GLOBAL)) {
-        return true;
-    }
+bool symbol_in_scope(SymbolTable* table, Proc* proc, char* name) {
+    Entry* curr_entry = proc->entry;
 
-    for (int i = 0; i < table->size; i++) {
-        Entry* curr_entry = ((Proc*)table->procs->arr[i])->entry;
-
-        while (curr_entry != NULL) {
-            if (strcmp(curr_entry->name, name) == 0) { // no entries can have the same symbol name
-                if (strcmp(((Proc*)table->procs->arr[i])->name, proc) == 0) {
-                    return true;
-                }
-            }
-            curr_entry = curr_entry->next;
+    puts(name);
+    while (curr_entry != NULL) {
+        if (strcmp(curr_entry->name, name) == 0) { // no entries can have the same symbol name
+            return true;
         }
+        curr_entry = curr_entry->next;
     }
+
+    if (strcmp(proc->name, "global") == 0)
+        return false;
+
+    curr_entry = ((Proc*)table->procs->arr[0])->entry; // check if its global
+
+    while (curr_entry != NULL) {
+        if (strcmp(curr_entry->name, name) == 0) { // no entries can have the same symbol name
+            if (strcmp(curr_entry->name, proc->name) == 0) {
+                return true;
+            }
+        }
+        curr_entry = curr_entry->next;
+    }
+
+
     return false;
 }
 
-void symbol_table_insert(SymbolTable* table, char* proc_name, Entry* entry) {
+void symbol_table_insert(SymbolTable* table, Proc* proc, Entry* entry) {
     entry = copy_entry(entry);
 
-    Proc* proc = symbol_table_lookup_proc(table, proc_name);
 
-    if (proc == NULL) {
-        proc = init_proc(proc_name);
+    if (symbol_table_lookup_proc(table, proc->name) == NULL) {
+        /*proc = init_proc(proc_node);
         list_append(table->procs, proc, sizeof(struct PROC_STRUCT));
-        table->size++;
+        table->size++;*/
+        printf("proc %s does not exist\n", proc->name);
+        exit(1);
     }
 
     Entry* curr_entry = proc->entry;
@@ -199,6 +213,11 @@ void symbol_table_insert(SymbolTable* table, char* proc_name, Entry* entry) {
     curr_entry->next = copy_entry(entry);
 
     free(entry);
+}
+
+void symbol_table_insert_proc(SymbolTable* table, Proc* proc) {
+    list_append(table->procs, proc, sizeof(struct PROC_STRUCT));
+    table->size++;
 }
 
 Proc* symbol_table_lookup_proc(SymbolTable* table, char* proc_name) {

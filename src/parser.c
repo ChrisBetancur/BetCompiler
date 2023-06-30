@@ -621,7 +621,7 @@ ASTNode* parser_parse(Parser* parser) {
  */
 
 void parser_parse_tokens(Parser* parser) {
-    parser->root = init_ASTNode("root", AST_GLOBAL);
+    parser->root = init_ASTNode("global", AST_GLOBAL);
 
     //printf("\n\n\n\t-----TOKENS-----\n\n");
 

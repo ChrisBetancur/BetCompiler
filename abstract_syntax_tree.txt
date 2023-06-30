@@ -1,5 +1,5 @@
 
-Ast Node <name: root type: GLOBAL SCOPE>
+Ast Node <name: global type: GLOBAL SCOPE>
 
 +--- Ast Node <name: i type: VARIABLE>
 
@@ -22,6 +22,56 @@ Ast Node <name: root type: GLOBAL SCOPE>
 |     +--- Ast Node <type: EXPRESSION>
 
 |           +--- Ast Node <name: 33 type: INTEGER>
+
++--- Ast Node <name: x type: VARIABLE>
+
+|     +--- Ast Node <name: int type: DECLARATION TYPE>
+
+|     +--- Ast Node <type: EXPRESSION>
+
+|           +--- Ast Node <type: BINARY OPERATION>
+
+|                 +--- Ast Node <name: + type: OPERATOR>
+
+|                 +--- Ast Node <type: BINARY OPERATION>
+
+|                 |     +--- Ast Node <name: - type: OPERATOR>
+
+|                 |     +--- Ast Node <name: 93 type: INTEGER>
+
+|                 |     +--- Ast Node <name: 7 type: INTEGER>
+
+|                 +--- Ast Node <type: BINARY OPERATION>
+
+|                       +--- Ast Node <name: / type: OPERATOR>
+
+|                       +--- Ast Node <type: BINARY OPERATION>
+
+|                       |     +--- Ast Node <name: * type: OPERATOR>
+
+|                       |     +--- Ast Node <name: 4 type: INTEGER>
+
+|                       |     +--- Ast Node <type: BINARY OPERATION>
+
+|                       |           +--- Ast Node <name: * type: OPERATOR>
+
+|                       |           +--- Ast Node <name: 40 type: INTEGER>
+
+|                       |           +--- Ast Node <name: 2 type: INTEGER>
+
+|                       +--- Ast Node <type: BINARY OPERATION>
+
+|                             +--- Ast Node <name: + type: OPERATOR>
+
+|                             +--- Ast Node <name: 3 type: INTEGER>
+
+|                             +--- Ast Node <name: 3 type: INTEGER>
+
++--- Ast Node <name: print type: BUILT_IN>
+
+|     +--- Ast Node <type: PARAMS>
+
+|           +--- Ast Node <name: x type: VARIABLE>
 
 +--- Ast Node <name: i type: VARIABLE>
 

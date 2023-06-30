@@ -1,0 +1,4 @@
+int main(int i, int j, int k, int l) {
+    int m = i + j + k + l;
+    return m;
+}

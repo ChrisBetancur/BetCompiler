@@ -1,6 +1,8 @@
 int i = 999;
 int b = 22;
 i = 33;
+int x = 93 - 7 + 4 * (40 * 2)/(3+3);
+print(x);
 i = 10;
 print("Hello");
 print("Hello", "my man joey", i, " l o bsbkhbd nnnr mammia yoooooooooooooooooooooooooooo no way");
