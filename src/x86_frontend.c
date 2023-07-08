@@ -34,7 +34,6 @@
 
 char* x86_assemble(ASTNode* node, SymbolTable* table, Proc* proc) {
     char* next_val = 0;
-
     switch (node->type) {
         case AST_GLOBAL:
             next_val = x86_global(node, table);
@@ -60,8 +59,16 @@ char* x86_assemble(ASTNode* node, SymbolTable* table, Proc* proc) {
             next_val = x86_func_block(node, table, proc);
             break;
 
+        case AST_RETURN:
+            next_val = x86_return(node, table, proc);
+            break;
+
         case AST_FUNC:
             next_val = x86_func(node, table);
+            break;
+
+        case AST_CALL:
+            next_val = x86_func_call(node, table, proc);
             break;
 
         default:
@@ -140,6 +147,7 @@ char* x86_correct_base(char* proc) {
     }
     return "rbp";
 }
+
 char* x86_var(ASTNode* node, SymbolTable* table, Proc* proc) { // SHOULD PASS A SCOPE ARGUMENT IN ORDER TO PUSH A VALID ENTRY, FOR NOW ITS JUST GLOBAL
     if (node->children->num_items == 0) {
         return x86_var_call(node, table, proc);
@@ -151,8 +159,7 @@ char* x86_var(ASTNode* node, SymbolTable* table, Proc* proc) { // SHOULD PASS A 
 
     if (child->type == AST_DEC_TYPE) {
         if (strcmp(child->name, "int") == 0) {
-
-            Entry* entry = init_entry_mem(node->name, ENTRY_INT, base, table->top_offset += 0x8);
+            Entry* entry = init_entry_mem(node->name, ENTRY_INT, base, proc->offset += 0x8);
             symbol_table_insert(table, proc, entry);
 
             const char* stack_push_template = "\n%s    pop rsi\n"
@@ -161,15 +168,26 @@ char* x86_var(ASTNode* node, SymbolTable* table, Proc* proc) { // SHOULD PASS A 
             const char* stack_push_no_expr_template = "\n    mov rsi, 0\n"
                                                         "    mov [%s - 0x%x], rsi\n";
 
-            char* expr = NULL;
+            const char* stack_push_call_template = "\n%s    mov rsi, rax\n"
+                                                       "    mov [%s - 0x%x], rsi\n";
+
+
+            char* value = NULL;
             if (((ASTNode*) node->children->arr[1])->type == AST_EXPR) {
-                expr = x86_eval_expr(((ASTNode*) node->children->arr[1])->children->arr[0], table, proc);
+                value = x86_eval_expr(((ASTNode*) node->children->arr[1])->children->arr[0], table, proc);
             }
 
-            char* output;
-            if (expr != NULL) {
-                output = calloc(strlen(stack_push_template) + strlen(expr) + strlen(base) + sizeof(entry->mem_addr) + 1, sizeof(char));
-                sprintf(output, stack_push_template, expr, base, entry->mem_addr);
+            char* output = NULL;
+            if (((ASTNode*) node->children->arr[1])->type == AST_CALL) {
+                char* func_call = x86_assemble((ASTNode*) node->children->arr[1], table, proc);
+                output = calloc(strlen(func_call) + strlen(stack_push_call_template) + strlen(base) + sizeof(entry->mem_addr) + 1, sizeof(char));
+                sprintf(output, stack_push_call_template, func_call, base, entry->mem_addr);
+                return output;
+            }
+
+            if (value != NULL) {
+                output = calloc(strlen(stack_push_template) + strlen(value) + strlen(base) + sizeof(entry->mem_addr) + 1, sizeof(char));
+                sprintf(output, stack_push_template, value, base, entry->mem_addr);
                 return output;
             }
 
@@ -182,7 +200,7 @@ char* x86_var(ASTNode* node, SymbolTable* table, Proc* proc) { // SHOULD PASS A 
     }
     else {
         const char* stack_push_template = "%s\n    pop rsi\n"
-                                            "    mov [%s - 0x%x], rsi\n\n";
+                                              "    mov [%s - 0x%x], rsi\n\n";
 
         char* expr = x86_eval_expr(child->children->arr[0], table, proc);
 
@@ -312,36 +330,96 @@ char* x86_identify_literals(char* root_data, ASTNode* node, SymbolTable* table, 
     return literals;
 }
 
+char* x86_func_call(ASTNode* node, SymbolTable* table, Proc* proc) { // error handle if not in scope and if params match, how to pass func_def_params
+    const char* func_call_template = "%s\n"
+                                     "    call %s\n";
+
+    Proc* func_proc = symbol_table_lookup_proc(table, node->name);
+    char* prep_params = x86_prep_stack_frame(node->children->arr[0], func_proc->def->children->arr[1]);
+
+    char* output = calloc(strlen(func_call_template) + strlen(prep_params) + strlen(proc->name) + 1, sizeof(char));
+    sprintf(output, func_call_template, prep_params, func_proc->name);
+
+    return output;
+}
+
+char* x86_prep_stack_frame(ASTNode* func_call_params, ASTNode* func_def_params) {
+    Stack* stack_frame = init_stack();
+
+    char* params_output = calloc(1, sizeof(char));
+
+    if (func_call_params->children->num_items != func_def_params->children->num_items) {
+        //handle func call not having same num of params
+        printf("%d %d\n", func_call_params->children->num_items, func_def_params->children->num_items);
+        puts(astnode_to_string(func_def_params));
+        printf("yo\n");
+        exit(1);
+    }
+
+    for (int i = func_def_params->children->num_items - 1; i >= 0; i--) {
+        const char* param_template;
+
+        if (i == 0) {
+            param_template = "%s    mov rdi, %s\n";
+
+        }
+        else if (i == 1) {
+            param_template = "%s    mov rsi, %s\n";
+        }
+        else {
+            param_template = "%s    push %s\n";
+        }
+        //puts(((ASTNode*) func_call_params->children->arr[i])->name);
+        params_output = realloc(params_output, (strlen(param_template) + strlen(params_output) + strlen(((ASTNode*) func_call_params->children->arr[i])->name) + 1) * sizeof(char));
+        sprintf(params_output, param_template, params_output, ((ASTNode*) func_call_params->children->arr[i])->name);
+    }
+
+    puts(params_output);
+    return params_output;
+}
+
+
 char* x86_identify_funcs(ASTNode* node, SymbolTable* table) {
     char* subroutines = calloc(1, sizeof(char));
 
     for (int i = 0; i < node->children->num_items; i++) {
         if (((ASTNode*) node->children->arr[i])->type == AST_FUNC) {
             char* curr_node = x86_func(node->children->arr[i], table);
-            subroutines = realloc(subroutines, (strlen(subroutines) + strlen(curr_node)) * sizeof(char));
+            subroutines = realloc(subroutines, (strlen(subroutines) + strlen(curr_node) + 1) * sizeof(char));
             strcat(subroutines, curr_node);
-
         }
     }
 
     return subroutines;
 }
 
+char* x86_return(ASTNode* node, SymbolTable* table, Proc* proc) {
+    ASTNode* ret_val = node->children->arr[0];
+    Entry* return_entry = symbol_table_lookup(table, ret_val->name);
+
+    const char* return_template = "    mov rax, QWORD [rbp - 0x%x]\n";
+
+    char* output = calloc(strlen(return_template) + sizeof(return_entry->mem_addr) + 1, sizeof(char));
+    sprintf(output, return_template, return_entry->mem_addr);
+    return output;
+}
+
 char* x86_func_block(ASTNode* node, SymbolTable* table, Proc* proc) {
-    char* output = calloc(1, sizeof(char));
-    for (int i = 0; i < node->children->num_items - 1; i++) {
+    char* block = calloc(1, sizeof(char));
+    for (int i = 0; i < node->children->num_items; i++) {
         char* curr_output = x86_assemble(node->children->arr[i], table, proc);
-        strcat(output, curr_output);
+        block = realloc(block, (strlen(block) + strlen(curr_output) + 1) * sizeof(char));
+        strcat(block, curr_output);
     }
 
-    return output;
+    return block;
 }
 
 char* x86_func(ASTNode* node, SymbolTable* table) {
     const char* subroutine_template = "%s:\n"
                                       "    push rbp\n"
                                       "    mov rbp, rsp\n"
-                                      "    sub rsp, 0x%x\n"
+                                      "    sub rsp, 0x%x\n\n"
                                       "%s"
                                       "%s"
                                       "%s"
@@ -351,7 +429,7 @@ char* x86_func(ASTNode* node, SymbolTable* table) {
 
     char* params_to_local = calloc(1, sizeof(char));
 
-    unsigned int offset = 0x8;
+    //unsigned int offset = 0x8;
     unsigned char access_offset = 0x8;
 
     Proc* proc = init_proc(node);
@@ -359,15 +437,9 @@ char* x86_func(ASTNode* node, SymbolTable* table) {
 
     for (int i = 0; i < params->children->num_items; i++) {
         ASTNode* param_type = ((ASTNode*) params->children->arr[i])->children->arr[0];
-        if (strcmp(param_type->name, "i64") == 0) {
-            offset += 0x8;
-        }
 
-        else if (strcmp(param_type->name, "i32") == 0) {
-            offset += 0x4;
-        }
 
-        Entry* entry = init_entry_mem(((ASTNode*)params->children->arr[i])->name, ENTRY_INT, "rbp", offset);
+        Entry* entry = init_entry_mem(((ASTNode*)params->children->arr[i])->name, ENTRY_INT, "rbp", proc->offset += 0x8);
         symbol_table_insert(table, proc, entry);
 
         if (i > 1) {
@@ -375,8 +447,8 @@ char* x86_func(ASTNode* node, SymbolTable* table) {
             const char* param_init_template = "%s    mov r8, QWORD [rbp + 0x%x]\n"
                                                 "    mov QWORD [rbp - 0x%x], r8\n";
 
-            params_to_local = realloc(params_to_local, (strlen(params_to_local) + strlen(param_init_template) + sizeof(access_offset) + sizeof(offset) + 1) * sizeof(char));
-            sprintf(params_to_local, param_init_template, params_to_local, access_offset, offset);
+            params_to_local = realloc(params_to_local, (strlen(params_to_local) + strlen(param_init_template) + sizeof(access_offset) + sizeof(proc->offset) + 1) * sizeof(char));
+            sprintf(params_to_local, param_init_template, params_to_local, access_offset, proc->offset);
         }
 
         else {
@@ -387,28 +459,20 @@ char* x86_func(ASTNode* node, SymbolTable* table) {
             else
                 param_init_template = "%s    mov QWORD [rbp - 0x%x], rdi\n";
 
-            params_to_local = realloc(params_to_local, (strlen(param_init_template) + strlen(params_to_local) + sizeof(offset) + 1) * sizeof(char));
-            sprintf(params_to_local, param_init_template, params_to_local, offset);
+            params_to_local = realloc(params_to_local, (strlen(param_init_template) + strlen(params_to_local) + sizeof(proc->offset) + 1) * sizeof(char));
+            sprintf(params_to_local, param_init_template, params_to_local, proc->offset);
         }
     }
 
     char* body = x86_assemble(node->children->arr[2], table, proc);
     //puts(body);
 
-    char* return_val = calloc(1, sizeof(char));
-    if (strcmp(((ASTNode*) node->children->arr[0])->name, "void") == 0) {
-        return_val = "    mov rsp, rbp\n"
+    char* epilogue = "    mov rsp, rbp\n"
                      "    pop rbp\n";
-    }
-    else {
-        return_val = "    mov rax, QWORD [rbp - 0x8]\n"
-                     "    mov rsp, rbp\n"
-                     "    pop rbp\n";
-    }
 
-    char* output = calloc(strlen(subroutine_template) + strlen(node->name) + sizeof(offset) + strlen(params_to_local) + strlen(body) + strlen(return_val) + 1, sizeof(char));
+    char* output = calloc(strlen(subroutine_template) + strlen(node->name) + sizeof(proc->offset) + strlen(params_to_local) + strlen(body) + strlen(epilogue) + 1, sizeof(char));
 
-    sprintf(output, subroutine_template, node->name, offset, params_to_local, body, return_val);
+    sprintf(output, subroutine_template, node->name, proc->offset, params_to_local, body, epilogue);
     return output;
 }
 

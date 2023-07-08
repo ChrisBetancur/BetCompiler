@@ -47,19 +47,24 @@ Entry* init_entry_label(char* name, int type, unsigned int* label_id) {
 Entry* copy_entry(Entry* entry) {
     Entry* entry_copy = calloc(1, sizeof(struct ENTRY_STRUCT));
 
-    entry_copy->name = calloc(strlen(entry->name), sizeof(char));
+    entry_copy->name = calloc(strlen(entry->name) + 1, sizeof(char));
     strcpy(entry_copy->name, entry->name);
     entry_copy->type = entry->type;
     entry_copy->base = entry->base;
     entry_copy->mem_addr = entry->mem_addr;
     if (entry->label != NULL) {
-        entry_copy->label = calloc(strlen(entry->label), sizeof(char));
+        entry_copy->label = calloc(strlen(entry->label) + 1, sizeof(char));
         strcpy(entry_copy->label, entry->label);
     }
     else {
         entry_copy->label = NULL;
     }
-    entry_copy->next = entry->next;
+
+    if (entry->next  == NULL) {
+        entry_copy->next = NULL;
+    }
+    else
+        entry_copy->next = entry->next;
 
     return entry_copy;
 
@@ -92,13 +97,9 @@ char* entry_to_string(Entry* entry) {
     char* entry_str = NULL;
 
     if (entry->label == NULL) {
-        const char* template = "Entry <name: %s type: %s base:%s addr: %s>";
-        int addr_str_len = snprintf(NULL, 0, "%d", entry->mem_addr);
-        char addr_str[addr_str_len];
-
-        snprintf(addr_str, addr_str_len + 1, "%d", entry->mem_addr);
-        entry_str = calloc(strlen(template) + strlen(entry->name) + strlen(type_str) + strlen(entry->base) + strlen(addr_str)  + 1, sizeof(char));
-        sprintf(entry_str, template, entry->name, type_str, entry->base, addr_str);
+        const char* template = "Entry <name: %s type: %s base:%s addr: 0x%x>";
+        entry_str = calloc(strlen(template) + strlen(entry->name) + strlen(type_str) + strlen(entry->base) + sizeof(entry->mem_addr)  + 1, sizeof(char));
+        sprintf(entry_str, template, entry->name, type_str, entry->base, entry->mem_addr);
     }
     else {
         const char* template = "Entry <name: %s type: %s label: %s>";
@@ -114,10 +115,42 @@ Proc* init_proc(ASTNode* node) {
     Proc* proc = calloc(1, sizeof(struct PROC_STRUCT));
     proc->name = calloc(strlen(node->name) + 1, sizeof(char));
     proc->def = node;
+    proc->offset = 0x8;
     strcpy(proc->name, node->name);
     proc->entry = NULL;
 
     return proc;
+}
+
+char* proc_to_string(Proc* proc) {
+    const char* proc_template = "Proc id=%s {%s}\n";
+
+    char* proc_str = calloc(1, sizeof(char));
+
+    if (proc->entry == NULL) {
+        proc_str = realloc(proc_str, (strlen(proc_template) + strlen(proc->name) + 2) * sizeof(char));
+        sprintf(proc_str, proc_template, proc->name, "");
+        return proc_str;
+    }
+
+    Entry* curr_entry = proc->entry;
+
+    char* proc_entries_str = calloc(2, sizeof(char));
+    strcpy(proc_entries_str, "\n");
+
+    while (curr_entry != NULL) {
+        char* entry_str = entry_to_string(curr_entry);
+        proc_entries_str = realloc(proc_entries_str, (strlen(proc_entries_str) + strlen(entry_str) + 3) * sizeof(char));
+        strcat(proc_entries_str, "\t");
+        strcat(proc_entries_str, entry_str);
+        strcat(proc_entries_str, "\n");
+        curr_entry = curr_entry->next;
+    }
+
+    proc_str = realloc(proc_str, (strlen(proc_template) + strlen(proc->name) + strlen(proc_entries_str) + 1) * sizeof(char));
+    sprintf(proc_str, proc_template, proc->name, proc_entries_str);
+
+    return proc_str;
 }
 
 SymbolTable* init_symbol_table() {
@@ -127,7 +160,6 @@ SymbolTable* init_symbol_table() {
 
     table->size = 0;
     table->num_symbols = 0;
-    table->top_offset = 0x10;
 
     return table;
 }
@@ -187,9 +219,6 @@ bool symbol_in_scope(SymbolTable* table, Proc* proc, char* name) {
 }
 
 void symbol_table_insert(SymbolTable* table, Proc* proc, Entry* entry) {
-    entry = copy_entry(entry);
-
-
     if (symbol_table_lookup_proc(table, proc->name) == NULL) {
         /*proc = init_proc(proc_node);
         list_append(table->procs, proc, sizeof(struct PROC_STRUCT));
@@ -211,7 +240,12 @@ void symbol_table_insert(SymbolTable* table, Proc* proc, Entry* entry) {
 
     curr_entry->next = copy_entry(entry);
 
-    free(entry);
+    puts("------------------------------");
+    //puts(symbol_table_to_string(table));
+    puts(entry_to_string(curr_entry->next));
+    puts("------------------------------");
+
+    //free(entry);
 }
 
 void symbol_table_insert_proc(SymbolTable* table, Proc* proc) {
@@ -229,10 +263,9 @@ Proc* symbol_table_lookup_proc(SymbolTable* table, char* proc_name) {
     return NULL;
 }
 
-Entry* symbol_table_lookup(SymbolTable* table, char* symbol_name) { // must find a way of checking if defined in scope
+Entry* symbol_table_lookup(SymbolTable* table,  char* symbol_name) { // must find a way of checking if defined in scope -> copy symbol_in_scope
     for (int i = 0; i < table->size; i++) {
         Entry* curr_entry = ((Proc*)table->procs->arr[i])->entry;
-
         while (curr_entry != NULL) {
             if (strcmp(curr_entry->name, symbol_name) == 0) { // no entries can have the same symbol name
                 return curr_entry;
@@ -245,39 +278,14 @@ Entry* symbol_table_lookup(SymbolTable* table, char* symbol_name) { // must find
 }
 
 char* symbol_table_to_string(SymbolTable* table) {
-    char* symbol_table_str = NULL;
-    const char* tab = "    ";
-    for (int i = 0; i < table->size; i++) {
-        Entry* curr_entry = ((Proc*)table->procs->arr[i])->entry;
-        const char* template = "Proc id=%s {\n";
-        char* proc_str = calloc(strlen(template) + sizeof(((Proc*)table->procs->arr[i])->name), sizeof(char));
-        sprintf(proc_str, template, ((Proc*)table->procs->arr[i])->name);
+    char* symbol_table_str = calloc(1, sizeof(char));
 
-        if (symbol_table_str == NULL) {
-            symbol_table_str = calloc(strlen(proc_str) + 1, sizeof(char));
-        }
-        else {
-            symbol_table_str = realloc(symbol_table_str, (strlen(symbol_table_str) + strlen(proc_str) + 1) * sizeof(char));
-        }
+    for (int i = 0; i < table->procs->num_items; i++) {
+        Proc* curr_proc = table->procs->arr[i];
+        char* proc_str = proc_to_string(curr_proc);
+        symbol_table_str = realloc(symbol_table_str, (strlen(symbol_table_str) + strlen(proc_str) + 1) * sizeof(char));
         strcat(symbol_table_str, proc_str);
-
-        while(curr_entry != NULL) {
-            char* curr_entry_str = entry_to_string(curr_entry);
-
-            symbol_table_str = realloc(symbol_table_str, (strlen(symbol_table_str) + strlen(curr_entry_str) + strlen(tab) + 2) * sizeof(char));
-            strcat(symbol_table_str, tab);
-            strcat(symbol_table_str, curr_entry_str);
-            strcat(symbol_table_str, "\n");
-
-            curr_entry = curr_entry->next;
-        }
-
-        symbol_table_str = realloc(symbol_table_str, (strlen(symbol_table_str) + 4) * sizeof(char));
-        strcat(symbol_table_str, "}");
-        strcat(symbol_table_str, "\n");
-        strcat(symbol_table_str, "\n");
     }
-
     return symbol_table_str;
 }
 

@@ -88,6 +88,7 @@ void bet_ide_compile(char* src) {
     SymbolTable* table = init_symbol_table(3);
     char* output = x86_assemble(parser->root, table, NULL);
 
+    puts(symbol_table_to_string(table));
     write_file(OUTPUT_FILE, output);
     system(COMPILE_OBJ);
     system(MAKE_EXECUTABLE);

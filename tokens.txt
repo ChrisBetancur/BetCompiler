@@ -39,15 +39,23 @@ Token <value: i type: ID line: 2>
 
 Token <value: + type: + line: 2>
 
+Token <value: ( type: ( line: 2>
+
 Token <value: j type: ID line: 2>
 
-Token <value: + type: + line: 2>
+Token <value: * type: * line: 2>
 
 Token <value: k type: ID line: 2>
 
 Token <value: + type: + line: 2>
 
 Token <value: l type: ID line: 2>
+
+Token <value: ) type: ) line: 2>
+
+Token <value: / type: / line: 2>
+
+Token <value: j type: ID line: 2>
 
 Token <value: ; type: ; line: 2>
 
@@ -61,11 +69,31 @@ Token <value: } type: } line: 4>
 
 Token <value: int type: ID line: 6>
 
-Token <value: i type: ID line: 6>
+Token <value: test type: ID line: 6>
 
 Token <value: = type: = line: 6>
 
-Token <value: 99 type: INT line: 6>
+Token <value: > type: > line: 6>
+
+Token <value: main type: ID line: 6>
+
+Token <value: ( type: ( line: 6>
+
+Token <value: 1 type: INT line: 6>
+
+Token <value: , type: , line: 6>
+
+Token <value: 2 type: INT line: 6>
+
+Token <value: , type: , line: 6>
+
+Token <value: 3 type: INT line: 6>
+
+Token <value: , type: , line: 6>
+
+Token <value: 4 type: INT line: 6>
+
+Token <value: ) type: ) line: 6>
 
 Token <value: ; type: ; line: 6>
 
@@ -73,11 +101,11 @@ Token <value: print type: ID line: 7>
 
 Token <value: ( type: ( line: 7>
 
-Token <value: i type: ID line: 7>
+Token <value: test type: ID line: 7>
 
 Token <value: ) type: ) line: 7>
 
 Token <value: ; type: ; line: 7>
 
-Token <value: EOF type: EOF line: 8>
+Token <value: EOF type: EOF line: 9>
 

@@ -72,10 +72,10 @@ char* token_type_to_string(int type) {
         case TOKEN_COMMA:
             return ",";
             break;
-        case TOKEN_LESS:
+        case TOKEN_LT:
             return "<";
             break;
-        case TOKEN_GREATER:
+        case TOKEN_GT:
             return ">";
             break;
         case TOKEN_STRING:

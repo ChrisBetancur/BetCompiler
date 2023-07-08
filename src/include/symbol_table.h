@@ -41,16 +41,18 @@ char* entry_to_string(Entry* entry);
 typedef struct PROC_STRUCT {
     char* name;
     ASTNode* def;
+    unsigned int offset;
     Entry* entry;
 } Proc;
 
 Proc* init_proc(ASTNode* node);
 
+char* proc_to_string(Proc* proc);
+
 typedef struct SYMBOL_TABLE_STRUCT {
     List* procs;
     unsigned int size;
     unsigned int num_symbols;
-    unsigned int top_offset;
     unsigned int num_labels;
 } SymbolTable;
 

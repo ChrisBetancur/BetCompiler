@@ -211,10 +211,10 @@ Token* lexer_next_token(Lexer* lexer) {
                 return lexer_advance_once(lexer, TOKEN_COMMA);
                 break;
             case '<':
-                return lexer_advance_once(lexer, TOKEN_LESS);
+                return lexer_advance_once(lexer, TOKEN_LT);
                 break;
             case '>':
-                return lexer_advance_once(lexer, TOKEN_GREATER);
+                return lexer_advance_once(lexer, TOKEN_GT);
                 break;
             case '\"':
                 return lexer_advance_string(lexer);

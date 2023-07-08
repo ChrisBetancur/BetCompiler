@@ -5,10 +5,10 @@ flags = -g -Wall -lm -ldl -fPIC -rdynamic
 path = /home/c_bet/Projects/BetCompiler
 
 $(exec): $(objects)
-	clang -g $(objects) $(flags) -o $(exec)
+	gcc -g $(objects) $(flags) -o $(exec)
 
 %.o: %.c include/%.h
-	clang -c $(flags) $< -o $@
+	gcc -c $(flags) $< -o $@
 
 clean_output:
 	-rm output.asm
