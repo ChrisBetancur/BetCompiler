@@ -149,7 +149,7 @@ Token* lexer_advance_once(Lexer* lexer, int type) {
 Token* lexer_advance_id(Lexer* lexer) {
     char* value_buffer = calloc(1, sizeof(char));
 
-    while (isalpha(lexer->curr) != 0 || lexer->curr == '_') {
+    while (isalpha(lexer->curr) != 0 || isdigit(lexer->curr) || lexer->curr == '_') {
         value_buffer = realloc(value_buffer, (strlen(value_buffer) + 2) * sizeof(char));
         strcat(value_buffer, (char[]){lexer->curr, 0}); // RESEARCH
         lexer_advance(lexer);

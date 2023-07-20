@@ -115,7 +115,7 @@ Proc* init_proc(ASTNode* node) {
     Proc* proc = calloc(1, sizeof(struct PROC_STRUCT));
     proc->name = calloc(strlen(node->name) + 1, sizeof(char));
     proc->def = node;
-    proc->offset = 0x8;
+    proc->offset = 0x0;
     strcpy(proc->name, node->name);
     proc->entry = NULL;
 
@@ -164,33 +164,7 @@ SymbolTable* init_symbol_table() {
     return table;
 }
 
-int generate_hash(char* key) {
-    int hash_code = 0;
-
-    for (int i = 0; i < strlen(key); i++) {
-        int multiplier = 1;
-
-        for (int j = 0; j < i; j++) {
-            multiplier = multiplier * HASH;
-        }
-
-        hash_code = (int) key[i] * multiplier;
-    }
-
-    return hash_code;
-}
-
-int compress_hash(int hash_code, unsigned int size) {
-    int a = rand();
-    int b = rand();
-
-    int compressed_hash = ((a * hash_code + b) % PRIME_NUM) % size;
-
-    return compressed_hash;
-}
-
-
-bool symbol_in_scope(SymbolTable* table, Proc* proc, char* name) {
+bool symbol_in_scope(SymbolTable* table, Proc* proc, char* name) { // FUNCS WONT SEE GLOBAL VARS SINCE FUNCS ARE CREATED BEFORE THE GLOBAL VAL THROUGH IDENTIFY
     Entry* curr_entry = proc->entry;
 
     while (curr_entry != NULL) {
@@ -205,6 +179,7 @@ bool symbol_in_scope(SymbolTable* table, Proc* proc, char* name) {
 
     curr_entry = ((Proc*)table->procs->arr[0])->entry; // check if its global
 
+    //puts(entry_to_string(curr_entry));
     while (curr_entry != NULL) {
         if (strcmp(curr_entry->name, name) == 0) { // no entries can have the same symbol name
             if (strcmp(curr_entry->name, proc->name) == 0) {
@@ -239,13 +214,6 @@ void symbol_table_insert(SymbolTable* table, Proc* proc, Entry* entry) {
     }
 
     curr_entry->next = copy_entry(entry);
-
-    puts("------------------------------");
-    //puts(symbol_table_to_string(table));
-    puts(entry_to_string(curr_entry->next));
-    puts("------------------------------");
-
-    //free(entry);
 }
 
 void symbol_table_insert_proc(SymbolTable* table, Proc* proc) {

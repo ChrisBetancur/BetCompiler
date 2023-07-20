@@ -1,8 +1,10 @@
-int main(int i, int j, int k, int l) {
-    int m = i + (j * k + l) / j;
-    return m;
+int demo(int i, int j) {
+    int answer = i + j;
+    return answer;
 }
 
-int test => main(1, 2, 3, 4);
-print(test);
 
+int test => demo(1, 2);
+int g = 99;
+print(g);
+print(test);

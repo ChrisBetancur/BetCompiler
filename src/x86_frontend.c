@@ -163,13 +163,13 @@ char* x86_var(ASTNode* node, SymbolTable* table, Proc* proc) { // SHOULD PASS A 
             symbol_table_insert(table, proc, entry);
 
             const char* stack_push_template = "\n%s    pop rsi\n"
-                                                  "    mov [%s - 0x%x], rsi\n\n";
+                                                  "    mov QWORD [%s - 0x%x], rsi\n\n";
 
             const char* stack_push_no_expr_template = "\n    mov rsi, 0\n"
-                                                        "    mov [%s - 0x%x], rsi\n";
+                                                        "    mov QWORD [%s - 0x%x], rsi\n";
 
             const char* stack_push_call_template = "\n%s    mov rsi, rax\n"
-                                                       "    mov [%s - 0x%x], rsi\n";
+                                                       "    mov QWORD [%s - 0x%x], rsi\n";
 
 
             char* value = NULL;
@@ -195,6 +195,7 @@ char* x86_var(ASTNode* node, SymbolTable* table, Proc* proc) { // SHOULD PASS A 
 
             sprintf(output, stack_push_no_expr_template, base, node->offset);
 
+            free(entry);
             return output;
         }
     }
@@ -251,7 +252,7 @@ char* x86_print_element(ASTNode* element, SymbolTable* table, Proc* proc) {
     if (element->type == AST_VAR) {
         char* var_call = x86_var(element, table, proc);
         const char* print_var_template = "%s\n    pop rax\n"
-                                            "     call print_int\n";
+                                             "    call print_int\n";
 
         char* output = calloc(strlen(var_call) + strlen(print_var_template) + 1, sizeof(char));
         sprintf(output, print_var_template, var_call);
@@ -291,6 +292,7 @@ char* x86_built_in(ASTNode* node, SymbolTable* table, Proc* proc) {
         for (int i = 0; i < params->children->num_items; i++) {
             char* print_output = x86_print_element(params->children->arr[i], table, proc);
 
+            puts(print_output);
             if (output == NULL) {
                 output = print_output;
             }
@@ -374,7 +376,6 @@ char* x86_prep_stack_frame(ASTNode* func_call_params, ASTNode* func_def_params) 
         sprintf(params_output, param_template, params_output, ((ASTNode*) func_call_params->children->arr[i])->name);
     }
 
-    puts(params_output);
     return params_output;
 }
 
@@ -492,7 +493,6 @@ char* x86_global(ASTNode* node, SymbolTable* table) {
     char* root_const = read_file(ROOT_CONST);
 
     char* print_int = read_file(PRINT_INT);
-
 
     char* body_output = calloc(1, sizeof(char));
     size_t body_size = 0;
