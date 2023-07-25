@@ -265,8 +265,7 @@ ASTNode* parse_var(Parser* parser, Token* symbol_name_token, ASTNode* def_type) 
             parser_eat(parser, TOKEN_ID);
             ASTNode* call = parse_func_call(parser, symbol_name_token);
             list_append(symbol->children, call, sizeof(struct AST_NODE_STRUCT));
-            print_ast_at_node(symbol);
-            puts(token_to_string(parser->curr_token));
+
             return symbol;
         }
         else if (strcmp(def_type->name, "int") == 0 ) {

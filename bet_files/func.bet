@@ -1,10 +1,16 @@
-int demo(int i, int j) {
-    int answer = i + j;
-    return answer;
+int add(int i, int j) {
+    int output = i + j;
+    return output;
 }
 
+int testing(int i, int j, int k, int l) {
+    int output = i * j * k * l;
+    return output;
+}
 
-int test => demo(1, 2);
-int g = 99;
-print(g);
-print(test);
+int output => add(5, 8);
+
+print(output);
+int value => testing(2, 3, 4, 5);
+print(output);
+print(value);
