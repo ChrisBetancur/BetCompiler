@@ -71,3 +71,15 @@ print_sign:
     mov word [is_str_buf_neg], 0
     jmp print_resume
 
+
+SYS_WRITE equ 1
+SYS_EXIT equ 60
+STDOUT equ 1
+
+section .data
+    hyphen db '-', 0
+
+section .bss
+    str_buf resb 100
+    str_buf_pos resb 8
+    is_str_buf_neg resb 1

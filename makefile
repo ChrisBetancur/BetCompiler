@@ -1,4 +1,4 @@
-exec = output
+exec = bin/betc
 sources = $(wildcard src/*.c)
 objects = $(sources:.c=.o)
 flags = -g -Wall -lm -ldl -fPIC -rdynamic
@@ -10,10 +10,10 @@ $(exec): $(objects)
 %.o: %.c include/%.h
 	gcc -c $(flags) $< -o $@
 
+
 clean_output:
-	-rm output.asm
-	-rm output.o
-	-rm ./output
+	-rm -r bin
+	-rm -r target
 
 
 clean:
@@ -29,3 +29,8 @@ run:
 
 lint:
 	clang-tidy src/*.c src/include/*.h
+
+$(shell mkdir -p bin)
+$(shell mkdir -p target)
+
+.PHONY: clean_output clean run lint

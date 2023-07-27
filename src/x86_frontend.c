@@ -507,7 +507,6 @@ char* x86_global(ASTNode* node, SymbolTable* table) {
 
     char* root_const = read_file(ROOT_CONST);
 
-    char* print_int = read_file(PRINT_INT);
 
     char* body_output = calloc(1, sizeof(char));
     size_t body_size = 0;
@@ -526,9 +525,10 @@ char* x86_global(ASTNode* node, SymbolTable* table) {
         }
     }
 
-    char* buffer = calloc(strlen(start_root) + strlen(body_output) + strlen(end_root) + strlen(subroutines) + strlen(print_int) + strlen(root_const) + strlen(root_data) + strlen(root_bss) + 1, sizeof(char)); //4 keeps track of the number of new lines in sprintf
+    char* include_print = "\n\%include \"target/print_int.asm\"\n\n"; // FIX HERE, IT IS NOT READING THE INCLUDE
+    char* buffer = calloc(strlen(start_root) + strlen(body_output) + strlen(end_root) + strlen(subroutines) + strlen(include_print)  + strlen(root_const) + strlen(root_data) + strlen(root_bss) + 1, sizeof(char)); //4 keeps track of the number of new lines in sprintf
 
-    sprintf(buffer, "%s%s%s%s%s%s%s%s", start_root, body_output, end_root, subroutines, print_int, root_const, root_data, root_bss);
+    sprintf(buffer, "%s%s%s%s%s%s%s%s", start_root, body_output, end_root, subroutines, include_print, root_const, root_data, root_bss);
 
     return buffer;
 }

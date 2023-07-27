@@ -23,7 +23,7 @@ char* read_file(char* file_path) {
     file = fopen(file_path, "rb");
 
     if (file == NULL) {
-        printf("Error: file not found at %s", file_path);
+        printf("Error: file not found at %s\n", file_path);
         exit(1);
     }
 
