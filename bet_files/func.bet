@@ -1,16 +1,10 @@
 int add(int i, int j) {
     int output = i + j;
-    return output;
 }
 
-int testing(int i, int j, int k, int l) {
-    int output = i * j * k * l;
-    return output;
-}
+
 
 int output => add(5, 8);
 
 print(output);
-int value => testing(2, 3, 4, 5);
-print(output);
-print(value);
+

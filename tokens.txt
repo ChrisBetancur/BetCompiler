@@ -31,45 +31,7 @@ Token <value: j type: ID line: 2>
 
 Token <value: ; type: ; line: 2>
 
-Token <value: return type: ID line: 3>
-
-Token <value: output type: ID line: 3>
-
-Token <value: ; type: ; line: 3>
-
-Token <value: } type: } line: 4>
-
-Token <value: int type: ID line: 6>
-
-Token <value: testing type: ID line: 6>
-
-Token <value: ( type: ( line: 6>
-
-Token <value: int type: ID line: 6>
-
-Token <value: i type: ID line: 6>
-
-Token <value: , type: , line: 6>
-
-Token <value: int type: ID line: 6>
-
-Token <value: j type: ID line: 6>
-
-Token <value: , type: , line: 6>
-
-Token <value: int type: ID line: 6>
-
-Token <value: k type: ID line: 6>
-
-Token <value: , type: , line: 6>
-
-Token <value: int type: ID line: 6>
-
-Token <value: l type: ID line: 6>
-
-Token <value: ) type: ) line: 6>
-
-Token <value: { type: { line: 6>
+Token <value: } type: } line: 3>
 
 Token <value: int type: ID line: 7>
 
@@ -77,111 +39,31 @@ Token <value: output type: ID line: 7>
 
 Token <value: = type: = line: 7>
 
-Token <value: i type: ID line: 7>
+Token <value: > type: > line: 7>
 
-Token <value: * type: * line: 7>
+Token <value: add type: ID line: 7>
 
-Token <value: j type: ID line: 7>
+Token <value: ( type: ( line: 7>
 
-Token <value: * type: * line: 7>
+Token <value: 5 type: INT line: 7>
 
-Token <value: k type: ID line: 7>
+Token <value: , type: , line: 7>
 
-Token <value: * type: * line: 7>
+Token <value: 8 type: INT line: 7>
 
-Token <value: l type: ID line: 7>
+Token <value: ) type: ) line: 7>
 
 Token <value: ; type: ; line: 7>
 
-Token <value: return type: ID line: 8>
+Token <value: print type: ID line: 9>
 
-Token <value: output type: ID line: 8>
+Token <value: ( type: ( line: 9>
 
-Token <value: ; type: ; line: 8>
+Token <value: output type: ID line: 9>
 
-Token <value: } type: } line: 9>
+Token <value: ) type: ) line: 9>
 
-Token <value: int type: ID line: 11>
+Token <value: ; type: ; line: 9>
 
-Token <value: output type: ID line: 11>
-
-Token <value: = type: = line: 11>
-
-Token <value: > type: > line: 11>
-
-Token <value: add type: ID line: 11>
-
-Token <value: ( type: ( line: 11>
-
-Token <value: 5 type: INT line: 11>
-
-Token <value: , type: , line: 11>
-
-Token <value: 8 type: INT line: 11>
-
-Token <value: ) type: ) line: 11>
-
-Token <value: ; type: ; line: 11>
-
-Token <value: print type: ID line: 13>
-
-Token <value: ( type: ( line: 13>
-
-Token <value: output type: ID line: 13>
-
-Token <value: ) type: ) line: 13>
-
-Token <value: ; type: ; line: 13>
-
-Token <value: int type: ID line: 14>
-
-Token <value: value type: ID line: 14>
-
-Token <value: = type: = line: 14>
-
-Token <value: > type: > line: 14>
-
-Token <value: testing type: ID line: 14>
-
-Token <value: ( type: ( line: 14>
-
-Token <value: 2 type: INT line: 14>
-
-Token <value: , type: , line: 14>
-
-Token <value: 3 type: INT line: 14>
-
-Token <value: , type: , line: 14>
-
-Token <value: 4 type: INT line: 14>
-
-Token <value: , type: , line: 14>
-
-Token <value: 5 type: INT line: 14>
-
-Token <value: ) type: ) line: 14>
-
-Token <value: ; type: ; line: 14>
-
-Token <value: print type: ID line: 15>
-
-Token <value: ( type: ( line: 15>
-
-Token <value: output type: ID line: 15>
-
-Token <value: ) type: ) line: 15>
-
-Token <value: ; type: ; line: 15>
-
-Token <value: print type: ID line: 16>
-
-Token <value: ( type: ( line: 16>
-
-Token <value: value type: ID line: 16>
-
-Token <value: ) type: ) line: 16>
-
-Token <value: ; type: ; line: 16>
-
-Token <value: EOF type: EOF line: 17>
+Token <value: EOF type: EOF line: 11>
 

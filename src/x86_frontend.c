@@ -157,6 +157,99 @@ char* x86_correct_base(char* proc) {
     return "rbp";
 }
 
+char* x86_int_var_assignment(ASTNode* node, SymbolTable* table, Proc* proc) {
+    if (((ASTNode*) node->children->arr[1])->type == AST_EXPR) {
+        return x86_eval_expr(((ASTNode*) node->children->arr[1])->children->arr[0], table, proc);
+    }
+    else {
+        printf("Invalid assignment to var, should be int\n");
+        exit(1);
+    }
+}
+
+char* x86_mem_op(char* proc_name) {
+    if (strcmp(proc_name, "global") == 0) {
+        return "+";
+    }
+    else {
+        return "-";
+    }
+}
+
+char* x86_declared_var(ASTNode* node, SymbolTable* table, Proc* proc) {
+
+    char* base = x86_correct_base(proc->name);
+
+    ASTNode* child = node->children->arr[0];
+    char* op = x86_mem_op(proc->name);
+
+    Entry* entry = init_entry_mem(node->name, ENTRY_INT, base, proc->offset += 0x8);
+    symbol_table_insert(table, proc, entry);
+
+    const char* stack_push_template = "\n%s    pop rsi\n"
+                                          "    mov QWORD [%s %s 0x%x], rsi\n\n";
+
+    const char* stack_push_no_expr_template = "\n    mov rsi, 0\n"
+                                                "    mov QWORD [%s %s 0x%x], rsi\n";
+
+    const char* stack_push_call_template = "\n%s    mov rsi, rax\n"
+                                               "    mov QWORD [%s %s 0x%x], rsi\n";
+
+    char* output = NULL;
+
+    if (((ASTNode*) node->children->arr[1])->type == AST_CALL) {
+        char* func_call = x86_assemble((ASTNode*) node->children->arr[1], table, proc);
+        output = calloc(strlen(func_call) + strlen(stack_push_call_template) + strlen(base) + strlen(op) + sizeof(entry->mem_addr) + 1, sizeof(char));
+        sprintf(output, stack_push_call_template, func_call, base, op, entry->mem_addr);
+        return output;
+    }
+
+    char* value = NULL;
+    if (strcmp(child->name, "int") == 0) {
+        value = x86_int_var_assignment(node, table, proc);
+    }
+
+    if (value != NULL) {
+        output = calloc(strlen(stack_push_template) + strlen(value) + strlen(base) + strlen(op) + sizeof(entry->mem_addr) + 1, sizeof(char));
+        sprintf(output, stack_push_template, value, base, op, entry->mem_addr);
+        return output;
+    }
+
+    output = calloc(strlen(stack_push_no_expr_template) + strlen(base) + sizeof(entry->mem_addr) + 1, sizeof(char));
+
+    sprintf(output, stack_push_no_expr_template, base, node->offset);
+
+    free(entry);
+    return output;
+
+}
+
+char* x86_var_reassign(ASTNode* node, SymbolTable* table, Proc* proc) {
+    char* base = x86_correct_base(proc->name);
+
+    ASTNode* child = node->children->arr[0];
+    const char* stack_push_template = "%s\n    pop rsi\n"
+                                          "    mov [%s + 0x%x], rsi\n\n";
+
+    char* expr = x86_eval_expr(child->children->arr[0], table, proc);
+
+    if (!symbol_in_scope(table, proc, node->name)) {
+        x86_error_handler(SYMBOL_NOT_IN_SCOPE, node);
+    }
+
+    Entry* entry_stored = symbol_table_lookup(table, node->name);
+
+    if (entry_stored == NULL) {
+        x86_error_handler(UNDEFINED_VAR, node);
+    }
+
+    char* output = calloc(strlen(stack_push_template) + strlen(expr) + strlen(base) + sizeof(node->offset) + 1, sizeof(char));
+    sprintf(output, stack_push_template, expr, base, entry_stored->mem_addr);
+
+    return output;
+
+}
+
 char* x86_var(ASTNode* node, SymbolTable* table, Proc* proc) { // SHOULD PASS A SCOPE ARGUMENT IN ORDER TO PUSH A VALID ENTRY, FOR NOW ITS JUST GLOBAL
     if (node->children->num_items == 0) {
         return x86_var_call(node, table, proc);
@@ -164,80 +257,11 @@ char* x86_var(ASTNode* node, SymbolTable* table, Proc* proc) { // SHOULD PASS A 
 
     ASTNode* child = node->children->arr[0];
 
-    char* base = x86_correct_base(proc->name);
-
     if (child->type == AST_DEC_TYPE) {
-
-        char* op = NULL;
-        if (strcmp(proc->name, "global") == 0) {
-            op = "+";
-        }
-        else {
-            op = "-";
-        }
-
-
-        if (strcmp(child->name, "int") == 0) {
-            Entry* entry = init_entry_mem(node->name, ENTRY_INT, base, proc->offset += 0x8);
-            symbol_table_insert(table, proc, entry);
-
-            const char* stack_push_template = "\n%s    pop rsi\n"
-                                                  "    mov QWORD [%s %s 0x%x], rsi\n\n";
-
-            const char* stack_push_no_expr_template = "\n    mov rsi, 0\n"
-                                                        "    mov QWORD [%s %s 0x%x], rsi\n";
-
-            const char* stack_push_call_template = "\n%s    mov rsi, rax\n"
-                                                       "    mov QWORD [%s %s 0x%x], rsi\n";
-
-
-            char* value = NULL;
-            if (((ASTNode*) node->children->arr[1])->type == AST_EXPR) {
-                value = x86_eval_expr(((ASTNode*) node->children->arr[1])->children->arr[0], table, proc);
-            }
-
-            char* output = NULL;
-            if (((ASTNode*) node->children->arr[1])->type == AST_CALL) {
-                char* func_call = x86_assemble((ASTNode*) node->children->arr[1], table, proc);
-                output = calloc(strlen(func_call) + strlen(stack_push_call_template) + strlen(base) + strlen(op) + sizeof(entry->mem_addr) + 1, sizeof(char));
-                sprintf(output, stack_push_call_template, func_call, base, op, entry->mem_addr);
-                return output;
-            }
-
-            if (value != NULL) {
-                output = calloc(strlen(stack_push_template) + strlen(value) + strlen(base) + strlen(op) + sizeof(entry->mem_addr) + 1, sizeof(char));
-                sprintf(output, stack_push_template, value, base, op, entry->mem_addr);
-                return output;
-            }
-
-            output = calloc(strlen(stack_push_no_expr_template) + strlen(base) + sizeof(entry->mem_addr) + 1, sizeof(char));
-
-            sprintf(output, stack_push_no_expr_template, base, node->offset);
-
-            free(entry);
-            return output;
-        }
+        return x86_declared_var(node, table, proc);
     }
     else {
-        const char* stack_push_template = "%s\n    pop rsi\n"
-                                              "    mov [%s + 0x%x], rsi\n\n";
-
-        char* expr = x86_eval_expr(child->children->arr[0], table, proc);
-
-        if (!symbol_in_scope(table, proc, node->name)) {
-            x86_error_handler(SYMBOL_NOT_IN_SCOPE, node);
-        }
-
-        Entry* entry_stored = symbol_table_lookup(table, node->name);
-
-        if (entry_stored == NULL) {
-            x86_error_handler(UNDEFINED_VAR, node);
-        }
-
-        char* output = calloc(strlen(stack_push_template) + strlen(expr) + strlen(base) + sizeof(node->offset) + 1, sizeof(char));
-        sprintf(output, stack_push_template, expr, base, entry_stored->mem_addr);
-
-        return output;
+        return x86_var_reassign(node, table, proc);
     }
 
     return NULL;
@@ -423,6 +447,7 @@ char* x86_return(ASTNode* node, SymbolTable* table, Proc* proc) {
 char* x86_func_block(ASTNode* node, SymbolTable* table, Proc* proc) {
     char* block = calloc(1, sizeof(char));
     for (int i = 0; i < node->children->num_items; i++) {
+        puts(astnode_to_string(node->children->arr[i]));
         char* curr_output = x86_assemble(node->children->arr[i], table, proc);
         block = realloc(block, (strlen(block) + strlen(curr_output) + 1) * sizeof(char));
         strcat(block, curr_output);

@@ -15,6 +15,16 @@ char* x86_op_evaluate(char* op);
 
 char* x86_var_call(ASTNode* node, SymbolTable* table, Proc* proc);
 
+char* x86_correct_base(char* proc);
+
+char* x86_int_var_assignment(ASTNode* node, SymbolTable* table, Proc* proc);
+
+char* x86_mem_op(char* proc_name);
+
+char* x86_declared_var(ASTNode* node, SymbolTable* table, Proc* proc);
+
+char* x86_var_reassign(ASTNode* node, SymbolTable* table, Proc* proc);
+
 char* x86_var(ASTNode* node, SymbolTable* table, Proc* proc);
 
 char* x86_int(ASTNode* node);

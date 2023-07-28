@@ -19,75 +19,17 @@ Ast Node <name: global type: GLOBAL SCOPE>
 
 |           +--- Ast Node <name: output type: VARIABLE>
 
-|           |     +--- Ast Node <name: int type: DECLARATION TYPE>
+|                 +--- Ast Node <name: int type: DECLARATION TYPE>
 
-|           |     +--- Ast Node <type: EXPRESSION>
+|                 +--- Ast Node <type: EXPRESSION>
 
-|           |           +--- Ast Node <type: BINARY OPERATION>
+|                       +--- Ast Node <type: BINARY OPERATION>
 
-|           |                 +--- Ast Node <name: + type: OPERATOR>
+|                             +--- Ast Node <name: + type: OPERATOR>
 
-|           |                 +--- Ast Node <name: i type: VARIABLE>
+|                             +--- Ast Node <name: i type: VARIABLE>
 
-|           |                 +--- Ast Node <name: j type: VARIABLE>
-
-|           +--- Ast Node <type: RETURN>
-
-|                 +--- Ast Node <name: output type: VARIABLE>
-
-+--- Ast Node <name: testing type: FUNCTION>
-
-|     +--- Ast Node <name: int type: RETURN TYPE>
-
-|     +--- Ast Node <type: PARAMS>
-
-|     |     +--- Ast Node <name: i type: VARIABLE>
-
-|     |     |     +--- Ast Node <name: int type: DECLARATION TYPE>
-
-|     |     +--- Ast Node <name: j type: VARIABLE>
-
-|     |     |     +--- Ast Node <name: int type: DECLARATION TYPE>
-
-|     |     +--- Ast Node <name: k type: VARIABLE>
-
-|     |     |     +--- Ast Node <name: int type: DECLARATION TYPE>
-
-|     |     +--- Ast Node <name: l type: VARIABLE>
-
-|     |           +--- Ast Node <name: int type: DECLARATION TYPE>
-
-|     +--- Ast Node <type: BLOCK>
-
-|           +--- Ast Node <name: output type: VARIABLE>
-
-|           |     +--- Ast Node <name: int type: DECLARATION TYPE>
-
-|           |     +--- Ast Node <type: EXPRESSION>
-
-|           |           +--- Ast Node <type: BINARY OPERATION>
-
-|           |                 +--- Ast Node <name: * type: OPERATOR>
-
-|           |                 +--- Ast Node <type: BINARY OPERATION>
-
-|           |                 |     +--- Ast Node <name: * type: OPERATOR>
-
-|           |                 |     +--- Ast Node <type: BINARY OPERATION>
-
-|           |                 |     |     +--- Ast Node <name: * type: OPERATOR>
-
-|           |                 |     |     +--- Ast Node <name: i type: VARIABLE>
-
-|           |                 |     |     +--- Ast Node <name: j type: VARIABLE>
-
-|           |                 |     +--- Ast Node <name: k type: VARIABLE>
-
-|           |                 +--- Ast Node <name: l type: VARIABLE>
-
-|           +--- Ast Node <type: RETURN>
-
-|                 +--- Ast Node <name: output type: VARIABLE>
+|                             +--- Ast Node <name: j type: VARIABLE>
 
 +--- Ast Node <name: output type: VARIABLE>
 
@@ -103,35 +45,7 @@ Ast Node <name: global type: GLOBAL SCOPE>
 
 +--- Ast Node <name: print type: BUILT_IN>
 
-|     +--- Ast Node <type: PARAMS>
-
-|           +--- Ast Node <name: output type: VARIABLE>
-
-+--- Ast Node <name: value type: VARIABLE>
-
-|     +--- Ast Node <name: int type: DECLARATION TYPE>
-
-|     +--- Ast Node <name: testing type: SYMBOL CALLED>
-
-|           +--- Ast Node <type: PARAMS>
-
-|                 +--- Ast Node <name: 2 type: INTEGER>
-
-|                 +--- Ast Node <name: 3 type: INTEGER>
-
-|                 +--- Ast Node <name: 4 type: INTEGER>
-
-|                 +--- Ast Node <name: 5 type: INTEGER>
-
-+--- Ast Node <name: print type: BUILT_IN>
-
-|     +--- Ast Node <type: PARAMS>
-
-|           +--- Ast Node <name: output type: VARIABLE>
-
-+--- Ast Node <name: print type: BUILT_IN>
-
       +--- Ast Node <type: PARAMS>
 
-            +--- Ast Node <name: value type: VARIABLE>
+            +--- Ast Node <name: output type: VARIABLE>
 
