@@ -1,10 +1,10 @@
-int add(int i, int j) {
-    int output = i + j;
+
+void add(i64 i, i64 j) {
+    i64 output = i + j;
+    print(output);
+    return void;
 }
 
+add(5, 8);
 
-
-int output => add(5, 8);
-
-print(output);
 

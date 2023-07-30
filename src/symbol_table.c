@@ -231,7 +231,7 @@ Proc* symbol_table_lookup_proc(SymbolTable* table, char* proc_name) {
     return NULL;
 }
 
-Entry* symbol_table_lookup(SymbolTable* table,  char* symbol_name) { // must find a way of checking if defined in scope -> copy symbol_in_scope
+Entry* symbol_table_lookup(SymbolTable* table, char* symbol_name) { // must find a way of checking if defined in scope -> copy symbol_in_scope
     for (int i = 0; i < table->size; i++) {
         Entry* curr_entry = ((Proc*)table->procs->arr[i])->entry;
         while (curr_entry != NULL) {

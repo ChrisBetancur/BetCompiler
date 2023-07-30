@@ -162,8 +162,7 @@ char* x86_int_var_assignment(ASTNode* node, SymbolTable* table, Proc* proc) {
         return x86_eval_expr(((ASTNode*) node->children->arr[1])->children->arr[0], table, proc);
     }
     else {
-        printf("Invalid assignment to var, should be int\n");
-        exit(1);
+        x86_error_handler(UNEXPECTED_ASSIGNMENT, node);
     }
 }
 
@@ -177,7 +176,6 @@ char* x86_mem_op(char* proc_name) {
 }
 
 char* x86_declared_var(ASTNode* node, SymbolTable* table, Proc* proc) {
-
     char* base = x86_correct_base(proc->name);
 
     ASTNode* child = node->children->arr[0];
@@ -198,6 +196,10 @@ char* x86_declared_var(ASTNode* node, SymbolTable* table, Proc* proc) {
     char* output = NULL;
 
     if (((ASTNode*) node->children->arr[1])->type == AST_CALL) {
+        Proc* func_proc = symbol_table_lookup_proc(table, ((ASTNode*)node->children->arr[1])->name);
+        if (strcmp(((ASTNode*) func_proc->def->children->arr[0])->name, "void") == 0) {
+            x86_error_handler(UNEXPECTED_ASSIGNMENT, node);
+        }
         char* func_call = x86_assemble((ASTNode*) node->children->arr[1], table, proc);
         output = calloc(strlen(func_call) + strlen(stack_push_call_template) + strlen(base) + strlen(op) + sizeof(entry->mem_addr) + 1, sizeof(char));
         sprintf(output, stack_push_call_template, func_call, base, op, entry->mem_addr);
@@ -205,7 +207,7 @@ char* x86_declared_var(ASTNode* node, SymbolTable* table, Proc* proc) {
     }
 
     char* value = NULL;
-    if (strcmp(child->name, "int") == 0) {
+    if (strcmp(child->name, "i64") == 0) {
         value = x86_int_var_assignment(node, table, proc);
     }
 
@@ -374,6 +376,7 @@ char* x86_identify_literals(char* root_data, ASTNode* node, SymbolTable* table, 
     return literals;
 }
 
+
 char* x86_func_call(ASTNode* node, SymbolTable* table, Proc* proc) { // error handle if not in scope and if params match, how to pass func_def_params
     const char* func_call_template = "%s\n"
                                      "    call %s\n";
@@ -433,26 +436,116 @@ char* x86_identify_funcs(ASTNode* node, SymbolTable* table) {
     return subroutines;
 }
 
-char* x86_return(ASTNode* node, SymbolTable* table, Proc* proc) {
-    ASTNode* ret_val = node->children->arr[0];
-    Entry* return_entry = symbol_table_lookup(table, ret_val->name);
+char* x86_handle_func_return(ASTNode* func_node, ASTNode* return_node, SymbolTable* table) { // MUST DESIGN MEASURES TO PREVENT OUT OF SCOPE CALLS
+    ASTNode* type = func_node->children->arr[0];
 
-    const char* return_template = "    mov rax, QWORD [rbp - 0x%x]\n";
+    if (strcmp(type->name, "void") == 0) {
+        if (return_node == NULL) return "";
 
-    char* output = calloc(strlen(return_template) + sizeof(return_entry->mem_addr) + 1, sizeof(char));
-    sprintf(output, return_template, return_entry->mem_addr);
-    return output;
+        if (return_node->children->num_items == 0) return "";
+
+        puts("invalid return value for void");
+        exit(1);
+    }
+
+    if (strcmp(type->name, "i64") == 0) {
+        if (return_node->children->num_items == 0 || return_node == NULL) {
+            puts("invalid return value for i64");
+            exit(1);
+        }
+
+        ASTNode* ret_val = return_node->children->arr[0];
+
+        if (is_expression(ret_val->name)) {
+            const char* return_template = "    mov rax, %s\n";
+
+            char* output = calloc(strlen(return_template) + strlen(ret_val->name) + 1, sizeof(char));
+            sprintf(output, return_template, ret_val->name);
+
+            return output;
+        }
+
+        Entry* return_entry = symbol_table_lookup(table, ret_val->name);
+
+        const char* return_template = "    mov rax, QWORD [rbp - 0x%x]\n";
+
+        char* output = calloc(strlen(return_template) + sizeof(return_entry->mem_addr) + 1, sizeof(char));
+        sprintf(output, return_template, return_entry->mem_addr);
+        return output;
+    }
+
+    puts("invalid return type");
+    exit(1);
+
+}
+
+char* x86_return(ASTNode* return_node, SymbolTable* table, Proc* proc) { // HANDLE SCOPE HERE??
+
+    ASTNode* func_node = proc->def;
+    ASTNode* type = func_node->children->arr[0];
+
+    if (strcmp(type->name, "void") == 0) {
+        puts(astnode_to_string(return_node));
+
+        if (return_node->children->num_items == 0) return "";
+
+        puts("invalid return value for void");
+        exit(1);
+    }
+
+    if (strcmp(type->name, "i64") == 0) {
+        if (return_node->children->num_items == 0) {
+            puts("invalid return value for i64");
+            exit(1);
+        }
+
+        ASTNode* ret_val = return_node->children->arr[0];
+
+        if (is_expression(ret_val->name)) {
+            const char* return_template = "    mov rax, %s\n";
+
+            char* output = calloc(strlen(return_template) + strlen(ret_val->name) + 1, sizeof(char));
+            sprintf(output, return_template, ret_val->name);
+
+            return output;
+        }
+
+        Entry* return_entry = symbol_table_lookup(table, ret_val->name);
+
+        const char* return_template = "    mov rax, QWORD [rbp - 0x%x]\n";
+
+        char* output = calloc(strlen(return_template) + sizeof(return_entry->mem_addr) + 1, sizeof(char));
+        sprintf(output, return_template, return_entry->mem_addr);
+        return output;
+    }
+
+    puts("invalid return type");
+    exit(1);
+
 }
 
 char* x86_func_block(ASTNode* node, SymbolTable* table, Proc* proc) {
+    bool requires_return = false;
+
+    if (strcmp(((ASTNode*) proc->def->children->arr[0])->name, "void") != 0) {
+        requires_return = true;
+    }
+
+    bool has_return = false;
+
     char* block = calloc(1, sizeof(char));
     for (int i = 0; i < node->children->num_items; i++) {
-        puts(astnode_to_string(node->children->arr[i]));
+        if (((ASTNode*) node->children->arr[i])->type == AST_RETURN)
+            has_return = true;
         char* curr_output = x86_assemble(node->children->arr[i], table, proc);
         block = realloc(block, (strlen(block) + strlen(curr_output) + 1) * sizeof(char));
         strcat(block, curr_output);
     }
 
+    if (!has_return && requires_return) {
+        printf("Function needs return value\n");
+        exit(1);
+    }
     return block;
 }
 

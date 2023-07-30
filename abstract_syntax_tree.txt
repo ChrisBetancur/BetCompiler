@@ -3,49 +3,45 @@ Ast Node <name: global type: GLOBAL SCOPE>
 
 +--- Ast Node <name: add type: FUNCTION>
 
-|     +--- Ast Node <name: int type: RETURN TYPE>
+|     +--- Ast Node <name: void type: RETURN TYPE>
 
 |     +--- Ast Node <type: PARAMS>
 
 |     |     +--- Ast Node <name: i type: VARIABLE>
 
-|     |     |     +--- Ast Node <name: int type: DECLARATION TYPE>
+|     |     |     +--- Ast Node <name: i64 type: DECLARATION TYPE>
 
 |     |     +--- Ast Node <name: j type: VARIABLE>
 
-|     |           +--- Ast Node <name: int type: DECLARATION TYPE>
+|     |           +--- Ast Node <name: i64 type: DECLARATION TYPE>
 
 |     +--- Ast Node <type: BLOCK>
 
 |           +--- Ast Node <name: output type: VARIABLE>
 
-|                 +--- Ast Node <name: int type: DECLARATION TYPE>
+|           |     +--- Ast Node <name: i64 type: DECLARATION TYPE>
 
-|                 +--- Ast Node <type: EXPRESSION>
+|           |     +--- Ast Node <type: EXPRESSION>
 
-|                       +--- Ast Node <type: BINARY OPERATION>
+|           |           +--- Ast Node <type: BINARY OPERATION>
 
-|                             +--- Ast Node <name: + type: OPERATOR>
+|           |                 +--- Ast Node <name: + type: OPERATOR>
 
-|                             +--- Ast Node <name: i type: VARIABLE>
+|           |                 +--- Ast Node <name: i type: VARIABLE>
 
-|                             +--- Ast Node <name: j type: VARIABLE>
+|           |                 +--- Ast Node <name: j type: VARIABLE>
 
-+--- Ast Node <name: output type: VARIABLE>
+|           +--- Ast Node <name: print type: BUILT_IN>
 
-|     +--- Ast Node <name: int type: DECLARATION TYPE>
+|                 +--- Ast Node <type: PARAMS>
 
-|     +--- Ast Node <name: add type: SYMBOL CALLED>
+|                       +--- Ast Node <name: output type: VARIABLE>
 
-|           +--- Ast Node <type: PARAMS>
-
-|                 +--- Ast Node <name: 5 type: INTEGER>
-
-|                 +--- Ast Node <name: 8 type: INTEGER>
-
-+--- Ast Node <name: print type: BUILT_IN>
++--- Ast Node <name: add type: SYMBOL CALLED>
 
       +--- Ast Node <type: PARAMS>
 
-            +--- Ast Node <name: output type: VARIABLE>
+            +--- Ast Node <name: 5 type: INTEGER>
+
+            +--- Ast Node <name: 8 type: INTEGER>
 

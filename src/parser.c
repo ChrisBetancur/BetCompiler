@@ -268,7 +268,7 @@ ASTNode* parse_var(Parser* parser, Token* symbol_name_token, ASTNode* def_type) 
 
             return symbol;
         }
-        else if (strcmp(def_type->name, "int") == 0 ) {
+        else if (strcmp(def_type->name, "i64") == 0 ) {
             parse_int_var(parser, symbol);
         }
         else if (strcmp(def_type->name, "string") == 0 ) {
@@ -342,9 +342,7 @@ ASTNode* parse_return_st(Parser* parser) {
                 parser_eat(parser, TOKEN_EOL);
                 return return_symbol;
             }
-            /*printf("Parser: cannot return keyword '%s'::%d\n", parser->curr_token->value, parser->curr_token->line_num);
-            printf("Exited with code 1\n");
-            exit(1);*/
+
             parser_error_handler(INVALID_RETURN, parser->curr_token->value, 0, parser->curr_token->line_num);
     }
 

@@ -16,7 +16,7 @@
  */
 
 bool is_prim_type(char* name) {
-    if (strcmp(name, "int") == 0)
+    if (strcmp(name, "i64") == 0)
         return true;
 
     if (strcmp(name, "bool") == 0)
@@ -237,20 +237,24 @@ void parser_error_handler(int error, char* token_value, int expected_type, int l
 void x86_error_handler(int error, ASTNode* node) {
     switch (error) {
         case UNEXPECTED_NODE:
-            printf("Assembler: Unexpected node type '%s' for '%s'\n", astnode_type_to_string(node->type), node->name);
+            printf("[DEBUG] Assembler: Unexpected node type '%s' for '%s'\n", astnode_type_to_string(node->type), node->name);
             exit(1);
             break;
 
         case UNDEFINED_VAR:
-            printf("Assembler: Variable '%s' not defined\n", node->name);
+            printf("[DEBUG] Assembler: Variable '%s' not defined\n", node->name);
             exit(1);
             break;
 
         case SYMBOL_NOT_IN_SCOPE:
-            printf("Assembler: Variable '%s' not defined in scope\n", node->name);
+            printf("[DEBUG] Assembler: Variable '%s' not defined in scope\n", node->name);
             exit(1);
             break;
 
+        case UNEXPECTED_ASSIGNMENT:
+            printf("[DEBUG] Assembler: Unexpected assignment for variable %s\n", node->name);
+            exit(1);
+            break;
 
         default:
             printf("Error Handler: Unexpected error code %d", error);
