@@ -1,0 +1,24 @@
+
+i64 add(i64 i, i64 j, i64 k) {
+    i64 man = i + j + k;
+    return man;
+}
+
+i64 sub(i64 i, i64 j, i64 k) {
+    i64 output = i - j - k;
+    return output;
+}
+
+i64 mult(i64 i, i64 j, i64 k) {
+    i64 output = i * j * k;
+    return output;
+}
+
+i64 output => add(5, 8, 2);
+i64 sub_output => sub(10, 3, 4);
+i64 mult_output => mult(3, 3, 3);
+
+print(output);
+print(sub_output);
+print(mult_output);
+

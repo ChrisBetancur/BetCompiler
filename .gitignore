@@ -1,0 +1,14 @@
+
+# Ignore object files
+*.o
+
+# Ignore everything in the 'target' directory
+/target/
+
+# Ignore everything in the 'bin' directory
+/bin/
+
+# Ignore all text files except 'x86_notes.txt' and 'compiler_template.txt'
+*.txt
+!x86_notes.txt
+!compiler_template.txt
