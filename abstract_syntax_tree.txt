@@ -1,47 +1,35 @@
 
 Ast Node <name: global type: GLOBAL SCOPE>
 
-+--- Ast Node <name: add type: FUNCTION>
++--- Ast Node <name: i type: VARIABLE>
 
-|     +--- Ast Node <name: void type: RETURN TYPE>
+      +--- Ast Node <name: i64 type: DECLARATION TYPE>
 
-|     +--- Ast Node <type: PARAMS>
+      +--- Ast Node <type: EXPRESSION syn_value: 73>
 
-|     |     +--- Ast Node <name: i type: VARIABLE>
+            +--- Ast Node <type: BINARY OPERATION>
 
-|     |     |     +--- Ast Node <name: i64 type: DECLARATION TYPE>
+                  +--- Ast Node <name: / type: OPERATOR>
 
-|     |     +--- Ast Node <name: j type: VARIABLE>
+                  +--- Ast Node <type: BINARY OPERATION>
 
-|     |           +--- Ast Node <name: i64 type: DECLARATION TYPE>
+                  |     +--- Ast Node <name: * type: OPERATOR>
 
-|     +--- Ast Node <type: BLOCK>
+                  |     +--- Ast Node <type: BINARY OPERATION>
 
-|           +--- Ast Node <name: output type: VARIABLE>
+                  |     |     +--- Ast Node <name: + type: OPERATOR>
 
-|           |     +--- Ast Node <name: i64 type: DECLARATION TYPE>
+                  |     |     +--- Ast Node <name: 999 type: INTEGER>
 
-|           |     +--- Ast Node <type: EXPRESSION>
+                  |     |     +--- Ast Node <name: 45 type: INTEGER>
 
-|           |           +--- Ast Node <type: BINARY OPERATION>
+                  |     +--- Ast Node <type: BINARY OPERATION>
 
-|           |                 +--- Ast Node <name: + type: OPERATOR>
+                  |           +--- Ast Node <name: - type: OPERATOR>
 
-|           |                 +--- Ast Node <name: i type: VARIABLE>
+                  |           +--- Ast Node <name: 10 type: INTEGER>
 
-|           |                 +--- Ast Node <name: j type: VARIABLE>
+                  |           +--- Ast Node <name: 3 type: INTEGER>
 
-|           +--- Ast Node <name: print type: BUILT_IN>
-
-|                 +--- Ast Node <type: PARAMS>
-
-|                       +--- Ast Node <name: output type: VARIABLE>
-
-+--- Ast Node <name: add type: SYMBOL CALLED>
-
-      +--- Ast Node <type: PARAMS>
-
-            +--- Ast Node <name: 5 type: INTEGER>
-
-            +--- Ast Node <name: 8 type: INTEGER>
+                  +--- Ast Node <name: 99 type: INTEGER>
 

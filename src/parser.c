@@ -36,7 +36,7 @@ Parser* init_parser(Lexer* lexer) {
  */
 
 void parser_eat(Parser* parser, int type) {
-
+    printf("Token->%s\n", token_to_string(parser->curr_token));
     if (parser->curr_token->type != type) {
         /*printf("Parser: '%s' unexpected token; Expected: '%s'::%d\n",
                 parser->curr_token->value, token_type_to_string(type), parser->curr_token->line_num);
@@ -77,6 +77,8 @@ ASTNode* parse_factor(Parser* parser) {
     ASTNode* symbol;
     if (parser->curr_token->type == TOKEN_INT) {
         symbol = init_ASTNode(parser->curr_token->value, AST_INT);
+        symbol->syn_value = (unsigned int) atoi(parser->curr_token->value);
+        printf("syn_value_fac=%d\n", (unsigned int) parser->curr_token->value);
         parser_eat(parser, TOKEN_INT);
         return symbol;
     }
@@ -86,6 +88,7 @@ ASTNode* parse_factor(Parser* parser) {
             parser_error_handler(INVALID_ASSIGNMENT, parser->curr_token->value, 0, parser->curr_token->line_num);
         }
 
+        
         symbol = init_ASTNode(parser->curr_token->value, AST_VAR); // MUST FIND WAY TO CLEAN SYMBOL THAT IS BEING ASSIGNED TO VAR IF SYMBOL DEFINED IN FUNCTION
                                                                    // might have to fix at runtime while translating to assembly
         //clean_symbol(parser, symbol, parser->root, parser->curr_token->line_num);
@@ -139,6 +142,15 @@ ASTNode* parse_term(Parser* parser) {
         list_append(symbol->children, prev_symbol, sizeof(struct AST_NODE_STRUCT));
         ASTNode* right = parse_factor(parser);
         list_append(symbol->children, right, sizeof(struct AST_NODE_STRUCT));
+
+        if (right->syn_value != NULL && prev_symbol->syn_value != NULL) {
+            if (strcmp(op, "*") == 0) {
+                symbol->syn_value = prev_symbol->syn_value * right->syn_value;
+            }
+            else {
+                symbol->syn_value = prev_symbol->syn_value / right->syn_value;
+            }
+        }
     }
     return symbol;
 }
@@ -159,6 +171,8 @@ ASTNode* parse_expr(Parser* parser) {
         ASTNode* prev_symbol = symbol;
         symbol = init_ASTNode(NULL, AST_BINARY_OP);
 
+        char* op = parser->curr_token->value;
+
         if (parser->curr_token->type == TOKEN_ADD) {
             list_append(symbol->children, init_ASTNode(parser->curr_token->value, AST_OPERATOR), sizeof(struct AST_NODE_STRUCT));
             parser_eat(parser, TOKEN_ADD);
@@ -171,6 +185,18 @@ ASTNode* parse_expr(Parser* parser) {
         list_append(symbol->children, prev_symbol, sizeof(struct AST_NODE_STRUCT));
         ASTNode* right_term = parse_term(parser);
         list_append(symbol->children, right_term, sizeof(struct AST_NODE_STRUCT));
+
+        printf("HEY rev_symv->%d\n", right_term->syn_value);
+        if (right_term->syn_value != NULL && prev_symbol->syn_value != NULL) {
+            if (strcmp(op, "+") == 0) {
+                printf("entered\n");
+                symbol->syn_value = prev_symbol->syn_value + right_term->syn_value;
+                printf("sum=%d+%d=%d\n", prev_symbol->syn_value, right_term->syn_value, symbol->syn_value);
+            }
+            else {
+                symbol->syn_value = prev_symbol->syn_value - right_term->syn_value;
+            }
+        }
     }
 
     return symbol;
@@ -187,8 +213,10 @@ ASTNode* parse_expr(Parser* parser) {
 
 void parse_int_var(Parser* parser, ASTNode* symbol) {
     ASTNode* expr = init_ASTNode(NULL, AST_EXPR);
+    ASTNode* expr_tree = parse_expr(parser);
     list_append(symbol->children, expr, sizeof(struct AST_NODE_STRUCT));
-    list_append(expr->children, parse_expr(parser), sizeof(struct AST_NODE_STRUCT));
+    list_append(expr->children, expr_tree, sizeof(struct AST_NODE_STRUCT));
+    expr->syn_value = expr_tree->syn_value;
 }
 
 /*

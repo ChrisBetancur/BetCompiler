@@ -20,7 +20,7 @@ ASTNode* init_ASTNode(char* name, int type) {
 
     node->name = name;
     node->type = type;
-    //node->offset = NULL;
+    node->syn_value = NULL;
     node->children = init_list(sizeof(struct AST_NODE_STRUCT));
 
     return node;
@@ -115,7 +115,15 @@ char* astnode_to_string(ASTNode* node) {
     const char* type_str = astnode_type_to_string(node->type);
     char* node_str;
 
-    if (node->name != NULL) {
+    
+    if (node->type == AST_EXPR && node->syn_value != NULL) {
+        const char* template = "Ast Node <type: %s syn_value: %d>\n";
+
+        node_str = calloc(strlen(type_str) + strlen(template) + sizeof(node->syn_value), sizeof(char));
+        sprintf(node_str, template, type_str, node->syn_value);
+        return node_str;
+    }
+    else if (node->name != NULL) {
         const char* template = "Ast Node <name: %s type: %s>\n";
         node_str = calloc(strlen(type_str) + strlen(template) + strlen(node->name), sizeof(char));
         sprintf(node_str, template, node->name, type_str);

@@ -1,31 +1,40 @@
 exec = bin/betc
 sources = $(wildcard src/*.c)
-objects = $(sources:.c=.o)
-flags = -g -Wall -lm -ldl -fPIC -rdynamic
+objects = $(patsubst src/%.c, obj/%.o, $(sources))
+flags = -g -Wall -fPIC -rdynamic
 path = /home/c_bet/Projects/BetCompiler
 
+# Define cross-compilation settings for Raspberry Pi
+ifeq ($(PLATFORM),raspberry)
+    CC = arm-linux-gnueabihf-gcc
+    CXX = arm-linux-gnueabihf-g++
+    CFLAGS += -I/usr/include
+    LDFLAGS += -L/usr/lib -lm -ldl
+else
+    CC = gcc
+    CXX = g++
+    CFLAGS += -I/usr/include
+    LDFLAGS += -lm -ldl
+endif
+
 $(exec): $(objects)
-	gcc -g $(objects) $(flags) -o $(exec)
+	$(CC) $(objects) $(flags) -o $(exec) $(LDFLAGS)
 
-%.o: %.c include/%.h
-	gcc -c $(flags) $< -o $@
-
+obj/%.o: src/%.c
+	@mkdir -p obj
+	$(CC) -c $(CFLAGS) $< -o $@
 
 clean_output:
-	-rm -r bin
-	-rm -r target
-
+	-rm -rf bin
+	-rm -rf target
+	-rm -rf obj
 
 clean:
-	-rm *.o
-	#-rm *.a
-	-rm src/*.o
 	$(MAKE) clean_output
 
 run:
 	$(MAKE) clean_output
-	#-make && ./$(exec) examples/test.bet
-	-make
+	make
 
 lint:
 	clang-tidy src/*.c src/include/*.h

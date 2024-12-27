@@ -40,7 +40,7 @@ typedef struct AST_NODE_STRUCT {
         AST_BUILT_IN
     } type;
 
-
+    unsigned int syn_value;
 } ASTNode;
 
 ASTNode* init_ASTNode(char* name, int type);

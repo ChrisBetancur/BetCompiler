@@ -15,22 +15,14 @@
 #include "include/symbol_table.h"
 #include "include/x86_frontend.h"
 
-#if __APPLE__
-    #define OUTPUT_FILE "output.s"
-    #define COMPILE_OBJ "as output.s -o output.o"
-    #define MAKE_EXECUTABLE "ld output.o -o output -macosx_version_min 13.0 -L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lSystem"
-    #define RUN_EXEC "./output"
-#elif defined(__x86_64__)
-    #define TARGET_PATH "target/"
-    #define ASM_MAIN TARGET_PATH "main.asm"
-    #define ASM_PRINT_INT TARGET_PATH "print_int.asm"
-    #define NASM_OBJ "nasm -f elf64 -o "
-    #define MAIN_OBJ NASM_OBJ "target/main.o " ASM_MAIN
-    #define PRINT_INT_OBJ NASM_OBJ "target/print_int.o target/print_int.asm"
-    #define MAKE_EXECUTABLE "ld -o bin/output target/main.o target/print_int.o"
-    #define RUN_EXEC "bin/output"
-
-#endif
+#define TARGET_PATH "target/"
+#define ASM_MAIN TARGET_PATH "main.asm"
+#define ASM_PRINT_INT TARGET_PATH "print_int.asm"
+#define NASM_OBJ "nasm -f elf64 -o "
+#define MAIN_OBJ NASM_OBJ "target/main.o " ASM_MAIN
+#define PRINT_INT_OBJ NASM_OBJ "target/print_int.o target/print_int.asm"
+#define MAKE_EXECUTABLE "ld -o bin/output target/main.o target/print_int.o"
+#define RUN_EXEC "bin/output"
 
 #define AST_OUTPUT "abstract_syntax_tree.txt"
 #define TOKENS_OUTPUT "tokens.txt"
@@ -94,7 +86,7 @@ void bet_ide_compile(char* src) {
     tokens_to_file(parser, token_output_file);
     fclose(token_output_file);
 
-    SymbolTable* table = init_symbol_table(3);
+    /*SymbolTable* table = init_symbol_table(3);
     char* output = x86_assemble(parser->root, table, NULL);
 
     //puts(symbol_table_to_string(table));
@@ -112,7 +104,7 @@ void bet_ide_compile(char* src) {
     system(MAKE_EXECUTABLE);
     system(RUN_EXEC);
 
-    puts("");
+    puts("");*/
 }
 
 char* get_target_path() {

@@ -1,61 +1,35 @@
 
-Token <value: add type: ID line: 2>
+Token <value: i type: ID line: 1>
 
-Token <value: ( type: ( line: 2>
+Token <value: = type: = line: 1>
 
-Token <value: i64 type: ID line: 2>
+Token <value: ( type: ( line: 1>
 
-Token <value: i type: ID line: 2>
+Token <value: 999 type: INT line: 1>
 
-Token <value: , type: , line: 2>
+Token <value: + type: + line: 1>
 
-Token <value: i64 type: ID line: 2>
+Token <value: 45 type: INT line: 1>
 
-Token <value: j type: ID line: 2>
+Token <value: ) type: ) line: 1>
 
-Token <value: ) type: ) line: 2>
+Token <value: * type: * line: 1>
 
-Token <value: { type: { line: 2>
+Token <value: ( type: ( line: 1>
 
-Token <value: i64 type: ID line: 3>
+Token <value: 10 type: INT line: 1>
 
-Token <value: output type: ID line: 3>
+Token <value: - type: - line: 1>
 
-Token <value: = type: = line: 3>
+Token <value: 3 type: INT line: 1>
 
-Token <value: i type: ID line: 3>
+Token <value: ) type: ) line: 1>
 
-Token <value: + type: + line: 3>
+Token <value: / type: / line: 1>
 
-Token <value: j type: ID line: 3>
+Token <value: 99 type: INT line: 1>
 
-Token <value: ; type: ; line: 3>
+Token <value: ; type: ; line: 1>
 
-Token <value: print type: ID line: 4>
-
-Token <value: ( type: ( line: 4>
-
-Token <value: output type: ID line: 4>
-
-Token <value: ) type: ) line: 4>
-
-Token <value: ; type: ; line: 4>
-
-Token <value: } type: } line: 5>
-
-Token <value: add type: ID line: 7>
-
-Token <value: ( type: ( line: 7>
-
-Token <value: 5 type: INT line: 7>
-
-Token <value: , type: , line: 7>
-
-Token <value: 8 type: INT line: 7>
-
-Token <value: ) type: ) line: 7>
-
-Token <value: ; type: ; line: 7>
-
-Token <value: EOF type: EOF line: 10>
+Token <value: EOF type: EOF line: 2>
 

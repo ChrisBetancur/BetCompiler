@@ -1,1 +1,5 @@
 bet-compiler-app/node_modules/
+launch.json
+task.json
+tokens.txt
+abstract_syntax_tree.txt
